@@ -71,7 +71,6 @@ kind: SLO
 metadata:
   name: string
   displayName: string #optional
-  project: string
 spec:
   description: string #optional
   service: [service name] #name of the service to associate this SLO with
@@ -95,10 +94,6 @@ spec:
         timeZone: America/New_York # name as in IANA Time Zone Database
       isRolling: false # false or or not defined
   budgetingMethod: Occurrences | Timeslices
-  alertPolicies:
-    - string # The name of the alert policy associated with this SLO
-             # (alert policy only from the same project as SLO).
-             # Allow to have 0 to 5 AlertPolicy per SLO.
   objectives:  # see objectives below for details
 ```
 
@@ -136,11 +131,6 @@ spec:
       ```
 
 - **description** *string* optional field, contains at most 1050 characters
-
-- **alertPolicies\[ \]** *AlertPolicy*, optional field,
-  **(count 0 up to 5 items)**, is a list of AlertPolicies names which can
-    trigger alerts for given SLO when all conditions are met. AlertPolicies have
-    to be created in the same project as SLO.
 
 - **budgetingMethod** *enum(Occurrences \| Timeslices)*, required field
   - Occurrences method uses a ratio of counts of good events and total count of
