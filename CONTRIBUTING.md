@@ -14,7 +14,7 @@ We encourage and welcome any and all feedback from the community.
 Please make a fork of the repo, and sumit a PR from there.  More information can
 be found [here](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
 
-## Merge Request title
+### Merge Request title
 
 Try to be as more descriptive as you can in your Merge Request title.
 
