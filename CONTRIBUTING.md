@@ -9,6 +9,10 @@ free to propose changes to this document in a pull request.
 Your pull request will be reviewed by one of the maintainers, and we won't bite.
 We encourage and welcome any and all feedback from the community.
 
+## Slack 
+
+Email ian@nobl9.com to get an invite to our slack channel
+
 ## Making a pull request
 
 Please make a fork of the repo, and sumit a PR from there.  More information can
