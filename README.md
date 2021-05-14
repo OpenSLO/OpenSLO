@@ -97,7 +97,7 @@ spec:
   objectives:  # see objectives below for details
 ```
 
-##### Notes
+##### Notes (SLO)
 
 - **indicator** optional, represents the Service Level Indicator (SLI).
   Currently this only supports one Metic, `thresholdMetric`, with `ratioMetric`
@@ -186,7 +186,7 @@ objectives:
           query: sum:requests.total{*}
 ```
 
-##### Notes
+##### Notes (Objectives)
 
 - **objectives\[ \]** *Threshold*, required field.  If `thresholdMetric` has
   been defined, only one Threshold can be defined.  However if using `ratioMetric`
