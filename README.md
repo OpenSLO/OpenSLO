@@ -19,8 +19,8 @@
 The intent of this document is to outline the OpenSLO specification.
 
 The goal of this project is to provide an open specification for defining and
-interfacing with SLOs to allow for a common, giving a set vendor-agnostic
-solution to defining and tracking SLOs. Platform specific implimentation details
+interfacing with SLOs to allow for a common approach, giving a set vendor-agnostic
+solution to defining and tracking SLOs. Platform specific implementation details
 are purposefully excluded from the scope of this specification.
 
 ## Specification
@@ -28,7 +28,7 @@ are purposefully excluded from the scope of this specification.
 ### Goals
 
 - Compliance with the Kubernetes YAML format.
-- Vendor agnostic
+- Vendor-agnostic
 - Be flexible enough to be extended elsewhere
 
 ### Object Types
@@ -63,7 +63,7 @@ spec:
 #### SLO
 
 A service level objective (SLO) is a target value or range of values for
-a service level that is measured by a service level indicator (SLI).
+a service level that is described by a service level indicator (SLI).
 
 ```yaml
 apiVersion: n9/v1alpha
@@ -82,7 +82,7 @@ spec:
   timeWindows:
     # exactly one item, one of possible rolling time window or calendar aligned
     # rolling time window
-    - unit: Day | Hour | Minute
+    - unit: Second
       count: numeric
       isRolling: true
     # or
@@ -150,7 +150,7 @@ the tolerance levels for your metrics
 objectives:
   - displayName: string # optional
     op: lte | gte | lt | gt # conditional. operator used to comare the SLI against the value. Only needed when using a thresholdMetric
-    value: numeric # value used to compare metrics values. All objectives of the SLO need to have unique value.
+    value: numeric # value used to compare metrics values. All objectives of the SLO need to have a unique value.
     target: numeric [0.0, 1.0) #budget target for given objective of the SLO
     timeSliceTarget: numeric (0.0, 1.0] #required only when budgetingMethod is set to TimeSlices
     # ratioMetric {good, total} should be defined only if thresholdMetric is not set.
@@ -230,5 +230,3 @@ metadata:
 spec:
   description: string  # optional up to 1050 characters
 ```
-=======
->>>>>>> @{-1}
