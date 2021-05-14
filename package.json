@@ -1,0 +1,12 @@
+{
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "check-word-lists": "node .github/ci/check-word-lists.js",
+    "check-trailing-whitespaces": "node .github/ci/check-trailing-whitespaces.js"
+  },
+  "devDependencies": {
+    "cspell": "^5.4.0",
+    "markdownlint-cli": "^0.27.1"
+  }
+}

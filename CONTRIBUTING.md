@@ -9,14 +9,31 @@ free to propose changes to this document in a pull request.
 Your pull request will be reviewed by one of the maintainers, and we won't bite.
 We encourage and welcome any and all feedback from the community.
 
-## Slack 
+## Slack
 
 Email ian@nobl9.com to get an invite to our slack channel
 
 ## Making a pull request
 
-Please make a fork of the repo, and sumit a PR from there.  More information can
-be found [here](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
+Please make a fork of the repo, and summit a PR from there. More information can
+be found [here](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
+Ensure that checks pass, perform
+
+```bash
+make install/checks/spell-and-markdown
+```
+
+to install required dependencies to perform the below command
+
+```bash
+make run/checks/spell-and-markdown
+```
+
+which executes checks for spelling, markdown files and redundant whitespaces. Configuration for them is in the below files:
+
+- [cspell.json](./cspell.json) - missing words can be added to the dictionary (please maintain alphabetical order)
+
+- [.markdownlint.json](./.markdownlint.json) - rules can be adjusted
 
 ### Merge Request title
 
