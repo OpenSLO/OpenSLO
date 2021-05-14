@@ -1,0 +1,24 @@
+{
+  "language": "en_US",
+  "dictionaries": [
+    "bash",
+    "companies",
+    "css",
+    "go",
+    "html",
+    "misc",
+    "softwareTerms"
+  ],
+  "ignorePaths": [
+    ".vscode/",
+    ".idea/",
+    "**/node_modules/**",
+    "**/*.lock",
+    "package.json"
+  ],
+  "allowCompoundWords": true,
+  "words": [
+    "socio",
+    "tada"
+  ]
+}

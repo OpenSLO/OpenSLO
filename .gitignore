@@ -1,0 +1,6 @@
+# IDE specific
+.vscode
+.idea
+
+# Project specific
+node_modules
