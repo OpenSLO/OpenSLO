@@ -1,4 +1,4 @@
-# OpenSLO
+# ![ OpenSLO ](images/openslo.png)
 
 ## Table of Contents
 
