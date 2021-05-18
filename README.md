@@ -162,9 +162,9 @@ objectives:
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the numerator
         total: # the denominator
-          source: string # data source for the "good" numerator
+          source: string # data source for the "total" denominator
           queryType: string # a name for the type of query to run on the data source
-          query: string # the query to run to return the numerator
+          query: string # the query to run to return the denominator
 ```
 
 Example:
