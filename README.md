@@ -100,7 +100,7 @@ spec:
 ##### Notes (SLO)
 
 - **indicator** optional, represents the Service Level Indicator (SLI).
-  Currently this only supports one Metic, `thresholdMetric`, with `ratioMetric`
+  Currently this only supports one Metric, `thresholdMetric`, with `ratioMetric`
   supported in the [objectives](#objectives) stanza.
 - **indicator.thresholdMetric** *Metric*, represents the query used for
   gathering data from metric sources. Raw data is used to compare objectives
