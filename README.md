@@ -43,7 +43,7 @@ apiVersion: openslo/v1alpha
 kind: SLO | Service
 metadata:
   name: string
-  displayName: string   # optional
+  displayName: string # optional
 spec:
 ```
 
@@ -70,10 +70,10 @@ apiVersion: n9/v1alpha
 kind: SLO
 metadata:
   name: string
-  displayName: string #optional
+  displayName: string # optional
 spec:
-  description: string #optional
-  service: [service name] #name of the service to associate this SLO with
+  description: string # optional
+  service: [service name] # name of the service to associate this SLO with
   indicator: # represents the Service Level Indicator (SLI)
     thresholdMetric: # represents the metric used to inform the Service Level Object in the objectives stanza
       source: string # data source for the metric
@@ -92,15 +92,15 @@ spec:
       calendar:
         startTime: 2020-01-21 12:30:00 # date with time in 24h format, format without time zone
         timeZone: America/New_York # name as in IANA Time Zone Database
-      isRolling: false # false or or not defined
+      isRolling: false # false or not defined
   budgetingMethod: Occurrences | Timeslices
-  objectives:  # see objectives below for details
+  objectives: # see objectives below for details
 ```
 
 ##### Notes (SLO)
 
 - **indicator** optional, represents the Service Level Indicator (SLI).
-  Currently this only supports one Metic, `thresholdMetric`, with `ratioMetric`
+  Currently this only supports one Metric, `thresholdMetric`, with `ratioMetric`
   supported in the [objectives](#objectives) stanza.
 - **indicator.thresholdMetric** *Metric*, represents the query used for
   gathering data from metric sources. Raw data is used to compare objectives
@@ -127,7 +127,7 @@ spec:
       calendar:
           startTime: 2020-01-21 12:30:00 # date with time in 24h format
           timeZone: America/New_York # name as in IANA Time Zone Database
-      # isRolling: false #for calendar aligned set false value or not set
+      # isRolling: false # for calendar aligned set false value or not set
       ```
 
 - **description** *string* optional field, contains at most 1050 characters
@@ -149,10 +149,10 @@ the tolerance levels for your metrics
 ```yaml
 objectives:
   - displayName: string # optional
-    op: lte | gte | lt | gt # conditional. operator used to comare the SLI against the value. Only needed when using a thresholdMetric
+    op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
     value: numeric # value used to compare metrics values. All objectives of the SLO need to have a unique value.
-    target: numeric [0.0, 1.0) #budget target for given objective of the SLO
-    timeSliceTarget: numeric (0.0, 1.0] #required only when budgetingMethod is set to TimeSlices
+    target: numeric [0.0, 1.0) # budget target for given objective of the SLO
+    timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     # ratioMetric {good, total} should be defined only if thresholdMetric is not set.
     # ratioMetric good and total have to contain the same source type configuration (for example for prometheus).
     ratioMetric:
@@ -188,8 +188,8 @@ objectives:
 
 ##### Notes (Objectives)
 
-- **objectives\[ \]** *Threshold*, required field.  If `thresholdMetric` has
-  been defined, only one Threshold can be defined.  However if using `ratioMetric`
+- **objectives\[ \]** *Threshold*, required field. If `thresholdMetric` has
+  been defined, only one Threshold can be defined. However if using `ratioMetric`
   then any number of Thresholds can be defined.
 
 - **op** *enum(lte | gte | lt | gt)*, operator used to compare the SLI against
@@ -226,7 +226,7 @@ apiVersion: openslo/v1alpha
 kind: Service
 metadata:
   name: string
-  displayName: string  # optional
+  displayName: string # optional
 spec:
-  description: string  # optional up to 1050 characters
+  description: string # optional up to 1050 characters
 ```
