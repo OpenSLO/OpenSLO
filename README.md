@@ -66,7 +66,7 @@ A service level objective (SLO) is a target value or range of values for
 a service level that is described by a service level indicator (SLI).
 
 ```yaml
-apiVersion: n9/v1alpha
+apiVersion: openslo/v1alpha
 kind: SLO
 metadata:
   name: string
