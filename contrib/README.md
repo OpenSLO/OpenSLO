@@ -1,1 +1,1 @@
-# External contributions to OpenSLO.
+# External contributions to OpenSLO
