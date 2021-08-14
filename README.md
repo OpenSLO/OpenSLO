@@ -80,6 +80,7 @@ spec:
       source: string # data source for the metric
       queryType: string # a name for the type of query to run on the data source
       query: string # the query to run to return the metric
+      metadata: # optional, allows data source specific details to be passed
   timeWindows:
     # exactly one item, one of possible rolling time window or calendar aligned
     # rolling time window
