@@ -163,7 +163,7 @@ objectives:
           source: string # data source for the "good" numerator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the numerator
-          metadata: # optional, allows data source specific details to be passed          
+          metadata: # optional, allows data source specific details to be passed
         bad: # the numerator, required when "good" is not set
           source: string # data source for the "bad" numerator
           queryType: string # a name for the type of query to run on the data source
