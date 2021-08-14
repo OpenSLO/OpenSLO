@@ -57,7 +57,6 @@ spec:
   - contain only lowercase alphanumeric characters or `-`
   - start with an alphanumeric character
   - end with an alphanumeric character
-
 ---
 
 #### SLO
@@ -161,10 +160,12 @@ objectives:
           source: string # data source for the "good" numerator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the numerator
+          metadata: # optional, allows data source specific details to be passed
         total: # the denominator
           source: string # data source for the "total" denominator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the denominator
+          metadata: # optional, allows data source specific details to be passed
 ```
 
 Example:
@@ -185,6 +186,37 @@ objectives:
           queryType: query
           query: sum:requests.total{*}
 ```
+
+The optional `metadata` key can be used to pass extraneous data to the data source,
+for example, if your data source accepts variables, they could be passed via the
+`metadata`.
+
+An example is an internal tool which uses a templating feature to ease the maintenance
+of SLOs by not repeating the same queries were there are only small differences.
+The internal tool can then generate the final OpensLO specification based on the input described.
+
+```yaml
+objectives:
+  - displayName: Foo Latency
+    value:  1
+    target: 0.98
+    ratioMetrics:
+        incremental: true
+        good:
+          source: prometheus
+          queryType: query
+          query: sum:requests.duration{*}
+          metadata:
+            bucket: "0.25"
+            exclude_errors: "true"
+        total:
+          source: prometheus
+          queryType: query
+          query: sum:requests.duration{*}
+          metadata:
+            exclude_errors: "true"
+```
+
 
 ##### Notes (Objectives)
 
