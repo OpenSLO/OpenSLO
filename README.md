@@ -153,12 +153,16 @@ objectives:
     value: numeric # value used to compare metrics values. All objectives of the SLO need to have a unique value.
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
-    # ratioMetric {good, total} should be defined only if thresholdMetric is not set.
-    # ratioMetric good and total have to contain the same source type configuration (for example for prometheus).
+    # ratioMetric {good, total} or {bad, total} should be defined only if thresholdMetric is not set.
+    # ratioMetric good or bad and total have to contain the same source type configuration (for example for prometheus).
     ratioMetric:
         incremental: true | false #todo: add description
-        good: # the numerator
+        good: # the numerator, required when "bad" is not set
           source: string # data source for the "good" numerator
+          queryType: string # a name for the type of query to run on the data source
+          query: string # the query to run to return the numerator
+        bad: # the numerator, required when "good" is not set
+          source: string # data source for the "bad" numerator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the numerator
         total: # the denominator
@@ -204,12 +208,17 @@ objectives:
 - **targetTimeSlices** *numeric* *\[0.0, 1.0\]*, required only when budgeting
   method is set to TimeSlices
 
-- **indicator.ratioMetric** *Metric {Good, Total}*, if `ratioMetric` is defined
-    then `thresholdMetric` should not be set in `indicator`
+- **indicator.ratioMetric** *Metric {Good, Total} or {Bad, Total}*
+    if `ratioMetric` is defined then `thresholdMetric` should not be set in `indicator`
 
   - *Good* represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
-   values to find good values.
+   values to find good values. If `Bad` is defined then `Good` should not be set.
+
+  - *Bad* represents the query used for gathering data from metric sources used
+   as the numerator. Received data is used to compare objectives (threshold)
+   values to find bad values. If `Good` is defined
+    then `Bad` should not be set.
 
   - *Total* represents the query used for gathering data from metric sources
     that is used as the denominator. Received data is used to compare objectives
