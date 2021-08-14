@@ -53,10 +53,12 @@ spec:
 - **metadata.name:** *string* - required field, convention for naming object from
   [DNS RFC1123](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names)
   `name` should:
+
   - contain at most 63 characters
   - contain only lowercase alphanumeric characters or `-`
   - start with an alphanumeric character
   - end with an alphanumeric character
+
 ---
 
 #### SLO
@@ -216,7 +218,6 @@ objectives:
           metadata:
             exclude_errors: "true"
 ```
-
 
 ##### Notes (Objectives)
 
