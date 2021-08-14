@@ -53,6 +53,7 @@ spec:
 - **metadata.name:** *string* - required field, convention for naming object from
   [DNS RFC1123](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names)
   `name` should:
+
   - contain at most 63 characters
   - contain only lowercase alphanumeric characters or `-`
   - start with an alphanumeric character
@@ -79,6 +80,7 @@ spec:
       source: string # data source for the metric
       queryType: string # a name for the type of query to run on the data source
       query: string # the query to run to return the metric
+      metadata: # optional, allows data source specific details to be passed
   timeWindows:
     # exactly one item, one of possible rolling time window or calendar aligned
     # rolling time window
@@ -161,14 +163,17 @@ objectives:
           source: string # data source for the "good" numerator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the numerator
+          metadata: # optional, allows data source specific details to be passed          
         bad: # the numerator, required when "good" is not set
           source: string # data source for the "bad" numerator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the numerator
+          metadata: # optional, allows data source specific details to be passed
         total: # the denominator
           source: string # data source for the "total" denominator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the denominator
+          metadata: # optional, allows data source specific details to be passed
 ```
 
 Example:
@@ -188,6 +193,36 @@ objectives:
           source: datadog
           queryType: query
           query: sum:requests.total{*}
+```
+
+The optional `metadata` key can be used to pass extraneous data to the data source,
+for example, if your data source accepts variables, they could be passed via the
+`metadata`.
+
+An example is an internal tool which uses a templating feature to ease the maintenance
+of SLOs by not repeating the same queries were there are only small differences.
+The internal tool can then generate the final OpensLO specification based on the input described.
+
+```yaml
+objectives:
+  - displayName: Foo Latency
+    value:  1
+    target: 0.98
+    ratioMetrics:
+        incremental: true
+        good:
+          source: prometheus
+          queryType: query
+          query: sum:requests.duration{*}
+          metadata:
+            bucket: "0.25"
+            exclude_errors: "true"
+        total:
+          source: prometheus
+          queryType: query
+          query: sum:requests.duration{*}
+          metadata:
+            exclude_errors: "true"
 ```
 
 ##### Notes (Objectives)
