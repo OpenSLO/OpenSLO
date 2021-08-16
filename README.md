@@ -75,6 +75,7 @@ metadata:
 spec:
   description: string # optional
   service: [service name] # name of the service to associate this SLO with
+  tags: # optional, list of tags associated with this SLO
   indicator: # represents the Service Level Indicator (SLI)
     thresholdMetric: # represents the metric used to inform the Service Level Object in the objectives stanza
       source: string # data source for the metric
@@ -151,6 +152,7 @@ the tolerance levels for your metrics
 ```yaml
 objectives:
   - displayName: string # optional
+    tags: # optional, list of tags associated with this SLO
     op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
     value: numeric # value used to compare metrics values. All objectives of the SLO need to have a unique value.
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
