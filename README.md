@@ -302,6 +302,7 @@ spec:
     - **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
   If the kind is `custom` the following fields are required:
     - **threshold** *number*, required field, the threshold that you want alert on
+    - **condition** *enum(lt, lte, gt, gte, eq)*, optional field, defines how the threshold should be met, defaults to `gt`
   If the kind is `guard` the following fields are required, can  be used to define quality conditions:
     - **threshold** *number*, required field, the threshold that you want alert on
     - **criteriaType** *enum(pass, warning)*, required field, defines the criteria type of the condition
