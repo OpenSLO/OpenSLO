@@ -299,20 +299,26 @@ spec:
 - **severity** *enum(ticket, page)*, required field. The severity level of the alert
 - **condition**, required field. Defines the conditions of the alert
   - **kind** *enum(burnrate, guard, custom)* the kind of alerting condition thats checked, defaults to `burnrate`
-  If the kind is `burnrate` the following fields are required:
-  - **threshold** *number*, required field, the threshold that you want alert on
-  - **lookbackWindow** *number*, required field, the time-frame for which to calculate the threshold
-  - **controlLookbackWindow** *number*, optional field
-  - **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
-  If the kind is `custom` the following fields are required:
-  - **threshold** *number*, required field, the threshold that you want alert on
-  - **comparison** *enum(lt, lte, gt, gte, eq)*, optional field, defines
+
+If the kind is `burnrate` the following fields are required:
+
+- **threshold** *number*, required field, the threshold that you want alert on
+- **lookbackWindow** *number*, required field, the time-frame for which to calculate the threshold
+- **controlLookbackWindow** *number*, optional field
+- **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
+
+If the kind is `custom` the following fields are required:
+
+- **threshold** *number*, required field, the threshold that you want alert on
+- **comparison** *enum(lt, lte, gt, gte, eq)*, optional field, defines
   how the threshold should be compared to meet the threshold, defaults to `gt`
-  If the kind is `guard` the following fields are required, can  be used to
-  define quality conditions:
-  - **threshold** *number*, required field, the threshold that you want alert on
-  - **criteriaType** *enum(pass, warning)*, required field, defines the criteria type of the condition
-  - **weight** *number*, required field, the weight or importance of the condition
+
+If the kind is `guard` the following fields are required, can  be used to
+define quality conditions:
+
+- **threshold** *number*, required field, the threshold that you want alert on
+- **criteriaType** *enum(pass, warning)*, required field, defines the criteria type of the condition
+- **weight** *number*, required field, the weight or importance of the condition
 
 ---
 
