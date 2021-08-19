@@ -224,6 +224,7 @@ objectives:
     (threshold) values to find total number of metrics.
 
 #### Alert Policy
+
 An Alert Policy allows you to define the alert conditions for a SLO.
 
 ```yaml
@@ -237,19 +238,20 @@ spec:
   conditions: # list of alert conditions
     - conditionRef: # required when alert condition is not inlined
   notificationTargets:
-    - targetRef: # required when alert notification target is not inlined
+  - targetRef: # required when alert notification target is not inlined
 
 ```
 
 #### Notes (Alert Policy)
+
 - **conditions\[ \]** *Alert Condition*, required field.
   A condition can be inline defined or can refer to external Alert condition defined
   in this case the following are required:
-    - **conditionRef** *string*: this is the name or path the Alert condition
+  - **conditionRef** *string*: this is the name or path the Alert condition
 - **notificationTargets\[ \]** *Alert Notification Target*, required field.
   A condition can be inline defined or can refer to external Alert Notification Target
   defined in this case the following are required:
-    - **targetRef** *string*: this is the name or path the Alert Notification Target
+  - **targetRef** *string*: this is the name or path the Alert Notification Target
 
 An example of a Alert policy which refers to another Alert Condition:
 
@@ -260,9 +262,9 @@ metadata:
   name: AlertPolicy
   displayName: Alert Policy
 spec:
-  description: Alert policy for cpu utilisation breaches, notifies on-call devops via email
+  description: Alert policy for cpu usage breaches, notifies on-call devops via email
   conditions:
-    - conditionRef: cpu-utilisation-breach
+    - conditionRef: cpu-usage-breach
   notificationTargets:
     - targetRef: OnCallDevopsMailNotification
 
@@ -271,6 +273,7 @@ spec:
 ---
 
 #### Alert Condition
+
 An Alert Condition allows you to define in which conditions a alert of SLO
 needs to be triggered.
 
@@ -292,21 +295,25 @@ spec:
 ```
 
 #### Notes (Alert Condition)
+
 - **severity** *enum(ticket, page)*, required field. The severity level of the alert
 - **condition**, required field. Defines the conditions of the alert
   - **kind** *enum(burnrate, guard, custom)* the kind of alerting condition thats checked, defaults to `burnrate`
   If the kind is `burnrate` the following fields are required:
-    - **threshold** *number*, required field, the threshold that you want alert on
-    - **lookbackWindow** *number*, required field, the time-frame for which to calculate the threshold
-    - **controlLookbackWindow** *number*, optional field
-    - **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
+  - **threshold** *number*, required field, the threshold that you want alert on
+  - **lookbackWindow** *number*, required field, the time-frame for which to calculate the threshold
+  - **controlLookbackWindow** *number*, optional field
+  - **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
   If the kind is `custom` the following fields are required:
-    - **threshold** *number*, required field, the threshold that you want alert on
-    - **comparison** *enum(lt, lte, gt, gte, eq)*, optional field, defines how the threshold should be compared to meet the threshold, defaults to `gt`
-  If the kind is `guard` the following fields are required, can  be used to define quality conditions:
-    - **threshold** *number*, required field, the threshold that you want alert on
-    - **criteriaType** *enum(pass, warning)*, required field, defines the criteria type of the condition
-    - **weight** *number*, required field, the weight or importance of the condition
+  - **threshold** *number*, required field, the threshold that you want alert on
+  - **comparison** *enum(lt, lte, gt, gte, eq)*, optional field, defines
+  how the threshold should be compared to meet the threshold, defaults to `gt`
+  If the kind is `guard` the following fields are required, can  be used to
+  define quality conditions:
+  - **threshold** *number*, required field, the threshold that you want alert on
+  - **criteriaType** *enum(pass, warning)*, required field, defines the criteria type of the condition
+  - **weight** *number*, required field, the weight or importance of the condition
+
 ---
 
 An example of a alert condition is the following:
@@ -315,10 +322,10 @@ An example of a alert condition is the following:
 apiVersion: openslo/v1alpha
 kind: AlertCondition
 metadata:
-  name: cpu-utilisation-breach
-  displayName: CPU utilisation breach
+  name: cpu-usage-breach
+  displayName: CPU usage breach
 spec:
-  description: If the CPU utilisation is too high for given period then it should alert
+  description: If the CPU usage is too high for given period then it should alert
   severity: page
   condition:
     kind: burnrate
@@ -330,6 +337,7 @@ spec:
 ---
 
 #### Alert Notification Target
+
 An Alert Notification Target defines the possible targets where alert notifications
 should be delivered to. For example, this can be a web-hook, Slack or similar
 
@@ -368,7 +376,6 @@ spec:
 
 Alternatively, a similar notification target can be defined for Slack in this example
 
-
 ```yaml
 apiVersion: openslo/v1alpha
 kind: AlertNotificationTarget
@@ -392,14 +399,17 @@ spec:
         Don't forget to schedule a meeting the company board via Executive Secretary
 ```
 
-##### Notes
+##### Notes (Alert Notification Target)
+
 - **target** *string*, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
 - **description** *string*, optional description about the notification target
 - **parameters**, defined all the available parameters for the target, e.g. username, password, Slack web-hook url
   - **name** *string*, unique name of the parameter
   - **description** *string* (optional), human readable description of the parameter
-  - **type** *enum(string, secret, number, email, url)* the accepted type of value of the parameter, if not given it fallbacks to `string`
-  - **value** *string*, a hard-coded value of the parameter name (e.g. web-hook url)
+  - **type** *enum(string, secret, number, email, url)* the accepted type of
+  value of the parameter, if not given it fallbacks to `string`
+  - **value** *string*, a hard-coded value of the parameter name
+    (e.g. web-hook url)
   - **defaultValue** *string*, a fallback or default value for the parameter
 
 **Note**: The OpenSLO comes with a few so called template fields which can be used as part of the specification to
@@ -417,12 +427,6 @@ kind: Service
 metadata:
   name: string
   displayName: string # optional
-  opensloApiVersion: openslo/v1alpha # required, when apiVersion is not a OpenSLO api version
 spec:
   description: string # optional up to 1050 characters
 ```
-
-##### Notes
- - The `apiVersion` can define a different api version, e.g. of a third-party service catalog,
-   if this field does not have a version that prefixes with `openslo/` then the `opensloApiVersion`-field in `metadata` is *required*
-- The `opensloApiVersion`-field is required when `apiVersion` is not populated with a valid OpenSLO api version
