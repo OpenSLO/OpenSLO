@@ -12,10 +12,10 @@
       - [SLO](#slo)
         - [Notes](#notes-1)
         - [Objectives](#objectives)
-      - [Alerting](#alerting)
-        - [Notes](#notes-2)
-        - [Conditions](#conditions)
-        - [Targets](#targets)
+      - [Alerting](#alert-policy)
+        - [Notes](#notes-alert-policy)
+        - [Alert Conditions](#alert-condition)
+        - [Notification Targets](#alert-notification-target)
       - [Service](#service)
 
 ## Introduction
