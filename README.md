@@ -356,7 +356,7 @@ metadata:
 spec:
   target: # required
   description: # optional
-  parameters: # required
+  parameters: # optional, list of parameters for the notification target
     - name: string # required
       description: string # optional
       type: string # required, string, secret, number, url
@@ -409,7 +409,7 @@ spec:
 
 - **target** *string*, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
 - **description** *string*, optional description about the notification target
-- **parameters**, defined all the available parameters for the target, e.g. username, password, Slack web-hook url
+- **parameters**, optional list of the parameters for the target, e.g. username, password, Slack web-hook url
   - **name** *string*, unique name of the parameter
   - **description** *string* (optional), human readable description of the parameter
   - **type** *enum(string, secret, number, email, url)* the accepted type of
