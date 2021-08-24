@@ -6,7 +6,7 @@
     "check-trailing-whitespaces": "node .github/ci/check-trailing-whitespaces.js"
   },
   "devDependencies": {
-    "cspell": "^5.6.6",
+    "cspell": "^5.8.0",
     "markdownlint-cli": "^0.28.1"
   }
 }
