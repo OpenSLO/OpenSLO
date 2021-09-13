@@ -23,10 +23,12 @@ interfacing with SLOs to allow for a common approach, giving a set vendor-agnost
 solution to defining and tracking SLOs. Platform specific implementation details
 are purposefully excluded from the scope of this specification.
 
-OpenSLO is an open specification-i.e., it is a specification created and controlled, in an open and fair 
-process, by an association or a standardization body intending to achieve interoperability and 
-interchangeability. An open specification is not controlled by a single company or 
-individual or by a group with discriminatory membership criteria.
+OpenSLO is an open specification-i.e., it is a specification created and
+controlled, in an open and fair process, by an association or a standardization
+body intending to achieve interoperability and interchangeability. An open
+specification is not controlled by a single company or individual or by a group
+with discriminatory membership criteria.  Additionally, this specification is
+designed to be extended where needed to meet the needs of the implementation.
 
 ## Specification
 
