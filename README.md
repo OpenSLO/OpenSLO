@@ -159,7 +159,7 @@ the tolerance levels for your metrics
 objectives:
   - displayName: string # optional
     op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
-    value: numeric # optional, value used to compare metrics values. All objectives of the SLO need to have a unique value. Only needed when using a thresholdMetric
+    value: numeric # optional, value used to compare threshold metrics. Only needed when using a thresholdMetric
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     # ratioMetric {good, total} should be defined only if thresholdMetric is not set.
