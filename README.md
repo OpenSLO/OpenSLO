@@ -107,10 +107,10 @@ spec:
 ##### Notes (SLO)
 
 - **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
-   - the `name` segment is required and must contain at most 63 characters beginning and ending
+  - the `name` segment is required and must contain at most 63 characters beginning and ending
      with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
      and alphanumerics between.
-   - the `value` of `name` segment can be a string or an array of strings
+  - the `value` of `name` segment can be a string or an array of strings
 - **indicator** optional, represents the Service Level Indicator (SLI).
   Currently this only supports one Metric, `thresholdMetric`, with `ratioMetric`
   supported in the [objectives](#objectives) stanza.
