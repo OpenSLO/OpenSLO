@@ -305,17 +305,17 @@ The table below lists the outcomes of the different combinations:
 In the table below lists when alert policy will be triggering depending on
 the resolved alert condition value:
 
-| Alert condition | alertIf       | Alert triggering |
-|-----------------|---------------|------------------|
-| true            | true          | Yes              |
-| true            | false         | No               |
-| true            | indeterminate | No               |
-| false           | true          | Yes              |
-| false           | false         | No               |
-| false           | indeterminate | No               |
-| indeterminate   | true          | No               |
-| indeterminate   | false         | No               |
-| indeterminate   | indeterminate | Yes              |
+| Alert condition | alertIf | Alert triggering |
+|---|---|---|
+| true | true | Yes |
+| true | false | No |
+| true | indeterminate | No |
+| false | true | Yes |
+| false | false | No |
+| false | indeterminate | No |
+| indeterminate | true | No |
+| indeterminate | false | No |
+| indeterminate | indeterminate | Yes |
 
 ---
 
