@@ -73,6 +73,7 @@ metadata:
   name: string
   displayName: string # optional
   labels: # optional, key <>value a pair of labels that can be used as metadata
+    userImpacting: "true"
     tags:
       - auth
       - tier-1
