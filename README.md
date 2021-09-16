@@ -72,10 +72,13 @@ kind: SLO
 metadata:
   name: string
   displayName: string # optional
+  labels: # optional, key <>value a pair of labels that can be used as metadata
+    tags:
+      - auth
+      - tier-1
 spec:
   description: string # optional
   service: [service name] # name of the service to associate this SLO with
-  tags: # optional, list of tags associated with this SLO
   indicator: # represents the Service Level Indicator (SLI)
     thresholdMetric: # represents the metric used to inform the Service Level Object in the objectives stanza
       source: string # data source for the metric
@@ -102,6 +105,11 @@ spec:
 
 ##### Notes (SLO)
 
+- **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
+   - the `name` segment is required and must contain at most 63 characters beginning and ending
+     with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
+     and alphanumerics between.
+   - the `value` of `name` segment can be a string or an array of strings
 - **indicator** optional, represents the Service Level Indicator (SLI).
   Currently this only supports one Metric, `thresholdMetric`, with `ratioMetric`
   supported in the [objectives](#objectives) stanza.
@@ -144,8 +152,6 @@ spec:
 - **objectives\[ \]** *Threshold*, required field, described in [Objectives](#objectives)
   section
 
-- **tags\[ \]** *string*, optional, a list of tags associated with the SLO
-
 ##### Objectives
 
 Objectives are the thresholds for your SLOs. You can use objectives to define
@@ -154,7 +160,6 @@ the tolerance levels for your metrics
 ```yaml
 objectives:
   - displayName: string # optional
-    tags: string[] # optional, array list of tags associated with this SLO
     op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
     value: numeric # value used to compare metrics values. All objectives of the SLO need to have a unique value.
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
@@ -252,8 +257,6 @@ objectives:
   - *Total* represents the query used for gathering data from metric sources
     that is used as the denominator. Received data is used to compare objectives
     (threshold) values to find total number of metrics.
-
-- **tags\[ \]** *string*, optional, a list of tags associated with the objective of the SLO
 
 ---
 
