@@ -235,18 +235,25 @@ metadata:
   displayName: string # optional
 spec:
   description: string # optional
+  when: enum # optional, defaults to breaching
+  alertIf: enum # optional, defaults to true
   conditions: # list of alert conditions
     - conditionRef: # required when alert condition is not inlined
   notificationTargets:
   - targetRef: # required when alert notification target is not inlined
-
 ```
 
 #### Notes (Alert Policy)
 
-- **conditions\[ \]** *Alert Condition*, required field.
+- **when** *enum*, an enum of `breached`, `resolved`, defines whether the alert
+  is triggering when the alert condition is breached or resolved
+- **alertIf** *enum*, an enum of `true`, `false`, and `indeterminate`,
+  defines at which resolved condition value the alert policy should be triggering,
+  defaults to `true`
+- **conditions\[ \]** *Alert Condition*, an array, required field.
   A condition can be inline defined or can refer to external Alert condition defined
   in this case the following are required:
+  - **operator** *string*, the logical operator, can be `AND`, or `OR`, defaults to `OR`
   - **conditionRef** *string*: this is the name or path the Alert condition
 - **notificationTargets\[ \]** *Alert Notification Target*, required field.
   A condition can be inline defined or can refer to external Alert Notification Target
@@ -263,12 +270,52 @@ metadata:
   displayName: Alert Policy
 spec:
   description: Alert policy for cpu usage breaches, notifies on-call devops via email
+  alertIf: true
+  when: breaching
   conditions:
-    - conditionRef: cpu-usage-breach
+    - operator: and
+      conditionRef: cpu-usage-breach
   notificationTargets:
     - targetRef: OnCallDevopsMailNotification
 
 ```
+
+An Alert Policy can have one or more alert conditions which need to be met before
+the alert will be triggered. Two or more condition can be logically joined using
+the logical operators `AND` or `OR`.
+
+The result of the alert conditions is either `true`, `false` or `indeterminate`.
+
+The table below lists the outcomes of the different combinations:
+
+| Expression                      | Outcome       |
+|---------------------------------|---------------|
+| true AND true                   | true          |
+| true AND false                  | false         |
+| false AND false                 | false         |
+| true AND indeterminate          | indeterminate |
+| indeterminate AND indeterminate | indeterminate |
+| true OR true                    | true          |
+| true OR false                   | true          |
+| false OR false                  | false         |
+| true OR indeterminate           | true          |
+| indeterminate OR indeterminate  | indeterminate |
+| false OR indeterminate          | indeterminate |
+
+In the table below lists when alert policy will be triggering depending on
+the resolved alert condition value:
+
+| Alert condition     | alertIf       | Alert triggering |
+|-------------------------------------|------------------|
+| true                | true          | Yes              |
+| true                | false         | No               |
+| true                | indeterminate | No               |
+| false               | true          | Yes              |
+| false               | false         | No               |
+| false               | indeterminate | No               |
+| indeterminate       | true          | No               |
+| indeterminate       | false         | No               |
+| indeterminate       | indeterminate | Yes              |
 
 ---
 
@@ -290,7 +337,6 @@ spec:
     kind: string
     threshold: number
     lookbackWindow: number
-    controlLookbackWindow: number # optional
     alertAfter: number
 ```
 
@@ -298,13 +344,12 @@ spec:
 
 - **severity** *enum(ticket, page)*, required field. The severity level of the alert
 - **condition**, required field. Defines the conditions of the alert
-  - **kind** *enum(burnrate, guard, custom)* the kind of alerting condition thats checked, defaults to `burnrate`
+  - **kind** *enum(burnrate, custom)* the kind of alerting condition thats checked, defaults to `burnrate`
 
 If the kind is `burnrate` the following fields are required:
 
 - **threshold** *number*, required field, the threshold that you want alert on
 - **lookbackWindow** *number*, required field, the time-frame for which to calculate the threshold
-- **controlLookbackWindow** *number*, optional field
 - **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
 
 If the kind is `custom` the following fields are required:
@@ -313,12 +358,8 @@ If the kind is `custom` the following fields are required:
 - **comparison** *enum(lt, lte, gt, gte, eq)*, optional field, defines
   how the threshold should be compared to meet the threshold, defaults to `gt`
 
-If the kind is `guard` the following fields are required, can  be used to
-define quality conditions:
-
-- **threshold** *number*, required field, the threshold that you want alert on
-- **criteriaType** *enum(pass, warning)*, required field, defines the criteria type of the condition
-- **weight** *number*, required field, the weight or importance of the condition
+If the alert condition can not be resolved to a `true` or `false` value, for example
+due to missing data points, then the `indeterminate` needs to be returned.
 
 ---
 
