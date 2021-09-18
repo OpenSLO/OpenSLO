@@ -79,9 +79,9 @@ kind: SLO
 metadata:
   name: string
   displayName: string # optional
-  annotations: map[string]string # optional, key <> value a pair of annotations that can be used as metadata
+  annotations: map[string]string # optional, key <> value a pair of annotations that can be used as implementation metadata
     openslo.com/key1: value1
-    openslo.com/key2: value2
+    fooimplementation.com/key2: value2
 spec:
   description: string # optional
   service: [service name] # name of the service to associate this SLO with
@@ -112,6 +112,8 @@ spec:
 ##### Notes (SLO)
 
 - **metadata.annotations:** *map[string]string* - optional field `key` <> `value`
+  - `annotations` should be used to define implementation / system specific metadata about the SLO.
+    For example, it can be metadata about a dashboard url, or how to name a metric created by the SLI, etc.
   - `key` have two segments: an optional `prefix` and `name`, separated by a slash `/`
   - the `name` segment is required and must contain at most 63 characters beginning and ending
     with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
