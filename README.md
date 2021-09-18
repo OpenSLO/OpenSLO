@@ -72,11 +72,13 @@ kind: SLO
 metadata:
   name: string
   displayName: string # optional
-  labels: # optional, key <>value a pair of labels that can be used as metadata
+  labels: # optional, key <>value a pair of labels that can be used as metadata relevant to users
     userImpacting: "true"
+    team: "identity"
+    costCentre: "project1"
+    serviceTier: "tier-1"
     tags:
       - auth
-      - tier-1
 spec:
   description: string # optional
   service: [service name] # name of the service to associate this SLO with
@@ -107,10 +109,10 @@ spec:
 ##### Notes (SLO)
 
 - **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
-  - the `name` segment is required and must contain at most 63 characters beginning and ending
+  - the `key` segment is required and must contain at most 63 characters beginning and ending
      with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
      and alphanumerics between.
-  - the `value` of `name` segment can be a string or an array of strings
+  - the `value` of `key` segment can be a string or an array of strings
 - **indicator** optional, represents the Service Level Indicator (SLI).
   Currently this only supports one Metric, `thresholdMetric`, with `ratioMetric`
   supported in the [objectives](#objectives) stanza.
