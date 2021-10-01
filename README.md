@@ -23,6 +23,13 @@ interfacing with SLOs to allow for a common approach, giving a set vendor-agnost
 solution to defining and tracking SLOs. Platform specific implementation details
 are purposefully excluded from the scope of this specification.
 
+OpenSLO is an open specification-i.e., it is a specification created and
+controlled, in an open and fair process, by an association or a standardization
+body intending to achieve interoperability and interchangeability. An open
+specification is not controlled by a single company or individual or by a group
+with discriminatory membership criteria.  Additionally, this specification is
+designed to be extended where needed to meet the needs of the implementation.
+
 ## Specification
 
 ### Goals
@@ -79,6 +86,9 @@ metadata:
     serviceTier: "tier-1"
     tags:
       - auth
+  annotations: map[string]string # optional, key <> value a pair of annotations that can be used as implementation metadata
+    openslo.com/key1: value1
+    fooimplementation.com/key2: value2
 spec:
   description: string # optional
   service: [service name] # name of the service to associate this SLO with
@@ -113,6 +123,16 @@ spec:
      with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
      and alphanumerics between.
   - the `value` of `key` segment can be a string or an array of strings
+- **metadata.annotations:** *map[string]string* - optional field `key` <> `value`
+  - `annotations` should be used to define implementation / system specific metadata about the SLO.
+    For example, it can be metadata about a dashboard url, or how to name a metric created by the SLI, etc.
+  - `key` have two segments: an optional `prefix` and `name`, separated by a slash `/`
+  - the `name` segment is required and must contain at most 63 characters beginning and ending
+    with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
+    and alphanumerics between.
+  - the `prefix` is optional and must be a DNS subdomain: a series of DNS labels separated by dots `.`,
+    it must contain at most 253 characters, followed by a slash `/`.
+  - the `openslo.com/` is reserved for OpenSLO usage
 - **indicator** optional, represents the Service Level Indicator (SLI).
   Currently this only supports one Metric, `thresholdMetric`, with `ratioMetric`
   supported in the [objectives](#objectives) stanza.
@@ -164,7 +184,7 @@ the tolerance levels for your metrics
 objectives:
   - displayName: string # optional
     op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
-    value: numeric # value used to compare metrics values. All objectives of the SLO need to have a unique value.
+    value: numeric # optional, value used to compare threshold metrics. Only needed when using a thresholdMetric
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     # ratioMetric {good, total} should be defined only if thresholdMetric is not set.
@@ -188,7 +208,6 @@ Example:
 ```yaml
 objectives:
   - displayName: Foo Total Errors
-    value:  1
     target: 0.98
     ratioMetrics:
         incremental: true
@@ -213,7 +232,6 @@ The internal tool can then generate the final OpensLO specification based on the
 ```yaml
 objectives:
   - displayName: Foo Latency
-    value:  1
     target: 0.98
     ratioMetrics:
         incremental: true
@@ -242,7 +260,7 @@ objectives:
   the value. Only needed when using `thresholdMetric`
 
 - **value numeric**, required field, used to compare values gathered from
-  metric source
+  metric source. Only needed when using a `thresholdMetric`.
 
 - **target numeric** *\[0.0, 1.0)*, required, budget target for given objective
   of the SLO
