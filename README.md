@@ -79,6 +79,13 @@ kind: SLO
 metadata:
   name: string
   displayName: string # optional
+  labels: # optional, key <>value a pair of labels that can be used as metadata relevant to users
+    userImpacting: "true"
+    team: "identity"
+    costCentre: "project1"
+    serviceTier: "tier-1"
+    tags:
+      - auth
   annotations: map[string]string # optional, key <> value a pair of annotations that can be used as implementation metadata
     openslo.com/key1: value1
     fooimplementation.com/key2: value2
@@ -111,6 +118,11 @@ spec:
 
 ##### Notes (SLO)
 
+- **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
+  - the `key` segment is required and must contain at most 63 characters beginning and ending
+     with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
+     and alphanumerics between.
+  - the `value` of `key` segment can be a string or an array of strings
 - **metadata.annotations:** *map[string]string* - optional field `key` <> `value`
   - `annotations` should be used to define implementation / system specific metadata about the SLO.
     For example, it can be metadata about a dashboard url, or how to name a metric created by the SLI, etc.
