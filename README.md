@@ -27,6 +27,13 @@ interfacing with SLOs to allow for a common approach, giving a set vendor-agnost
 solution to defining and tracking SLOs. Platform specific implementation details
 are purposefully excluded from the scope of this specification.
 
+OpenSLO is an open specification-i.e., it is a specification created and
+controlled, in an open and fair process, by an association or a standardization
+body intending to achieve interoperability and interchangeability. An open
+specification is not controlled by a single company or individual or by a group
+with discriminatory membership criteria.  Additionally, this specification is
+designed to be extended where needed to meet the needs of the implementation.
+
 ## Specification
 
 ### Goals
@@ -57,6 +64,7 @@ spec:
 - **metadata.name:** *string* - required field, convention for naming object from
   [DNS RFC1123](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names)
   `name` should:
+
   - contain at most 63 characters
   - contain only lowercase alphanumeric characters or `-`
   - start with an alphanumeric character
@@ -83,6 +91,7 @@ spec:
       source: string # data source for the metric
       queryType: string # a name for the type of query to run on the data source
       query: string # the query to run to return the metric
+      metadata: # optional, allows data source specific details to be passed
   timeWindows:
     # exactly one item, one of possible rolling time window or calendar aligned
     # rolling time window
@@ -158,7 +167,7 @@ the tolerance levels for your metrics
 objectives:
   - displayName: string # optional
     op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
-    value: numeric # value used to compare metrics values. All objectives of the SLO need to have a unique value.
+    value: numeric # optional, value used to compare threshold metrics. Only needed when using a thresholdMetric
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     # ratioMetric {good, total} should be defined only if thresholdMetric is not set.
@@ -169,10 +178,12 @@ objectives:
           source: string # data source for the "good" numerator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the numerator
+          metadata: # optional, allows data source specific details to be passed
         total: # the denominator
           source: string # data source for the "total" denominator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the denominator
+          metadata: # optional, allows data source specific details to be passed
 ```
 
 Example:
@@ -180,7 +191,6 @@ Example:
 ```yaml
 objectives:
   - displayName: Foo Total Errors
-    value:  1
     target: 0.98
     ratioMetrics:
         incremental: true
@@ -194,6 +204,35 @@ objectives:
           query: sum:requests.total{*}
 ```
 
+The optional `metadata` key can be used to pass extraneous data to the data source,
+for example, if your data source accepts variables, they could be passed via the
+`metadata`.
+
+An example is an internal tool which uses a templating feature to ease the maintenance
+of SLOs by not repeating the same queries were there are only small differences.
+The internal tool can then generate the final OpensLO specification based on the input described.
+
+```yaml
+objectives:
+  - displayName: Foo Latency
+    target: 0.98
+    ratioMetrics:
+        incremental: true
+        good:
+          source: prometheus
+          queryType: query
+          query: sum:requests.duration{*}
+          metadata:
+            bucket: "0.25"
+            exclude_errors: "true"
+        total:
+          source: prometheus
+          queryType: query
+          query: sum:requests.duration{*}
+          metadata:
+            exclude_errors: "true"
+```
+
 ##### Notes (Objectives)
 
 - **objectives\[ \]** *Threshold*, required field. If `thresholdMetric` has
@@ -204,7 +243,7 @@ objectives:
   the value. Only needed when using `thresholdMetric`
 
 - **value numeric**, required field, used to compare values gathered from
-  metric source
+  metric source. Only needed when using a `thresholdMetric`.
 
 - **target numeric** *\[0.0, 1.0)*, required, budget target for given objective
   of the SLO
@@ -235,8 +274,9 @@ metadata:
   displayName: string # optional
 spec:
   description: string # optional
-  when: enum # optional, defaults to breaching
-  alertIf: enum # optional, defaults to true
+  alertWhenNoData: boolean
+  alertWhenResolved: boolean
+  alertWhenBreaching: boolean
   conditions: # list of alert conditions
     - conditionRef: # required when alert condition is not inlined
   notificationTargets:
@@ -245,11 +285,12 @@ spec:
 
 #### Notes (Alert Policy)
 
-- **when** *enum*, an enum of `breached`, `resolved`, defines whether the alert
-  is triggering when the alert condition is breached or resolved
-- **alertIf** *enum*, an enum of `true`, `false`, and `indeterminate`,
-  defines at which resolved condition value the alert policy should be triggering,
-  defaults to `true`
+- **alertWhenBreaching** *boolean*, `true`, `false`, whether the alert should be triggered
+  when the condition is breaching
+- **alertWhenResolved** *boolean*, `true`, `false`, whether the alert should be triggered
+  when the condition is resolved
+- **alertWhenNoData** *boolean*, `true`, `false`, whether the alert should be triggered
+  when the condition indicates that no data is available
 - **conditions\[ \]** *Alert Condition*, an array, required field.
   A condition can be inline defined or can refer to external Alert condition defined
   in this case the following are required:
@@ -270,52 +311,14 @@ metadata:
   displayName: Alert Policy
 spec:
   description: Alert policy for cpu usage breaches, notifies on-call devops via email
-  alertIf: true
-  when: breaching
+  alertWhenBreaching: true
+  alertWhenResolved: false
   conditions:
     - operator: and
       conditionRef: cpu-usage-breach
   notificationTargets:
     - targetRef: OnCallDevopsMailNotification
-
 ```
-
-An Alert Policy can have one or more alert conditions which need to be met before
-the alert will be triggered. Two or more condition can be logically joined using
-the logical operators `AND` or `OR`.
-
-The result of the alert conditions is either `true`, `false` or `indeterminate`.
-
-The table below lists the outcomes of the different combinations:
-
-| Expression                      | Outcome       |
-|---------------------------------|---------------|
-| true AND true                   | true          |
-| true AND false                  | false         |
-| false AND false                 | false         |
-| true AND indeterminate          | indeterminate |
-| indeterminate AND indeterminate | indeterminate |
-| true OR true                    | true          |
-| true OR false                   | true          |
-| false OR false                  | false         |
-| true OR indeterminate           | true          |
-| indeterminate OR indeterminate  | indeterminate |
-| false OR indeterminate          | indeterminate |
-
-In the table below lists when alert policy will be triggering depending on
-the resolved alert condition value:
-
-| Alert condition | alertIf | Alert triggering |
-|---|---|---|
-| true | true | Yes |
-| true | false | No |
-| true | indeterminate | No |
-| false | true | Yes |
-| false | false | No |
-| false | indeterminate | No |
-| indeterminate | true | No |
-| indeterminate | false | No |
-| indeterminate | indeterminate | Yes |
 
 ---
 
@@ -344,7 +347,7 @@ spec:
 
 - **severity** *enum(ticket, page)*, required field. The severity level of the alert
 - **condition**, required field. Defines the conditions of the alert
-  - **kind** *enum(burnrate, custom)* the kind of alerting condition thats checked, defaults to `burnrate`
+  - **kind** *enum(burnrate)* the kind of alerting condition thats checked, defaults to `burnrate`
 
 If the kind is `burnrate` the following fields are required:
 
@@ -352,14 +355,17 @@ If the kind is `burnrate` the following fields are required:
 - **lookbackWindow** *number*, required field, the time-frame for which to calculate the threshold
 - **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
 
-If the kind is `custom` the following fields are required:
+If the alert condition is breaching, and the alert policy has `alertWhenBreaching` set to `true`
+the alert will be triggered
 
-- **threshold** *number*, required field, the threshold that you want alert on
-- **comparison** *enum(lt, lte, gt, gte, eq)*, optional field, defines
-  how the threshold should be compared to meet the threshold, defaults to `gt`
+If the alert condition is resolved, and the alert policy has `alertWhenResolved` set to `true`
+the alert will be triggered
 
-If the alert condition can not be resolved to a `true` or `false` value, for example
-due to missing data points, then the `indeterminate` needs to be returned.
+If the *service level objective* associated with the alert condition returns no value for the burn rate,
+for example, due to the service level indicators missing data (e.g. no time series being returned)
+
+*Note*: The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
+if you want an alert to trigger when in all circumstances or for each separately.
 
 ---
 
