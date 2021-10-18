@@ -340,7 +340,7 @@ spec:
         name: cpu-usage-breach
         displayName: CPU Usage breaching
       spec:
-        description: SLO burn rate exceeds for cpu-usage-breach exceeds 2
+        description: SLO burn rate for cpu-usage-breach exceeds 2
         severity: page
         condition:
           kind: burnrate
