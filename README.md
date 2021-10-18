@@ -500,6 +500,13 @@ spec:
 - **target** *string*, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
 - **description** *string*, optional description about the notification target
 
+*Note*: The way the alert notification targets are is an implementation detail of the
+system that consumes the OpenSLO specification.
+
+For example, if the OpenSLO is consumed by a solution that generates Prometheus recording rules,
+and alerts, you can imagine that the name of the alert notification gets passed as label
+to Alertmanager which then can be routed accordingly based on this label.
+
 ---
 
 #### Service
