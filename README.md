@@ -340,11 +340,11 @@ spec:
         name: cpu-usage-breach
         displayName: CPU Usage breaching
       spec:
-        description: Condition for CPU usage breach check with burn rate over 50% for longer then five minutes
+        description: SLO burn rate exceeds for cpu-usage-breach exceeds 2
         severity: page
         condition:
-          kind: burnate
-          threshold: 0.5
+          kind: burnrate
+          threshold: 2
           lookbackWindow: 1h
           alertAfter: 5m
   notificationTargets:
@@ -415,7 +415,7 @@ spec:
   severity: page
   condition:
     kind: burnrate
-    threshold: 0.9
+    threshold: 2
     lookbackWindow: 1h
     alertAfter: 5m
 ```
