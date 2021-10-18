@@ -362,7 +362,7 @@ If the alert condition is resolved, and the alert policy has `alertWhenResolved`
 the alert will be triggered
 
 If the *service level objective* associated with the alert condition returns no value for the burn rate,
-for example, due to the service level indicators missing data (e.g. no time series being returned)
+for example, due to the service level indicators missing data (e.g. no time series being returned) and the `alertWhenNoData` is set to `true` the alert will be triggered.
 
 *Note*: The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
 if you want an alert to trigger when in all circumstances or for each separately.
