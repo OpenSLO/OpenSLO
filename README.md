@@ -451,23 +451,18 @@ spec:
 #### Alert Notification Target
 
 An Alert Notification Target defines the possible targets where alert notifications
-should be delivered to. For example, this can be a web-hook, Slack or similar
+should be delivered to. For example, this can be a web-hook, Slack or any other
+custom target.
 
 ```yaml
 apiVersion: openslo/v1alpha
 kind: AlertNotificationTarget
 metadata:
-  name:
+  name: string
   displayName: string # optional, human readable name
 spec:
   target: # required
   description: # optional
-  parameters: # optional, list of parameters for the notification target
-    - name: string # required
-      description: string # optional
-      type: string # required, string, secret, number, url
-      value: string # optional
-      defaultValue: string # optional
 ```
 
 An example of the Alert Notification Target can be:
@@ -480,10 +475,6 @@ metadata:
 spec:
   description: Notifies by a mail message to the on-call devops mailing group
   target: email
-  parameters:
-    - name: emailAddress
-      type: email
-      value: on-call-devops@openslo.org
 ```
 
 Alternatively, a similar notification target can be defined for Slack in this example
@@ -494,38 +485,20 @@ kind: AlertNotificationTarget
 metadata:
   name: OnCallDevopsSlackNotification
 spec:
-  description: "Sends P1 alert notifications to the #alerts channel"
+  description: "Sends P1 alert notifications to the slack channel"
   target: slack
-  parameters:
-    - name: channel
-      type: string
-      value: alerts
-    - name: webhook
-      type: url
-      value: https://hooks.slack.com/services/XXX1XXXXX/XXXXXXX8X/acdifghf7Klxy8xZCEDXyOk5I
-    - name: template
-      type: string
-      value: |-
-        A priority one alert has been triggered for the service $service_name for SLO $slo_name,
-        please extinguish the fire, thank you!
-        Don't forget to schedule a meeting the company board via Executive Secretary
 ```
 
 ##### Notes (Alert Notification Target)
 
+- **name** *string*, required, the name of the notification target
+- **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
+  - the `key` segment is required and must contain at most 63 characters beginning and ending
+     with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
+     and alphanumerics between.
+  - the `value` of `key` segment can be a string or an array of strings
 - **target** *string*, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
 - **description** *string*, optional description about the notification target
-- **parameters**, optional list of the parameters for the target, e.g. username, password, Slack web-hook url
-  - **name** *string*, unique name of the parameter
-  - **description** *string* (optional), human readable description of the parameter
-  - **type** *enum(string, secret, number, email, url)* the accepted type of
-  value of the parameter, if not given it fallbacks to `string`
-  - **value** *string*, a hard-coded value of the parameter name
-    (e.g. web-hook url)
-  - **defaultValue** *string*, a fallback or default value for the parameter
-
-**Note**: The OpenSLO comes with a few so called template fields which can be used as part of the specification to
-get the name of the relevant service, SLO name, SLO description and
 
 ---
 
