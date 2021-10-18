@@ -190,7 +190,8 @@ objectives:
     # ratioMetric {good, total} should be defined only if thresholdMetric is not set.
     # ratioMetric good and total have to contain the same source type configuration (for example for prometheus).
     ratioMetric:
-        incremental: true | false #todo: add description
+        counter: true | false # true if the metric is a monotonically increasing counter,
+        # or false, if it is a single number that can arbitrarily go up or down
         good: # the numerator
           source: string # data source for the "good" numerator
           queryType: string # a name for the type of query to run on the data source
@@ -210,7 +211,7 @@ objectives:
   - displayName: Foo Total Errors
     target: 0.98
     ratioMetrics:
-        incremental: true
+        counter: true
         good:
           source: datadog
           queryType: query
