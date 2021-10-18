@@ -83,6 +83,16 @@ kind: SLO
 metadata:
   name: string
   displayName: string # optional
+  labels: # optional, key <>value a pair of labels that can be used as metadata relevant to users
+    userImpacting: "true"
+    team: "identity"
+    costCentre: "project1"
+    serviceTier: "tier-1"
+    tags:
+      - auth
+  annotations: map[string]string # optional, key <> value a pair of annotations that can be used as implementation metadata
+    openslo.com/key1: value1
+    fooimplementation.com/key2: value2
 spec:
   description: string # optional
   service: [service name] # name of the service to associate this SLO with
@@ -113,6 +123,21 @@ spec:
 
 ##### Notes (SLO)
 
+- **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
+  - the `key` segment is required and must contain at most 63 characters beginning and ending
+     with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
+     and alphanumerics between.
+  - the `value` of `key` segment can be a string or an array of strings
+- **metadata.annotations:** *map[string]string* - optional field `key` <> `value`
+  - `annotations` should be used to define implementation / system specific metadata about the SLO.
+    For example, it can be metadata about a dashboard url, or how to name a metric created by the SLI, etc.
+  - `key` have two segments: an optional `prefix` and `name`, separated by a slash `/`
+  - the `name` segment is required and must contain at most 63 characters beginning and ending
+    with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
+    and alphanumerics between.
+  - the `prefix` is optional and must be a DNS subdomain: a series of DNS labels separated by dots `.`,
+    it must contain at most 253 characters, followed by a slash `/`.
+  - the `openslo.com/` is reserved for OpenSLO usage
 - **indicator** optional, represents the Service Level Indicator (SLI).
   Currently this only supports one Metric, `thresholdMetric`, with `ratioMetric`
   supported in the [objectives](#objectives) stanza.
@@ -173,7 +198,8 @@ objectives:
     # ratioMetric {good, total} should be defined only if thresholdMetric is not set.
     # ratioMetric good and total have to contain the same source type configuration (for example for prometheus).
     ratioMetric:
-        incremental: true | false #todo: add description
+        counter: true | false # true if the metric is a monotonically increasing counter,
+        # or false, if it is a single number that can arbitrarily go up or down
         good: # the numerator
           source: string # data source for the "good" numerator
           queryType: string # a name for the type of query to run on the data source
@@ -193,7 +219,7 @@ objectives:
   - displayName: Foo Total Errors
     target: 0.98
     ratioMetrics:
-        incremental: true
+        counter: true
         good:
           source: datadog
           queryType: query
