@@ -291,15 +291,17 @@ spec:
   when the condition is resolved
 - **alertWhenNoData** *boolean*, `true`, `false`, whether the alert should be triggered
   when the condition indicates that no data is available
-- **conditions\[ \]** *Alert Condition*, an array, required field.
-  A condition can be inline defined or can refer to external Alert condition defined
-  in this case the following are required:
-  - **operator** *string*, the logical operator, can be `AND`, or `OR`, defaults to `OR`
+- **conditions\[ \]** *Alert Condition*, an array, (max of one condition), required field.
+  A condition can be defined inline or can refer to external Alert condition defined in this case the following are required:
   - **conditionRef** *string*: this is the name or path the Alert condition
 - **notificationTargets\[ \]** *Alert Notification Target*, required field.
   A condition can be inline defined or can refer to external Alert Notification Target
   defined in this case the following are required:
   - **targetRef** *string*: this is the name or path the Alert Notification Target
+
+*Note*: The `conditions`-field is of the type `array` of *AlertCondition*
+but only allows one single condition to be defined.
+The use of an array is for future-proofing purposes.
 
 An example of a Alert policy which refers to another Alert Condition:
 
@@ -316,6 +318,35 @@ spec:
   conditions:
     - operator: and
       conditionRef: cpu-usage-breach
+  notificationTargets:
+    - targetRef: OnCallDevopsMailNotification
+```
+
+An example of a Alert Policy were the Alert Condition is inlined:
+
+```yaml
+apiVersion: openslo/v1alpha
+kind: AlertPolicy
+metadata:
+  name: AlertPolicy
+  displayName: Alert Policy
+spec:
+  description: Alert policy for cpu usage breaches, notifies on-call devops via email
+  alertWhenBreaching: true
+  alertWhenResolved: false
+  conditions:
+    - kind: AlertCondition
+      metadata:
+        name: cpu-usage-breach
+        displayName: CPU Usage breaching
+      spec:
+        description: Condition for CPU usage breach check with burn rate over 50% for longer then five minutes
+        severity: page
+        condition:
+          kind: burnate
+          threshold: 0.5
+          lookbackWindow: 1h
+          alertAfter: 5m
   notificationTargets:
     - targetRef: OnCallDevopsMailNotification
 ```
@@ -361,8 +392,10 @@ the alert will be triggered
 If the alert condition is resolved, and the alert policy has `alertWhenResolved` set to `true`
 the alert will be triggered
 
-If the *service level objective* associated with the alert condition returns no value for the burn rate,
-for example, due to the service level indicators missing data (e.g. no time series being returned) and the `alertWhenNoData` is set to `true` the alert will be triggered.
+If the *service level objective* associated with the alert condition returns
+no value for the burn rate, for example, due to the service level indicators
+missing data (e.g. no time series being returned) and the `alertWhenNoData`
+is set  to `true` the alert will be triggered.
 
 *Note*: The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
 if you want an alert to trigger when in all circumstances or for each separately.
