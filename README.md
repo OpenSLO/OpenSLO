@@ -1,18 +1,18 @@
-# ![ OpenSLO ](images/openslo.png)
+# ![ OpenSLO ][image-1]
 
 ## Table of Contents
 
-- [OpenSLO](#openslo)
-  - [Introduction](#introduction)
-  - [Specification](#specification)
-    - [Goals](#goals)
-    - [Object Types](#object-types)
-      - [General Schema](#general-schema)
-        - [Notes](#notes)
-      - [SLO](#slo)
-        - [Notes](#notes-1)
-        - [Objectives](#objectives)
-      - [Service](#service)
+- [OpenSLO][1]
+  - [Introduction][2]
+  - [Specification][3]
+  - [Goals][4]
+  - [Object Types][5]
+    - [General Schema][6]
+    - [Notes][7]
+    - [SLO][8]
+    - [Notes][9]
+    - [Objectives][10]
+    - [Service][11]
 
 ## Introduction
 
@@ -56,9 +56,9 @@ spec:
 
 ##### Notes
 
-- **kind** *string* - required, either [SLO](#slo) or [Service](#service)
+- **kind** *string* - required, either [SLO][12] or [Service][13]
 - **metadata.name:** *string* - required field, convention for naming object from
-  [DNS RFC1123](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names)
+  [DNS RFC1123][14]
   `name` should:
 
   - contain at most 63 characters
@@ -135,44 +135,42 @@ spec:
   - the `openslo.com/` is reserved for OpenSLO usage
 - **indicator** optional, represents the Service Level Indicator (SLI).
   Currently this only supports one Metric, `thresholdMetric`, with `ratioMetric`
-  supported in the [objectives](#objectives) stanza.
+  supported in the [objectives][15] stanza.
 - **indicator.thresholdMetric** *Metric*, represents the query used for
   gathering data from metric sources. Raw data is used to compare objectives
   (threshold) values. If `thresholdMetric` is defined then `ratioMetrics`
-  should be excluded in [objectives](#objectives).
-- **timeWindows\[ \]** *TimeWindow* is a list but accepting only exactly one
-  item, one of the rolling or calendar aligned
-    time window:
-  - Rolling time window. Minimum duration for rolling time window is 5
-      minutes, maximum 31 days).
+  should be excluded in [objectives][16].
+- **timeWindows[ ]** *TimeWindow* is a list but accepting only exactly one
+  item, one of the rolling or calendar aligned time window:
 
-      ```yaml
-      unit: Day | Hour | Minute
-      count: numeric
-      isRolling: true
-      ```
+  - Rolling time window. Minimum duration for rolling time window is 5
+    minutes, maximum 31 days).
+
+    ```yaml
+    unit: Day | Hour | Minute
+    count: numeric
+    isRolling: true
+    ```
 
   - Calendar Aligned time window. Minimum duration for calendar aligned time
-    window is 1 day and maximum is 366 days.
+  window is 1 day and maximum is 366 days.
 
-      ```yaml
-      unit: Year | Quarter | Month | Week | Day
-      count: numeric
-      calendar:
-          startTime: 2020-01-21 12:30:00 # date with time in 24h format
-          timeZone: America/New_York # name as in IANA Time Zone Database
-      # isRolling: false # for calendar aligned set false value or not set
-      ```
+  ```yaml
+  unit: Year | Quarter | Month | Week | Day
+  count: numeric
+  calendar:
+      startTime: 2020-01-21 12:30:00 # date with time in 24h format
+      timeZone: America/New_York # name as in IANA Time Zone Database
+  # isRolling: false # for calendar aligned set false value or not set
+  ```
 
 - **description** *string* optional field, contains at most 1050 characters
 
 - **budgetingMethod** *enum(Occurrences \| Timeslices)*, required field
-  - Occurrences method uses a ratio of counts of good events and total count of
-    the event.
-  - Timeslices method uses a ratio of good time slices vs. total time slices in
-    a budgeting period.
+  - Occurrences method uses a ratio of counts of good events and total count of the event.
+- Timeslices method uses a ratio of good time slices vs. total time slices in a budgeting period.
 
-- **objectives\[ \]** *Threshold*, required field, described in [Objectives](#objectives)
+- **objectives[ ]** *Threshold*, required field, described in [Objectives][17]
   section
 
 ##### Objectives
@@ -187,13 +185,18 @@ objectives:
     value: numeric # optional, value used to compare threshold metrics. Only needed when using a thresholdMetric
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
-    # ratioMetric {good, total} should be defined only if thresholdMetric is not set.
-    # ratioMetric good and total have to contain the same source type configuration (for example for prometheus).
+    # ratioMetric {good, total} or {bad, total} should be defined only if thresholdMetric is not set.
+    # ratioMetric good or bad and total have to contain the same source type configuration (for example for prometheus).
     ratioMetric:
         counter: true | false # true if the metric is a monotonically increasing counter,
         # or false, if it is a single number that can arbitrarily go up or down
         good: # the numerator
           source: string # data source for the "good" numerator
+          queryType: string # a name for the type of query to run on the data source
+          query: string # the query to run to return the numerator
+          metadata: # optional, allows data source specific details to be passed
+        bad: # the numerator, required when "good" is not set
+          source: string # data source for the "bad" numerator
           queryType: string # a name for the type of query to run on the data source
           query: string # the query to run to return the numerator
           metadata: # optional, allows data source specific details to be passed
@@ -253,7 +256,7 @@ objectives:
 
 ##### Notes (Objectives)
 
-- **objectives\[ \]** *Threshold*, required field. If `thresholdMetric` has
+- **objectives[ ]** *Threshold*, required field. If `thresholdMetric` has
   been defined, only one Threshold can be defined. However if using `ratioMetric`
   then any number of Thresholds can be defined.
 
@@ -263,22 +266,59 @@ objectives:
 - **value numeric**, required field, used to compare values gathered from
   metric source. Only needed when using a `thresholdMetric`.
 
-- **target numeric** *\[0.0, 1.0)*, required, budget target for given objective
+- **target numeric** *[0.0, 1.0)*, required, budget target for given objective
   of the SLO
 
-- **targetTimeSlices** *numeric* *\[0.0, 1.0\]*, required only when budgeting
+- **targetTimeSlices** *numeric* *[0.0, 1.0]*, required only when budgeting
   method is set to TimeSlices
 
-- **indicator.ratioMetric** *Metric {Good, Total}*, if `ratioMetric` is defined
-    then `thresholdMetric` should not be set in `indicator`
+- **indicator.ratioMetric** *Metric {Good, Total} or {Bad, Total}*
+  if `ratioMetric` is defined then `thresholdMetric` should not be set in `indicator`
 
   - *Good* represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
-   values to find good values.
+   values to find good values. If `Bad` is defined then `Good` should not be set.
+
+  - *Bad* represents the query used for gathering data from metric sources used
+   as the numerator. Received data is used to compare objectives (threshold)
+   values to find bad values. If `Good` is defined then `Bad` should not be set.
 
   - *Total* represents the query used for gathering data from metric sources
-    that is used as the denominator. Received data is used to compare objectives
-    (threshold) values to find total number of metrics.
+  that is used as the denominator. Received data is used to compare objectives
+  (threshold) values to find total number of metrics.
+
+###### Notes (Ratio metrics)
+
+If a service level indicator has `ratioMetrics` defined, the following maths can
+be used to calculate the value of the SLI. Below we describe the advised formulas
+for calculating the indicator value.
+
+*Good-Total queries*
+If the `good` and `total` queries are given then following formula can be used
+to calculate the value:
+
+```text
+indicatorValue = good / total
+```
+
+If we have 99 good requests out of a total of 100 requests, the calculated value
+for the indicator would be: `99 / 100  = 0.99`. This represents 99% on a 0-100 scale
+using the formula `0.99 * 100 = 99`.
+
+*Bad-Total queries*
+If the `bad` and `total` queries are given then following formula can be used
+to calculate the value:
+
+```text
+indicatorValue = ( total - bad ) / total
+```
+
+If we have 1 error out of a total of 100 requests, the calculated value for
+the indicator would be: `(100 - 1 )  = 0.99`. This represents 99% on a 0-100 scale
+using the formula `0.99 * 100 = 99`.
+
+*Note*: As you can see for both query combinations we end up with the same calculated
+value for the service level indicator.
 
 ---
 
@@ -295,3 +335,23 @@ metadata:
 spec:
   description: string # optional up to 1050 characters
 ```
+
+[1]: #openslo
+[2]: #introduction
+[3]: #specification
+[4]: #goals
+[5]: #object-types
+[6]: #general-schema
+[7]: #notes
+[8]: #slo
+[9]: #notes-1
+[10]: #objectives
+[11]: #service
+[12]: #slo
+[13]: #service
+[14]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+[15]: #objectives
+[16]: #objectives
+[17]: #objectives
+
+[image-1]: images/openslo.png
