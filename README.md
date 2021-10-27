@@ -325,8 +325,8 @@ If we have 1 error out of a total of 100 requests, the calculated value for
 the indicator would be: `(100 - 1 )  = 0.99`. This represents 99% on a 0-100 scale
 using the formula `0.99 * 100 = 99`.
 
-*Note*: As you can see for both query combinations we end up with the same calculated
-value for the service level indicator.
+> 💡 **Note:** : As you can see for both query combinations we end up with the same calculated
+> value for the service level indicator.
 
 #### Alert Policy
 
@@ -365,9 +365,9 @@ spec:
   defined in this case the following are required:
   - **targetRef** *string*: this is the name or path the Alert Notification Target
 
-*Note*: The `conditions`-field is of the type `array` of *AlertCondition*
-but only allows one single condition to be defined.
-The use of an array is for future-proofing purposes.
+> 💡 **Note:**: The `conditions`-field is of the type `array` of *AlertCondition*
+> but only allows one single condition to be defined.
+> The use of an array is for future-proofing purposes.
 
 An example of a Alert policy which refers to another Alert Condition:
 
@@ -463,8 +463,8 @@ no value for the burn rate, for example, due to the service level indicators
 missing data (e.g. no time series being returned) and the `alertWhenNoData`
 is set  to `true` the alert will be triggered.
 
-*Note*: The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
-if you want an alert to trigger when in all circumstances or for each separately.
+> 💡 **Note:**: The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
+> if you want an alert to trigger when in all circumstances or for each separately.
 
 ---
 
@@ -540,8 +540,8 @@ spec:
 - **target** *string*, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
 - **description** *string*, optional description about the notification target
 
-*Note*: The way the alert notification targets are is an implementation detail of the
-system that consumes the OpenSLO specification.
+> 💡 **Note:**: The way the alert notification targets are is an implementation detail of the
+> system that consumes the OpenSLO specification.
 
 For example, if the OpenSLO is consumed by a solution that generates Prometheus recording rules,
 and alerts, you can imagine that the name of the alert notification gets passed as label
