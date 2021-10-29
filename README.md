@@ -2,17 +2,21 @@
 
 ## Table of Contents
 
-- [OpenSLO][1]
-  - [Introduction][2]
-  - [Specification][3]
-  - [Goals][4]
-  - [Object Types][5]
-    - [General Schema][6]
-    - [Notes][7]
-    - [SLO][8]
-    - [Notes][9]
-    - [Objectives][10]
-    - [Service][11]
+- [OpenSLO](#openslo)
+  - [Introduction](#introduction)
+  - [Specification](#specification)
+    - [Goals](#goals)
+    - [Object Types](#object-types)
+      - [General Schema](#general-schema)
+        - [Notes](#notes)
+      - [SLO](#slo)
+        - [Notes](#notes-1)
+        - [Objectives](#objectives)
+      - [Alerting](#alert-policy)
+        - [Notes](#notes-alert-policy)
+        - [Alert Conditions](#alert-condition)
+        - [Notification Targets](#alert-notification-target)
+      - [Service](#service)
 
 ## Introduction
 
@@ -114,6 +118,7 @@ spec:
       isRolling: false # false or not defined
   budgetingMethod: Occurrences | Timeslices
   objectives: # see objectives below for details
+  alertPolicies: # see alert policies below details
 ```
 
 ##### Notes (SLO)
@@ -171,6 +176,9 @@ spec:
 - Timeslices method uses a ratio of good time slices vs. total time slices in a budgeting period.
 
 - **objectives[ ]** *Threshold*, required field, described in [Objectives][17]
+  section
+
+- **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alertpolicies)
   section
 
 ##### Objectives
@@ -317,8 +325,227 @@ If we have 1 error out of a total of 100 requests, the calculated value for
 the indicator would be: `(100 - 1 )  = 0.99`. This represents 99% on a 0-100 scale
 using the formula `0.99 * 100 = 99`.
 
-*Note*: As you can see for both query combinations we end up with the same calculated
-value for the service level indicator.
+> 💡 **Note:** : As you can see for both query combinations we end up with the same calculated
+> value for the service level indicator.
+
+#### Alert Policy
+
+An Alert Policy allows you to define the alert conditions for a SLO.
+
+```yaml
+apiVersion: openslo/v1alpha
+kind: AlertPolicy
+metadata:
+  name: string
+  displayName: string # optional
+spec:
+  description: string # optional
+  alertWhenNoData: boolean
+  alertWhenResolved: boolean
+  alertWhenBreaching: boolean
+  conditions: # list of alert conditions
+    - conditionRef: # required when alert condition is not inlined
+  notificationTargets:
+  - targetRef: # required when alert notification target is not inlined
+```
+
+#### Notes (Alert Policy)
+
+- **alertWhenBreaching** *boolean*, `true`, `false`, whether the alert should be triggered
+  when the condition is breaching
+- **alertWhenResolved** *boolean*, `true`, `false`, whether the alert should be triggered
+  when the condition is resolved
+- **alertWhenNoData** *boolean*, `true`, `false`, whether the alert should be triggered
+  when the condition indicates that no data is available
+- **conditions\[ \]** *Alert Condition*, an array, (max of one condition), required field.
+  A condition can be defined inline or can refer to external Alert condition defined in this case the following are required:
+  - **conditionRef** *string*: this is the name or path the Alert condition
+- **notificationTargets\[ \]** *Alert Notification Target*, required field.
+  A condition can be inline defined or can refer to external Alert Notification Target
+  defined in this case the following are required:
+  - **targetRef** *string*: this is the name or path the Alert Notification Target
+
+> 💡 **Note:**: The `conditions`-field is of the type `array` of *AlertCondition*
+> but only allows one single condition to be defined.
+> The use of an array is for future-proofing purposes.
+
+An example of a Alert policy which refers to another Alert Condition:
+
+```yaml
+apiVersion: openslo/v1alpha
+kind: AlertPolicy
+metadata:
+  name: AlertPolicy
+  displayName: Alert Policy
+spec:
+  description: Alert policy for cpu usage breaches, notifies on-call devops via email
+  alertWhenBreaching: true
+  alertWhenResolved: false
+  conditions:
+    - operator: and
+      conditionRef: cpu-usage-breach
+  notificationTargets:
+    - targetRef: OnCallDevopsMailNotification
+```
+
+An example of a Alert Policy were the Alert Condition is inlined:
+
+```yaml
+apiVersion: openslo/v1alpha
+kind: AlertPolicy
+metadata:
+  name: AlertPolicy
+  displayName: Alert Policy
+spec:
+  description: Alert policy for cpu usage breaches, notifies on-call devops via email
+  alertWhenBreaching: true
+  alertWhenResolved: false
+  conditions:
+    - kind: AlertCondition
+      metadata:
+        name: cpu-usage-breach
+        displayName: CPU Usage breaching
+      spec:
+        description: SLO burn rate for cpu-usage-breach exceeds 2
+        severity: page
+        condition:
+          kind: burnrate
+          threshold: 2
+          lookbackWindow: 1h
+          alertAfter: 5m
+  notificationTargets:
+    - targetRef: OnCallDevopsMailNotification
+```
+
+---
+
+#### Alert Condition
+
+An Alert Condition allows you to define in which conditions a alert of SLO
+needs to be triggered.
+
+```yaml
+apiVersion: openslo/v1alpha
+kind: AlertCondition
+metadata:
+  name: string
+  displayName: string # optional
+spec:
+  description: # optional
+  severity: string # required (ticket or page)
+  condition: # optional
+    kind: string
+    threshold: number
+    lookbackWindow: number
+    alertAfter: number
+```
+
+#### Notes (Alert Condition)
+
+- **severity** *enum(ticket, page)*, required field. The severity level of the alert
+- **condition**, required field. Defines the conditions of the alert
+  - **kind** *enum(burnrate)* the kind of alerting condition thats checked, defaults to `burnrate`
+
+If the kind is `burnrate` the following fields are required:
+
+- **threshold** *number*, required field, the threshold that you want alert on
+- **lookbackWindow** *number*, required field, the time-frame for which to calculate the threshold
+- **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
+
+If the alert condition is breaching, and the alert policy has `alertWhenBreaching` set to `true`
+the alert will be triggered
+
+If the alert condition is resolved, and the alert policy has `alertWhenResolved` set to `true`
+the alert will be triggered
+
+If the *service level objective* associated with the alert condition returns
+no value for the burn rate, for example, due to the service level indicators
+missing data (e.g. no time series being returned) and the `alertWhenNoData`
+is set  to `true` the alert will be triggered.
+
+> 💡 **Note:**: The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
+> if you want an alert to trigger when in all circumstances or for each separately.
+
+---
+
+An example of a alert condition is the following:
+
+```yaml
+apiVersion: openslo/v1alpha
+kind: AlertCondition
+metadata:
+  name: cpu-usage-breach
+  displayName: CPU usage breach
+spec:
+  description: If the CPU usage is too high for given period then it should alert
+  severity: page
+  condition:
+    kind: burnrate
+    threshold: 2
+    lookbackWindow: 1h
+    alertAfter: 5m
+```
+
+---
+
+#### Alert Notification Target
+
+An Alert Notification Target defines the possible targets where alert notifications
+should be delivered to. For example, this can be a web-hook, Slack or any other
+custom target.
+
+```yaml
+apiVersion: openslo/v1alpha
+kind: AlertNotificationTarget
+metadata:
+  name: string
+  displayName: string # optional, human readable name
+spec:
+  target: # required
+  description: # optional
+```
+
+An example of the Alert Notification Target can be:
+
+```yaml
+apiVersion: openslo/v1alpha
+kind: AlertNotificationTarget
+metadata:
+  name: OnCallDevopsMailNotification
+spec:
+  description: Notifies by a mail message to the on-call devops mailing group
+  target: email
+```
+
+Alternatively, a similar notification target can be defined for Slack in this example
+
+```yaml
+apiVersion: openslo/v1alpha
+kind: AlertNotificationTarget
+metadata:
+  name: OnCallDevopsSlackNotification
+spec:
+  description: "Sends P1 alert notifications to the slack channel"
+  target: slack
+```
+
+##### Notes (Alert Notification Target)
+
+- **name** *string*, required, the name of the notification target
+- **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
+  - the `key` segment is required and must contain at most 63 characters beginning and ending
+     with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
+     and alphanumerics between.
+  - the `value` of `key` segment can be a string or an array of strings
+- **target** *string*, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
+- **description** *string*, optional description about the notification target
+
+> 💡 **Note:**: The way the alert notification targets are is an implementation detail of the
+> system that consumes the OpenSLO specification.
+
+For example, if the OpenSLO is consumed by a solution that generates Prometheus recording rules,
+and alerts, you can imagine that the name of the alert notification gets passed as label
+to Alertmanager which then can be routed accordingly based on this label.
 
 ---
 
