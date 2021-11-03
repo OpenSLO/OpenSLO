@@ -50,7 +50,7 @@ designed to be extended where needed to meet the needs of the implementation.
 #### General Schema
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: SLO | Service
 metadata:
   name: string
@@ -78,7 +78,7 @@ A service level objective (SLO) is a target value or range of values for
 a service level that is described by a service level indicator (SLI).
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: SLO
 metadata:
   name: string
@@ -333,7 +333,7 @@ using the formula `0.99 * 100 = 99`.
 An Alert Policy allows you to define the alert conditions for a SLO.
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: AlertPolicy
 metadata:
   name: string
@@ -372,7 +372,7 @@ spec:
 An example of a Alert policy which refers to another Alert Condition:
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: AlertPolicy
 metadata:
   name: AlertPolicy
@@ -391,7 +391,7 @@ spec:
 An example of a Alert Policy were the Alert Condition is inlined:
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: AlertPolicy
 metadata:
   name: AlertPolicy
@@ -425,7 +425,7 @@ An Alert Condition allows you to define in which conditions a alert of SLO
 needs to be triggered.
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: AlertCondition
 metadata:
   name: string
@@ -471,7 +471,7 @@ is set  to `true` the alert will be triggered.
 An example of a alert condition is the following:
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: AlertCondition
 metadata:
   name: cpu-usage-breach
@@ -495,7 +495,7 @@ should be delivered to. For example, this can be a web-hook, Slack or any other
 custom target.
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: AlertNotificationTarget
 metadata:
   name: string
@@ -508,7 +508,7 @@ spec:
 An example of the Alert Notification Target can be:
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: AlertNotificationTarget
 metadata:
   name: OnCallDevopsMailNotification
@@ -520,7 +520,7 @@ spec:
 Alternatively, a similar notification target can be defined for Slack in this example
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: AlertNotificationTarget
 metadata:
   name: OnCallDevopsSlackNotification
@@ -554,7 +554,7 @@ to Alertmanager which then can be routed accordingly based on this label.
 A Service is a high-level grouping of SLO.
 
 ```yaml
-apiVersion: openslo/v1alpha
+apiVersion: openslo/v0.1.0-beta
 kind: Service
 metadata:
   name: string
