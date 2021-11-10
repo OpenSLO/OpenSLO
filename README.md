@@ -246,7 +246,7 @@ objectives:
   - displayName: Foo Latency
     target: 0.98
     ratioMetrics:
-        incremental: true
+        counter: true
         good:
           source: prometheus
           queryType: query
