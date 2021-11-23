@@ -432,7 +432,7 @@ metadata:
   displayName: string # optional
 spec:
   description: # optional
-  severity: string # required (ticket or page)
+  severity: string # optional 
   condition: # optional
     kind: string
     threshold: number
@@ -442,7 +442,7 @@ spec:
 
 #### Notes (Alert Condition)
 
-- **severity** *enum(ticket, page)*, required field. The severity level of the alert
+- **severity** *string* , optional field. The severity level of the alert
 - **condition**, required field. Defines the conditions of the alert
   - **kind** *enum(burnrate)* the kind of alerting condition thats checked, defaults to `burnrate`
 
