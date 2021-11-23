@@ -431,8 +431,8 @@ metadata:
   name: string
   displayName: string # optional
 spec:
-  description: # optional
-  severity: string # optional 
+  description: string # optional
+  severity: string # optional
   condition: # optional
     kind: string
     threshold: number
