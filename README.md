@@ -102,7 +102,7 @@ spec:
       queryType: string # a name for the type of query to run on the data source
       query: string # the query to run to return the metric
       metadata: # optional, allows data source specific details to be passed
-  timeWindows:
+  timeWindow:
     # exactly one item, one of possible rolling time window or calendar aligned
     # rolling time window
     - unit: Second
@@ -145,7 +145,7 @@ spec:
   gathering data from metric sources. Raw data is used to compare objectives
   (threshold) values. If `thresholdMetric` is defined then `ratioMetrics`
   should be excluded in [objectives][16].
-- **timeWindows[ ]** *TimeWindow* is a list but accepting only exactly one
+- **timeWindow[ ]** *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
 
   - Rolling time window. Minimum duration for rolling time window is 5
