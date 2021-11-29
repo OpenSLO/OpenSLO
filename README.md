@@ -193,6 +193,7 @@ objectives:
     value: numeric # optional, value used to compare threshold metrics. Only needed when using a thresholdMetric
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
+    timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices
     # ratioMetric {good, total} or {bad, total} should be defined only if thresholdMetric is not set.
     # ratioMetric good or bad and total have to contain the same source type configuration (for example for prometheus).
     ratioMetric:
@@ -277,8 +278,13 @@ objectives:
 - **target numeric** *[0.0, 1.0)*, required, budget target for given objective
   of the SLO
 
-- **targetTimeSlices** *numeric* *[0.0, 1.0]*, required only when budgeting
+- **timeSliceTarget** *numeric* *[0.0, 1.0]*, required only when budgeting
   method is set to TimeSlices
+
+- **timeSliceWindow** *(numeric | duration-shorthand)*, required only when budgeting
+  method is set to TimeSlices. Denotes the size of timeslice for which data will be
+  evaluated e.g. 5, 1m, 10m, 2h, 1d. Also ascertains the frequency at which to run the
+  queries. Default interpretation of unit if specified as a number is minutes.
 
 - **indicator.ratioMetric** *Metric {Good, Total} or {Bad, Total}*
   if `ratioMetric` is defined then `thresholdMetric` should not be set in `indicator`
@@ -431,8 +437,8 @@ metadata:
   name: string
   displayName: string # optional
 spec:
-  description: # optional
-  severity: string # required (ticket or page)
+  description: string # optional
+  severity: string # required
   condition: # optional
     kind: string
     threshold: number
@@ -442,7 +448,7 @@ spec:
 
 #### Notes (Alert Condition)
 
-- **severity** *enum(ticket, page)*, required field. The severity level of the alert
+- **severity** *string* , required field describing the severity level of the alert (ex. "sev1", "page", etc.)
 - **condition**, required field. Defines the conditions of the alert
   - **kind** *enum(burnrate)* the kind of alerting condition thats checked, defaults to `burnrate`
 
