@@ -139,7 +139,7 @@ spec:
     it must contain at most 253 characters, followed by a slash `/`.
   - the `openslo.com/` is reserved for OpenSLO usage
 - **indicator** optional, represents the Service Level Indicator (SLI).
-  Currently this only supports one Metric, `thresholdMetric`, with `ratioMetric`
+  Currently this only supports one Metric, `thresholdMetric`, with `ratioMetrics`
   supported in the [objectives][15] stanza.
 - **indicator.thresholdMetric** *Metric*, represents the query used for
   gathering data from metric sources. Raw data is used to compare objectives
@@ -194,9 +194,9 @@ objectives:
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices
-    # ratioMetric {good, total} or {bad, total} should be defined only if thresholdMetric is not set.
-    # ratioMetric good or bad and total have to contain the same source type configuration (for example for prometheus).
-    ratioMetric:
+    # ratioMetrics {good, total} or {bad, total} should be defined only if thresholdMetric is not set.
+    # ratioMetrics good or bad and total have to contain the same source type configuration (for example for prometheus).
+    ratioMetrics:
         counter: true | false # true if the metric is a monotonically increasing counter,
         # or false, if it is a single number that can arbitrarily go up or down
         good: # the numerator
@@ -266,7 +266,7 @@ objectives:
 ##### Notes (Objectives)
 
 - **objectives[ ]** *Threshold*, required field. If `thresholdMetric` has
-  been defined, only one Threshold can be defined. However if using `ratioMetric`
+  been defined, only one Threshold can be defined. However if using `ratioMetrics`
   then any number of Thresholds can be defined.
 
 - **op** *enum(lte | gte | lt | gt)*, operator used to compare the SLI against
@@ -286,8 +286,8 @@ objectives:
   evaluated e.g. 5, 1m, 10m, 2h, 1d. Also ascertains the frequency at which to run the
   queries. Default interpretation of unit if specified as a number is minutes.
 
-- **indicator.ratioMetric** *Metric {Good, Total} or {Bad, Total}*
-  if `ratioMetric` is defined then `thresholdMetric` should not be set in `indicator`
+- **objectives[].ratioMetrics** *Metric {Good, Total} or {Bad, Total}*
+  if `ratioMetrics` is defined then `thresholdMetric` should not be set in `indicator`
 
   - *Good* represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
