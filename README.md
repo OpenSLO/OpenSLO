@@ -104,14 +104,12 @@ spec:
       metadata: # optional, allows data source specific details to be passed
   timeWindow:
     # exactly one item, one of possible rolling time window or calendar aligned
-    # rolling time window
-    - unit: Second
-      count: numeric
+    ## rolling time window
+    - duration: duration-shorthand # duration of the window eg 1d, 28d
       isRolling: true
     # or
     # calendar aligned time window
-    - unit: Year | Quarter | Month | Week | Day
-      count: numeric # count of time units for example count: 7 and unit: Day means 7 days window
+    - duration: duration-shorthand # duration of the window eg 1d, 28d, 366d
       calendar:
         startTime: 2020-01-21 12:30:00 # date with time in 24h format, format without time zone
         timeZone: America/New_York # name as in IANA Time Zone Database
@@ -147,27 +145,12 @@ spec:
   should be excluded in [objectives][16].
 - **timeWindow[ ]** *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
-
   - Rolling time window. Minimum duration for rolling time window is 5
-    minutes, maximum 31 days).
-
-    ```yaml
-    unit: Day | Hour | Minute
-    count: numeric
-    isRolling: true
-    ```
-
+    minutes, maximum 31 days). Duration should be provided in shorthand format
+    e.g. 5m, 31d.
   - Calendar Aligned time window. Minimum duration for calendar aligned time
-  window is 1 day and maximum is 366 days.
-
-  ```yaml
-  unit: Year | Quarter | Month | Week | Day
-  count: numeric
-  calendar:
-      startTime: 2020-01-21 12:30:00 # date with time in 24h format
-      timeZone: America/New_York # name as in IANA Time Zone Database
-  # isRolling: false # for calendar aligned set false value or not set
-  ```
+    window is 1 day and maximum is 366 days. Duration should be provided in shorthand format
+    eg. 1d, 366d.
 
 - **description** *string* optional field, contains at most 1050 characters
 
@@ -442,8 +425,8 @@ spec:
   condition: # optional
     kind: string
     threshold: number
-    lookbackWindow: number
-    alertAfter: number
+    lookbackWindow: duration-shorthand
+    alertAfter: duration-shorthand
 ```
 
 #### Notes (Alert Condition)
@@ -455,8 +438,8 @@ spec:
 If the kind is `burnrate` the following fields are required:
 
 - **threshold** *number*, required field, the threshold that you want alert on
-- **lookbackWindow** *number*, required field, the time-frame for which to calculate the threshold
-- **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
+- **lookbackWindow** *duration-shorthand*, required field, the time-frame for which to calculate the threshold e.g. `5m`
+- **alertAfter** *duration-shorthand*: required field, the duration the condition needs to be valid, defaults `0m`
 
 If the alert condition is breaching, and the alert policy has `alertWhenBreaching` set to `true`
 the alert will be triggered
