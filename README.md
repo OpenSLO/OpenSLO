@@ -178,7 +178,7 @@ spec:
 - **objectives[ ]** *Threshold*, required field, described in [Objectives][17]
   section
 
-- **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alertpolicies)
+- **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alert-policy)
   section
 
 ##### Objectives
