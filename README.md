@@ -173,12 +173,12 @@ spec:
 
 - **budgetingMethod** *enum(Occurrences \| Timeslices)*, required field
   - Occurrences method uses a ratio of counts of good events and total count of the event.
-- Timeslices method uses a ratio of good time slices vs. total time slices in a budgeting period.
+  - Timeslices method uses a ratio of good time slices vs. total time slices in a budgeting period.
 
 - **objectives[ ]** *Threshold*, required field, described in [Objectives][17]
   section
 
-- **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alertpolicies)
+- **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alert-policy)
   section
 
 ##### Objectives
