@@ -12,6 +12,9 @@
       - [SLO](#slo)
         - [Notes](#notes-1)
         - [Objectives](#objectives)
+      - [SLI](#sli)
+        - [Notes](#notes-sli)
+        - [Ratio Metric](#ratio-metric)
       - [Alerting](#alert-policy)
         - [Notes](#notes-alert-policy)
         - [Alert Conditions](#alert-condition)
@@ -96,12 +99,8 @@ metadata:
 spec:
   description: string # optional
   service: [service name] # name of the service to associate this SLO with
-  indicator: # represents the Service Level Indicator (SLI)
-    thresholdMetric: # represents the metric used to inform the Service Level Object in the objectives stanza
-      source: string # data source for the metric
-      queryType: string # a name for the type of query to run on the data source
-      query: string # the query to run to return the metric
-      metadata: # optional, allows data source specific details to be passed
+  indicator: # see SLI below for details
+  indicatorRef: string # name of the SLI. Required if indicator is not given.
   timeWindow:
     # exactly one item, one of possible rolling time window or calendar aligned
     # rolling time window
@@ -138,13 +137,10 @@ spec:
   - the `prefix` is optional and must be a DNS subdomain: a series of DNS labels separated by dots `.`,
     it must contain at most 253 characters, followed by a slash `/`.
   - the `openslo.com/` is reserved for OpenSLO usage
-- **indicator** optional, represents the Service Level Indicator (SLI).
-  Currently this only supports one Metric, `thresholdMetric`, with `ratioMetrics`
-  supported in the [objectives][15] stanza.
-- **indicator.thresholdMetric** *Metric*, represents the query used for
-  gathering data from metric sources. Raw data is used to compare objectives
-  (threshold) values. If `thresholdMetric` is defined then `ratioMetrics`
-  should be excluded in [objectives][16].
+- **indicator** optional, represents the Service Level Indicator (SLI),
+  described in [SLI](#sli) section.
+- **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
+  One of `indicator` or `indicatorRef` must be given.
 - **timeWindow[ ]** *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
 
@@ -176,7 +172,8 @@ spec:
   - Timeslices method uses a ratio of good time slices vs. total time slices in a budgeting period.
 
 - **objectives[ ]** *Threshold*, required field, described in [Objectives][17]
-  section
+  section. If `thresholdMetric` has been defined, only one Threshold can be defined.
+  However if using `ratioMetric` then any number of Thresholds can be defined.
 
 - **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alert-policy)
   section
@@ -184,7 +181,7 @@ spec:
 ##### Objectives
 
 Objectives are the thresholds for your SLOs. You can use objectives to define
-the tolerance levels for your metrics
+the tolerance levels for your metrics.
 
 ```yaml
 objectives:
@@ -194,26 +191,6 @@ objectives:
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices
-    # ratioMetrics {good, total} or {bad, total} should be defined only if thresholdMetric is not set.
-    # ratioMetrics good or bad and total have to contain the same source type configuration (for example for prometheus).
-    ratioMetrics:
-        counter: true | false # true if the metric is a monotonically increasing counter,
-        # or false, if it is a single number that can arbitrarily go up or down
-        good: # the numerator
-          source: string # data source for the "good" numerator
-          queryType: string # a name for the type of query to run on the data source
-          query: string # the query to run to return the numerator
-          metadata: # optional, allows data source specific details to be passed
-        bad: # the numerator, required when "good" is not set
-          source: string # data source for the "bad" numerator
-          queryType: string # a name for the type of query to run on the data source
-          query: string # the query to run to return the numerator
-          metadata: # optional, allows data source specific details to be passed
-        total: # the denominator
-          source: string # data source for the "total" denominator
-          queryType: string # a name for the type of query to run on the data source
-          query: string # the query to run to return the denominator
-          metadata: # optional, allows data source specific details to be passed
 ```
 
 Example:
@@ -222,52 +199,9 @@ Example:
 objectives:
   - displayName: Foo Total Errors
     target: 0.98
-    ratioMetrics:
-        counter: true
-        good:
-          source: datadog
-          queryType: query
-          query: sum:requests.error{*}
-        total:
-          source: datadog
-          queryType: query
-          query: sum:requests.total{*}
-```
-
-The optional `metadata` key can be used to pass extraneous data to the data source,
-for example, if your data source accepts variables, they could be passed via the
-`metadata`.
-
-An example is an internal tool which uses a templating feature to ease the maintenance
-of SLOs by not repeating the same queries were there are only small differences.
-The internal tool can then generate the final OpensLO specification based on the input described.
-
-```yaml
-objectives:
-  - displayName: Foo Latency
-    target: 0.98
-    ratioMetrics:
-        counter: true
-        good:
-          source: prometheus
-          queryType: query
-          query: sum:requests.duration{*}
-          metadata:
-            bucket: "0.25"
-            exclude_errors: "true"
-        total:
-          source: prometheus
-          queryType: query
-          query: sum:requests.duration{*}
-          metadata:
-            exclude_errors: "true"
 ```
 
 ##### Notes (Objectives)
-
-- **objectives[ ]** *Threshold*, required field. If `thresholdMetric` has
-  been defined, only one Threshold can be defined. However if using `ratioMetrics`
-  then any number of Thresholds can be defined.
 
 - **op** *enum(lte | gte | lt | gt)*, operator used to compare the SLI against
   the value. Only needed when using `thresholdMetric`
@@ -286,8 +220,51 @@ objectives:
   evaluated e.g. 5, 1m, 10m, 2h, 1d. Also ascertains the frequency at which to run the
   queries. Default interpretation of unit if specified as a number is minutes.
 
-- **objectives[].ratioMetrics** *Metric {Good, Total} or {Bad, Total}*
-  if `ratioMetrics` is defined then `thresholdMetric` should not be set in `indicator`
+#### SLI
+
+A service level indicator (SLI) represents how to gather data from metric sources.
+
+```yaml
+apiVersion: openslo/v0.1.0-beta
+kind: SLI
+metadata:
+  name: string
+  displayName: string # optional
+spec:
+  thresholdMetric: # either thresholdMetric or ratioMetric should be provided
+    source: string # data source for the metric
+    queryType: string # a name for the type of query to run on the data source
+    query: string # the query to run to return the metric
+    metadata: # optional, allows data source specific details to be passed
+  ratioMetric: # either thresholdMetric or ratioMetric should be provided
+    counter: true | false # true if the metric is a monotonically increasing counter,
+                          # or false, if it is a single number that can arbitrarily go up or down
+    good: # the numerator
+      source: string # data source for the "good" numerator
+      queryType: string # a name for the type of query to run on the data source
+      query: string # the query to run to return the numerator
+      metadata: # optional, allows data source specific details to be passed
+    bad: # the numerator, required when "good" is not set
+      source: string # data source for the "bad" numerator
+      queryType: string # a name for the type of query to run on the data source
+      query: string # the query to run to return the numerator
+      metadata: # optional, allows data source specific details to be passed
+    total: # the denominator
+      source: string # data source for the "total" denominator
+      queryType: string # a name for the type of query to run on the data source
+      query: string # the query to run to return the denominator
+      metadata: # optional, allows data source specific details to be passed
+```
+
+##### Notes(SLI)
+
+Either `ratioMetric` or `thresholdMetric` should be set.
+
+- **thresholdMetric** *Metric*, represents the query used for
+  gathering data from metric sources. Raw data is used to compare objectives
+  (threshold) values.
+
+- **ratioMetric** *Metric {Good, Total} or {Bad, Total}*.
 
   - *Good* represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
@@ -298,12 +275,12 @@ objectives:
    values to find bad values. If `Good` is defined then `Bad` should not be set.
 
   - *Total* represents the query used for gathering data from metric sources
-  that is used as the denominator. Received data is used to compare objectives
-  (threshold) values to find total number of metrics.
+   that is used as the denominator. Received data is used to compare objectives
+   (threshold) values to find total number of metrics.
 
-###### Notes (Ratio metrics)
+##### Ratio Metric
 
-If a service level indicator has `ratioMetrics` defined, the following maths can
+If a service level indicator has `ratioMetric` defined, the following maths can
 be used to calculate the value of the SLI. Below we describe the advised formulas
 for calculating the indicator value.
 
@@ -333,6 +310,32 @@ using the formula `0.99 * 100 = 99`.
 
 > 💡 **Note:** : As you can see for both query combinations we end up with the same calculated
 > value for the service level indicator.
+
+The optional `metadata` key can be used to pass extraneous data to the data source,
+for example, if your data source accepts variables, they could be passed via the
+`metadata`.
+
+An example is an internal tool which uses a templating feature to ease the maintenance
+of SLOs by not repeating the same queries were there are only small differences.
+The internal tool can then generate the final OpensLO specification based on the input described.
+
+```yaml
+ratioMetric:
+    counter: true
+    good:
+        source: prometheus
+        queryType: query
+        query: sum:requests.duration{*}
+        metadata:
+        bucket: "0.25"
+        exclude_errors: "true"
+    total:
+        source: prometheus
+        queryType: query
+        query: sum:requests.duration{*}
+        metadata:
+        exclude_errors: "true"
+```
 
 #### Alert Policy
 
