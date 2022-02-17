@@ -220,6 +220,8 @@ objectives:
   evaluated e.g. 5, 1m, 10m, 2h, 1d. Also ascertains the frequency at which to run the
   queries. Default interpretation of unit if specified as a number is minutes.
 
+---
+
 #### SLI
 
 A service level indicator (SLI) represents how to gather data from metric sources.
@@ -277,6 +279,36 @@ Either `ratioMetric` or `thresholdMetric` should be set.
   - *Total* represents the query used for gathering data from metric sources
    that is used as the denominator. Received data is used to compare objectives
    (threshold) values to find total number of metrics.
+
+An example of an SLO where SLI is inlined:
+
+```yaml
+apiVersion: openslo/v0.1.0-beta
+kind: SLO
+metadata:
+  name: foo-slo
+  displayName: Foo SLO
+spec:
+  indicator:
+    kind: SLI
+    metadata:
+      name: foo-error
+      displayName: Foo Error
+    spec:
+      ratioMetric:
+        counter: true
+        good:
+          source: datadog
+          queryType: query
+          query: sum:requests.error{*}
+        total:
+          source: datadog
+          queryType: query
+          query: sum:requests.total{*}
+  objectives:
+    - displayName: Foo Total Errors
+      target: 0.98
+```
 
 ##### Ratio Metric
 
