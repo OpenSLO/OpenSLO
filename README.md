@@ -353,20 +353,20 @@ The internal tool can then generate the final OpensLO specification based on the
 
 ```yaml
 ratioMetric:
-    counter: true
-    good:
-        source: prometheus
-        queryType: query
-        query: sum:requests.duration{*}
-        metadata:
-        bucket: "0.25"
-        exclude_errors: "true"
-    total:
-        source: prometheus
-        queryType: query
-        query: sum:requests.duration{*}
-        metadata:
-        exclude_errors: "true"
+  counter: true
+  good:
+    source: prometheus
+    queryType: query
+    query: sum:requests.duration{*}
+    metadata:
+      bucket: "0.25"
+      exclude_errors: "true"
+  total:
+    source: prometheus
+    queryType: query
+    query: sum:requests.duration{*}
+    metadata:
+      exclude_errors: "true"
 ```
 
 #### Alert Policy
