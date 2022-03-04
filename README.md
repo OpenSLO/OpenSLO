@@ -290,7 +290,6 @@ metadata:
   displayName: Foo SLO
 spec:
   indicator:
-    kind: SLI
     metadata:
       name: foo-error
       displayName: Foo Error
