@@ -489,8 +489,8 @@ spec:
 If the kind is `burnrate` the following fields are required:
 
 - **threshold** *number*, required field, the threshold that you want alert on
-- **lookbackWindow** *number*, required field, the time-frame for which to calculate the threshold
-- **alertAfter** *number*: required field, the duration the condition needs to be valid, defaults `0m`
+- **lookbackWindow** *string*, required field, the time-frame for which to calculate the threshold
+- **alertAfter** *string*: required field, the duration the condition needs to be valid, defaults `0m`
 
 If the alert condition is breaching, and the alert policy has `alertWhenBreaching` set to `true`
 the alert will be triggered
