@@ -9,6 +9,8 @@
     - [Object Types](#object-types)
       - [General Schema](#general-schema)
         - [Notes](#notes)
+      - [DataSource](#datasource)
+        - [Notes](#notes-1)
       - [SLO](#slo)
         - [Notes](#notes-1)
         - [Objectives](#objectives)
@@ -73,6 +75,44 @@ spec:
   - start with an alphanumeric character
   - end with an alphanumeric character
 
+---
+
+#### DataSource
+
+A DataSource represents connection details with a particular metric source. 
+
+```yaml
+apiVersion: openslo/v0.1.0-beta
+kind: DataSource
+metadata:
+  name: string
+  displayName: string # optional
+spec:
+  type: string # predefined type e.g. Prometheus, Datadog, etc.
+  connectionDetails:
+    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+
+```
+
+##### Notes (DataSource)
+
+DataSource enables reusing one source between many SLOs and moving 
+connection specific details e.g. authentication away from SLO.
+
+An example of the DataSource kind can be:
+
+```yaml
+apiVersion: openslo/v0.1.0-beta
+kind: DataSource
+metadata:
+  name: string
+  displayName: string # optional
+spec:
+  type: CloudWatch
+  connectionDetails:
+    accessKeyID: accessKey
+    secretAccessKey: secretAccessKey
+```
 ---
 
 #### SLO
@@ -234,31 +274,39 @@ metadata:
   displayName: string # optional
 spec:
   thresholdMetric: # either thresholdMetric or ratioMetric should be provided
-    source: string # data source for the metric
-    queryType: string # a name for the type of query to run on the data source
-    query: string # the query to run to return the metric
-    metadata: # optional, allows data source specific details to be passed
+    metricSource:
+      name: string # optional, this field can be used to refer to DataSource object
+      type: string # optional, this field can be used to refer to DataSource object
+      spec:
+    	# arbitrary chosen fields for every data source type to make it comfortable to use.
+        # user can refer to a particular DataSource, so that there are no connection specific
+        # details in the SLI e.g. secret keys, urls.
   ratioMetric: # either thresholdMetric or ratioMetric should be provided
     counter: true | false # true if the metric is a monotonically increasing counter,
                           # or false, if it is a single number that can arbitrarily go up or down
     good: # the numerator
-      source: string # data source for the "good" numerator
-      queryType: string # a name for the type of query to run on the data source
-      query: string # the query to run to return the numerator
-      metadata: # optional, allows data source specific details to be passed
+      metricSource:
+        name: string # optional
+        type: string # optional
+        spec:
+        # arbitrary chosen fields for every data source type to make it comfortable to use.
     bad: # the numerator, required when "good" is not set
-      source: string # data source for the "bad" numerator
-      queryType: string # a name for the type of query to run on the data source
-      query: string # the query to run to return the numerator
-      metadata: # optional, allows data source specific details to be passed
+      metricSource:
+        name: string # optional
+        type: string # optional
+        spec:
+        # arbitrary chosen fields for every data source type to make it comfortable to use.
     total: # the denominator
-      source: string # data source for the "total" denominator
-      queryType: string # a name for the type of query to run on the data source
-      query: string # the query to run to return the denominator
-      metadata: # optional, allows data source specific details to be passed
+      metricSource:
+        name: string # optional
+        type: string # optional
+        spec:
+        # arbitrary chosen fields for every data source type to make it comfortable to use.
 ```
 
 ##### Notes(SLI)
+
+When filling data in `metricSource` 
 
 Either `ratioMetric` or `thresholdMetric` should be set.
 
@@ -297,13 +345,17 @@ spec:
       ratioMetric:
         counter: true
         good:
-          source: datadog
-          queryType: query
-          query: sum:requests.error{*}
+          metricSource:
+            name: datadog-datasource
+            type: Datadog
+            spec:
+              query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
         total:
-          source: datadog
-          queryType: query
-          query: sum:requests.total{*}
+          metricSource:
+            name: datadog-datasource
+            type: Datadog
+            spec:
+              query: sum:trace.http.request.hits.by_http_status{*}.as_count()
   objectives:
     - displayName: Foo Total Errors
       target: 0.98
@@ -342,31 +394,55 @@ using the formula `0.99 * 100 = 99`.
 > 💡 **Note:** : As you can see for both query combinations we end up with the same calculated
 > value for the service level indicator.
 
-The optional `metadata` key can be used to pass extraneous data to the data source,
-for example, if your data source accepts variables, they could be passed via the
-`metadata`.
+The required `spec` key will be used to pass extraneous data to the data source. Goal of this approach
+is to give the maximum flexibility when querying data from a particular source. In the following examples
+we can see that it works fine for simple and more complex cases. 
 
-An example is an internal tool which uses a templating feature to ease the maintenance
-of SLOs by not repeating the same queries were there are only small differences.
-The internal tool can then generate the final OpensLO specification based on the input described.
-
+An example of **ratioMetric**:
 ```yaml
 ratioMetric:
   counter: true
   good:
-    source: prometheus
-    queryType: query
-    query: sum:requests.duration{*}
-    metadata:
-      bucket: "0.25"
-      exclude_errors: "true"
+    metricSource:
+      type: Prometheus
+      name: prometheus-datasource
+      spec:
+        query: sum(localhost_server_requests{code=~"2xx|3xx",host="*",instance="127.0.0.1:9090"})
   total:
-    source: prometheus
-    queryType: query
-    query: sum:requests.duration{*}
-    metadata:
-      exclude_errors: "true"
+    metricSource:
+      type: Prometheus
+      name: prometheus-datasource
+      spec:
+        query: localhost_server_requests{code="total",host="*",instance="127.0.0.1:9090"}
 ```
+
+An example of **thresholdMetric**:
+```yaml
+thresholdMetric:
+  metricSource:
+    type: Redshift
+    name: redshift-datasource
+    spec:
+      region: eu-central-1
+      clusterId: metrics-cluster
+      databaseName: metrics-db
+      query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
+```
+
+An example of **thresholdMetric** without specifying DataSource name and kind:
+```yaml
+thresholdMetric:
+  metricSource:
+    spec:
+      region: eu-central-1
+      clusterId: metrics-cluster
+      databaseName: metrics-db
+      query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
+      accessKeyID: accessKey
+      secretAccessKey: secretAccessKey
+ ```
+
+---
 
 #### Alert Policy
 
