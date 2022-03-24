@@ -450,7 +450,7 @@ thresholdMetric:
       secretAccessKey: secretAccessKey
  ```
 
- Field `type` can't be omitted because reference to existing DataSource is not speciefed.
+ Field `type` can't be omitted because the reference to an existing DataSource is not specified.
 
 ---
 
