@@ -79,7 +79,7 @@ spec:
 
 #### DataSource
 
-A DataSource represents connection details with a particular metric source. 
+A DataSource represents connection details with a particular metric source.
 
 ```yaml
 apiVersion: openslo/v0.1.0-beta
@@ -91,12 +91,13 @@ spec:
   type: string # predefined type e.g. Prometheus, Datadog, etc.
   connectionDetails:
     # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+    # everything that is valid YAML can be put here
 
 ```
 
 ##### Notes (DataSource)
 
-DataSource enables reusing one source between many SLOs and moving 
+DataSource enables reusing one source between many SLOs and moving
 connection specific details e.g. authentication away from SLO.
 
 An example of the DataSource kind can be:
@@ -113,6 +114,7 @@ spec:
     accessKeyID: accessKey
     secretAccessKey: secretAccessKey
 ```
+
 ---
 
 #### SLO
@@ -276,11 +278,12 @@ spec:
   thresholdMetric: # either thresholdMetric or ratioMetric should be provided
     metricSource:
       name: string # optional, this field can be used to refer to DataSource object
-      type: string # optional, this field can be used to refer to DataSource object
+      type: string # optional, this field describes predefined metric source type e.g. Prometheus, Datadog, etc.
       spec:
-    	# arbitrary chosen fields for every data source type to make it comfortable to use.
-        # user can refer to a particular DataSource, so that there are no connection specific
-        # details in the SLI e.g. secret keys, urls.
+        # arbitrary chosen fields for every data source type to make it comfortable to use
+        # anything that is valid YAML can be put here, user can refer to a particular
+        # DataSource, so that there are no connection specific details in the SLI
+        # e.g. secret keys, urls
   ratioMetric: # either thresholdMetric or ratioMetric should be provided
     counter: true | false # true if the metric is a monotonically increasing counter,
                           # or false, if it is a single number that can arbitrarily go up or down
@@ -289,24 +292,24 @@ spec:
         name: string # optional
         type: string # optional
         spec:
-        # arbitrary chosen fields for every data source type to make it comfortable to use.
+          # arbitrary chosen fields for every data source type to make it comfortable to use.
     bad: # the numerator, required when "good" is not set
       metricSource:
         name: string # optional
         type: string # optional
         spec:
-        # arbitrary chosen fields for every data source type to make it comfortable to use.
+          # arbitrary chosen fields for every data source type to make it comfortable to use.
     total: # the denominator
       metricSource:
         name: string # optional
         type: string # optional
         spec:
-        # arbitrary chosen fields for every data source type to make it comfortable to use.
+          # arbitrary chosen fields for every data source type to make it comfortable to use.
 ```
 
 ##### Notes(SLI)
 
-When filling data in `metricSource` 
+When filling data in `metricSource`
 
 Either `ratioMetric` or `thresholdMetric` should be set.
 
@@ -396,9 +399,10 @@ using the formula `0.99 * 100 = 99`.
 
 The required `spec` key will be used to pass extraneous data to the data source. Goal of this approach
 is to give the maximum flexibility when querying data from a particular source. In the following examples
-we can see that it works fine for simple and more complex cases. 
+we can see that it works fine for simple and more complex cases.
 
 An example of **ratioMetric**:
+
 ```yaml
 ratioMetric:
   counter: true
@@ -417,10 +421,10 @@ ratioMetric:
 ```
 
 An example of **thresholdMetric**:
+
 ```yaml
 thresholdMetric:
   metricSource:
-    type: Redshift
     name: redshift-datasource
     spec:
       region: eu-central-1
@@ -429,10 +433,14 @@ thresholdMetric:
       query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
 ```
 
+Field `type` can be omitted because type will be inferred from DataSource.
+
 An example of **thresholdMetric** without specifying DataSource name and kind:
+
 ```yaml
 thresholdMetric:
   metricSource:
+    type: Redshift
     spec:
       region: eu-central-1
       clusterId: metrics-cluster
@@ -441,6 +449,8 @@ thresholdMetric:
       accessKeyID: accessKey
       secretAccessKey: secretAccessKey
  ```
+
+ Field `type` can't be omitted because reference to existing DataSource is not speciefed.
 
 ---
 
