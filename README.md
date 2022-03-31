@@ -277,7 +277,7 @@ metadata:
 spec:
   thresholdMetric: # either thresholdMetric or ratioMetric should be provided
     metricSource:
-      name: string # optional, this field can be used to refer to DataSource object
+      metricSourceRef: string # optional, this field can be used to refer to DataSource object
       type: string # optional, this field describes predefined metric source type e.g. Prometheus, Datadog, etc.
       spec:
         # arbitrary chosen fields for every data source type to make it comfortable to use
@@ -289,19 +289,19 @@ spec:
                           # or false, if it is a single number that can arbitrarily go up or down
     good: # the numerator
       metricSource:
-        name: string # optional
+        metricSourceRef: string # optional
         type: string # optional
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
     bad: # the numerator, required when "good" is not set
       metricSource:
-        name: string # optional
+        metricSourceRef: string # optional
         type: string # optional
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
     total: # the denominator
       metricSource:
-        name: string # optional
+        metricSourceRef: string # optional
         type: string # optional
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
@@ -349,13 +349,13 @@ spec:
         counter: true
         good:
           metricSource:
-            name: datadog-datasource
+            metricSourceRef: datadog-datasource
             type: Datadog
             spec:
               query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
         total:
           metricSource:
-            name: datadog-datasource
+            metricSourceRef: datadog-datasource
             type: Datadog
             spec:
               query: sum:trace.http.request.hits.by_http_status{*}.as_count()
@@ -409,13 +409,13 @@ ratioMetric:
   good:
     metricSource:
       type: Prometheus
-      name: prometheus-datasource
+      metricSourceRef: prometheus-datasource
       spec:
         query: sum(localhost_server_requests{code=~"2xx|3xx",host="*",instance="127.0.0.1:9090"})
   total:
     metricSource:
       type: Prometheus
-      name: prometheus-datasource
+      metricSourceRef: prometheus-datasource
       spec:
         query: localhost_server_requests{code="total",host="*",instance="127.0.0.1:9090"}
 ```
@@ -425,7 +425,7 @@ An example of **thresholdMetric**:
 ```yaml
 thresholdMetric:
   metricSource:
-    name: redshift-datasource
+    metricSourceRef: redshift-datasource
     spec:
       region: eu-central-1
       clusterId: metrics-cluster
