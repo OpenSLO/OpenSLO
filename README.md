@@ -433,7 +433,7 @@ thresholdMetric:
       query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
 ```
 
-Field `type` can be omitted because type will be inferred from DataSource.
+Field `type` can be omitted because the type will be inferred from the DataSource when `metricSourceRef` is specified.
 
 An example of **thresholdMetric** without specifying DataSource name and kind:
 
