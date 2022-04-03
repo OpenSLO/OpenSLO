@@ -281,9 +281,7 @@ spec:
       type: string # optional, this field describes predefined metric source type e.g. Prometheus, Datadog, etc.
       spec:
         # arbitrary chosen fields for every data source type to make it comfortable to use
-        # anything that is valid YAML can be put here, user can refer to a particular
-        # DataSource, so that there are no connection specific details in the SLI
-        # e.g. secret keys, urls
+        # anything that is valid YAML can be put here.
   ratioMetric: # either thresholdMetric or ratioMetric should be provided
     counter: true | false # true if the metric is a monotonically increasing counter,
                           # or false, if it is a single number that can arbitrarily go up or down
