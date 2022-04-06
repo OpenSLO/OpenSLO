@@ -21,7 +21,7 @@ import (
 
 type SLO struct {
 	model.Header `yaml:",inline"`
-	SLOSpec      SLOSpec `yaml:"spec" validate:"required"`
+	Spec         SLOSpec `yaml:"spec" validate:"required"`
 }
 
 type SLOSpec struct {
