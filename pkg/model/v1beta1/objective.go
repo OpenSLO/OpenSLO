@@ -27,7 +27,7 @@ type SLO struct {
 type SLOSpec struct {
 	Description     string        `yaml:"description,omitempty" validate:"max=1050,omitempty"`
 	Service         string        `yaml:"service" validate:"required" example:"webapp-service"`
-	Indicator       *SLIInline    `yaml:"indicator,omitempty"`
+	Indicator       sliInline     `yaml:"indicator,omitempty"`
 	IndicatorRef    string        `yaml:"indicatorRef,omitempty"`
 	BudgetingMethod string        `yaml:"budgetingMethod" validate:"required,oneof=Occurrences Timeslices" example:"Occurrences"`
 	TimeWindow      []TimeWindow  `yaml:"timeWindow" validate:"required,len=1,dive"`

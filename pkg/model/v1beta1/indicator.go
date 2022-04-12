@@ -34,7 +34,7 @@ type SLI struct {
 	Spec         SLISpec `yaml:"spec" validate:"required"`
 }
 
-type SLIInline struct {
+type sliInline struct {
 	Metadata model.Metadata `yaml:"metadata" validate:"required"`
 	Spec     SLISpec        `yaml:"spec" validate:"required"`
 }
