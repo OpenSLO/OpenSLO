@@ -1,4 +1,4 @@
-# ![ OpenSLO ][image-1]
+# ![ OpenSLO ][logo]
 
 ## Table of Contents
 
@@ -29,10 +29,10 @@
 
 The intent of this document is to outline the OpenSLO specification.
 
-The goal of this project is to provide an open specification for defining and
-interfacing with SLOs to allow for a common approach, giving a set vendor-agnostic
-solution to defining and tracking SLOs. Platform specific implementation details
-are purposefully excluded from the scope of this specification.
+The goal of this project is to provide an open specification for defining SLOs
+to enable a common, vendor–agnostic approach to tracking and interfacing with
+SLOs. Platform-specific implementation details are purposefully excluded from
+the scope of this specification.
 
 OpenSLO is an open specification-i.e., it is a specification created and
 controlled, in an open and fair process, by an association or a standardization
@@ -66,7 +66,7 @@ spec:
   [SLI](#sli), [AlertPolicy](#alertpolicy), [AlertCondition](#alertcondition),
   [AlertNotificationTarget](#alertnotificationtarget)
 - **metadata.name:** *string* - required field, follows convention for naming object
-  from  [DNS RFC1123][14]; `name` should:
+  from  [RFC1123][rfc1123-names]; `name` should:
   - contain at most 63 characters
   - contain only lowercase alphanumeric characters or `-`
   - start with an alphanumeric character
@@ -74,8 +74,8 @@ spec:
 
 ### Object Types
 
-> 💡 **Note:** Specific attributes are described in detail in the **Notes** and
-> under each integration section.
+> 💡 **Note:** Specific attributes are described in detail in the **Notes**
+> subsection of each object type's section.
 
 #### DataSource
 
@@ -98,7 +98,11 @@ spec:
 ##### Notes (DataSource)
 
 DataSource enables reusing one source between many SLOs and moving
-connection specific details e.g. authentication away from SLO.
+connection specific details (e.g. authentication) away from SLO definitions.
+
+This spec does not enforce naming conventions for data source types, however
+the OpenSLO project will publish guidelines in the form of supplementary materials
+once common patterns start emerging from implementations.
 
 An example of the DataSource kind can be:
 
@@ -119,7 +123,7 @@ spec:
 
 #### SLO
 
-A service level objective (SLO) is a target value or range of values for
+A service level objective (SLO) is a target value or a range of values for
 a service level that is described by a service level indicator (SLI).
 
 ```yaml
@@ -144,17 +148,17 @@ spec:
   indicator: # see SLI below for details
   indicatorRef: string # name of the SLI. Required if indicator is not given.
   timeWindow:
-    # exactly one item, one of possible rolling time window or calendar aligned
+    # exactly one item; one of possible: rolling or calendar–aligned time window
     ## rolling time window
     - duration: duration-shorthand # duration of the window eg 1d, 4w
       isRolling: true
     # or
-    # calendar aligned time window
+    ## calendar–aligned time window
     - duration: duration-shorthand # duration of the window eg 1M, 1Q, 1Y
       calendar:
         startTime: 2020-01-21 12:30:00 # date with time in 24h format, format without time zone
         timeZone: America/New_York # name as in IANA Time Zone Database
-      isRolling: false # false or not defined
+      isRolling: false # if omitted assumed `false` if `calendar:` is present
   budgetingMethod: Occurrences | Timeslices
   objectives: # see objectives below for details
   alertPolicies: # see alert policies below details
@@ -179,21 +183,20 @@ spec:
   - the `openslo.com/` is reserved for OpenSLO usage
 - **indicator** optional, represents the Service Level Indicator (SLI),
   described in [SLI](#sli) section.
+  One of `indicator` or `indicatorRef` must be given.
 - **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
   One of `indicator` or `indicatorRef` must be given.
-- **timeWindow[ ]** *TimeWindow* is a list but accepting only exactly one
+- **timeWindow[ ]** optional, *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
-  - Rolling time window. Minimum duration for rolling time window is 5
-    minutes, maximum 31 days). Duration should be provided in shorthand format
-    e.g. 5m, 31d.
-  - Calendar Aligned time window. Minimum duration for calendar aligned time
-    window is 1 day and maximum is 366 days. Duration should be provided in shorthand format
-    eg. 1d, 366d.
+  - Rolling time window. Duration should be provided in shorthand format
+    e.g. 5m, 4w, 31d.
+  - Calendar Aligned time window. Duration should be provided in shorthand format
+    eg. 1d, 2M, 1Q, 366d.
 
 - **description** *string* optional field, contains at most 1050 characters
 
 - **budgetingMethod** *enum(Occurrences \| Timeslices)*, required field
-  - Occurrences method uses a ratio of counts of good events and total count of the event.
+  - Occurrences method uses a ratio of counts of good events to the total count of the events.
   - Timeslices method uses a ratio of good time slices vs. total time slices in a budgeting period.
 
 - **objectives[ ]** *Threshold*, required field, described in [Objectives](#objectives)
@@ -201,7 +204,7 @@ spec:
   However if using `ratioMetric` then any number of Thresholds can be defined.
 
 - **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alertpolicy)
-  section
+  section.
 
 ##### Objectives
 
@@ -229,15 +232,15 @@ objectives:
 ###### Notes (Objectives)
 
 - **op** *enum(lte | gte | lt | gt)*, operator used to compare the SLI against
-  the value. Only needed when using `thresholdMetric`
+  the value. Only needed when using a `thresholdMetric`
 
-- **value numeric**, required field, used to compare values gathered from
+- **value** *numeric*, required field, used to compare values gathered from
   metric source. Only needed when using a `thresholdMetric`.
 
-- **target numeric** *[0.0, 1.0)*, required, budget target for given objective
+- **target** *numeric [0.0, 1.0)*, required, budget target for given objective
   of the SLO
 
-- **timeSliceTarget** *numeric* *[0.0, 1.0]*, required only when budgeting
+- **timeSliceTarget** *numeric [0.0, 1.0]*, required only when budgeting
   method is set to TimeSlices
 
 - **timeSliceWindow** *(numeric | duration-shorthand)*, required only when budgeting
@@ -249,7 +252,7 @@ objectives:
 
 #### SLI
 
-A service level indicator (SLI) represents how to gather data from metric sources.
+A service level indicator (SLI) represents how to read metrics from data sources.
 
 ```yaml
 apiVersion: openslo/v0.1.0-beta
@@ -258,29 +261,29 @@ metadata:
   name: string
   displayName: string # optional
 spec:
-  thresholdMetric: # either thresholdMetric or ratioMetric should be provided
+  thresholdMetric: # either thresholdMetric or ratioMetric must be provided
     metricSource:
       metricSourceRef: string # optional, this field can be used to refer to DataSource object
       type: string # optional, this field describes predefined metric source type e.g. Prometheus, Datadog, etc.
       spec:
         # arbitrary chosen fields for every data source type to make it comfortable to use
         # anything that is valid YAML can be put here.
-  ratioMetric: # either thresholdMetric or ratioMetric should be provided
+  ratioMetric: # either thresholdMetric or ratioMetric must be provided
     counter: true | false # true if the metric is a monotonically increasing counter,
                           # or false, if it is a single number that can arbitrarily go up or down
-    good: # the numerator
+    good: # the numerator, either "good" or "bad" must be provided
       metricSource:
         metricSourceRef: string # optional
         type: string # optional
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
-    bad: # the numerator, required when "good" is not set
+    bad: # the numerator, either "good" or "bad" must be provided
       metricSource:
         metricSourceRef: string # optional
         type: string # optional
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
-    total: # the denominator
+    total: # the denominator, required
       metricSource:
         metricSourceRef: string # optional
         type: string # optional
@@ -290,25 +293,23 @@ spec:
 
 ##### Notes (SLI)
 
-When filling data in `metricSource`
-
-Either `ratioMetric` or `thresholdMetric` should be set.
+Either `ratioMetric` or `thresholdMetric` must be used.
 
 - **thresholdMetric** *Metric*, represents the query used for
   gathering data from metric sources. Raw data is used to compare objectives
   (threshold) values.
 
-- **ratioMetric** *Metric {Good, Total} or {Bad, Total}*.
+- **ratioMetric** *Metric {good, total} or {bad, total}*.
 
-  - *Good* represents the query used for gathering data from metric sources used
+  - **good** represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
-   values to find good values. If `Bad` is defined then `Good` should not be set.
+   values to find good values. If `Bad` is defined then `Good` must not be set.
 
-  - *Bad* represents the query used for gathering data from metric sources used
+  - **bad** represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
-   values to find bad values. If `Good` is defined then `Bad` should not be set.
+   values to find bad values. If `Good` is defined then `Bad` must not be set.
 
-  - *Total* represents the query used for gathering data from metric sources
+  - **total** represents the query used for gathering data from metric sources
    that is used as the denominator. Received data is used to compare objectives
    (threshold) values to find total number of metrics.
 
@@ -378,9 +379,9 @@ using the formula `0.99 * 100 = 99`.
 > 💡 **Note:** : As you can see for both query combinations we end up with the same calculated
 > value for the service level indicator.
 
-The required `spec` key will be used to pass extraneous data to the data source. Goal of this approach
-is to give the maximum flexibility when querying data from a particular source. In the following examples
-we can see that it works fine for simple and more complex cases.
+The required `spec` key will be used to pass extraneous data to the data source. The goal of this approach
+is to provide maximum flexibility when querying data from a particular source. In the following examples
+we can see that this works fine for both simple and more complex cases.
 
 An example of **ratioMetric**:
 
@@ -416,7 +417,7 @@ thresholdMetric:
 
 Field `type` can be omitted because the type will be inferred from the DataSource when `metricSourceRef` is specified.
 
-An example of **thresholdMetric** without specifying DataSource name and kind:
+An example **thresholdMetric** that does not reference a defined DataSource:
 
 ```yaml
 thresholdMetric:
@@ -437,7 +438,7 @@ thresholdMetric:
 
 #### AlertPolicy
 
-An Alert Policy allows you to define the alert conditions for a SLO.
+An Alert Policy allows you to define the alert conditions for an SLO.
 
 ```yaml
 apiVersion: openslo/v0.1.0-beta
@@ -468,15 +469,15 @@ spec:
   A condition can be defined inline or can refer to external Alert condition defined in this case the following are required:
   - **conditionRef** *string*: this is the name or path the Alert condition
 - **notificationTargets\[ \]** *Alert Notification Target*, required field.
-  A condition can be inline defined or can refer to external Alert Notification Target
-  defined in this case the following are required:
-  - **targetRef** *string*: this is the name or path the Alert Notification Target
+  A condition can be defined inline or can refer to an [AlertNotificationTarget](#alertnotificationtarget)
+  object, in which case the following are required:
+  - **targetRef** *string*: this is the name or path to the AlertNotificationTarget
 
-> 💡 **Note:**: The `conditions`-field is of the type `array` of *AlertCondition*
+> 💡 **Note:**: The `conditions` field is of the type `array` of *AlertCondition*
 > but only allows one single condition to be defined.
 > The use of an array is for future-proofing purposes.
 
-An example of a Alert policy which refers to another Alert Condition:
+An example of an Alert policy which refers to another Alert Condition:
 
 ```yaml
 apiVersion: openslo/v0.1.0-beta
@@ -495,7 +496,7 @@ spec:
     - targetRef: OnCallDevopsMailNotification
 ```
 
-An example of a Alert Policy were the Alert Condition is inlined:
+An example of an Alert Policy were the Alert Condition is inlined:
 
 ```yaml
 apiVersion: openslo/v0.1.0-beta
@@ -528,7 +529,7 @@ spec:
 
 #### AlertCondition
 
-An Alert Condition allows you to define in which conditions a alert of SLO
+An Alert Condition allows you to define under which conditions an alert for an SLO
 needs to be triggered.
 
 ```yaml
@@ -549,7 +550,7 @@ spec:
 
 ##### Notes (AlertCondition)
 
-- **severity** *string* , required field describing the severity level of the alert (ex. "sev1", "page", etc.)
+- **severity** *string*, required field describing the severity level of the alert (ex. "sev1", "page", etc.)
 - **condition**, required field. Defines the conditions of the alert
   - **kind** *enum(burnrate)* the kind of alerting condition thats checked, defaults to `burnrate`
 
@@ -557,7 +558,7 @@ If the kind is `burnrate` the following fields are required:
 
 - **threshold** *number*, required field, the threshold that you want alert on
 - **lookbackWindow** *duration-shorthand*, required field, the time-frame for which to calculate the threshold e.g. `5m`
-- **alertAfter** *duration-shorthand*: required field, the duration the condition needs to be valid, defaults `0m`
+- **alertAfter** *duration-shorthand*: required field, the duration the condition needs to be valid for before alerting, defaults to `0m`
 
 If the alert condition is breaching, and the alert policy has `alertWhenBreaching` set to `true`
 the alert will be triggered
@@ -571,11 +572,11 @@ missing data (e.g. no time series being returned) and the `alertWhenNoData`
 is set  to `true` the alert will be triggered.
 
 > 💡 **Note:**: The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
-> if you want an alert to trigger when in all circumstances or for each separately.
+> if you want an alert to trigger whenever at least one of these conditions is true.
 
 ---
 
-An example of a alert condition is the following:
+An example of an alert condition:
 
 ```yaml
 apiVersion: openslo/v0.1.0-beta
@@ -612,7 +613,7 @@ spec:
   description: # optional
 ```
 
-An example of the Alert Notification Target can be:
+An example Alert Notification Target:
 
 ```yaml
 apiVersion: openslo/v0.1.0-beta
@@ -624,7 +625,7 @@ spec:
   target: email
 ```
 
-Alternatively, a similar notification target can be defined for Slack in this example
+Alternatively, a similar notification target can be defined for Slack like this:
 
 ```yaml
 apiVersion: openslo/v0.1.0-beta
@@ -638,7 +639,6 @@ spec:
 
 ##### Notes (AlertNotificationTarget)
 
-- **name** *string*, required, the name of the notification target
 - **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
   - the `key` segment is required and must contain at most 63 characters beginning and ending
      with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
@@ -649,10 +649,10 @@ spec:
 
 > 💡 **Note:**: The way the alert notification targets are is an implementation detail of the
 > system that consumes the OpenSLO specification.
-
-For example, if the OpenSLO is consumed by a solution that generates Prometheus recording rules,
-and alerts, you can imagine that the name of the alert notification gets passed as label
-to Alertmanager which then can be routed accordingly based on this label.
+>
+> For example, if the OpenSLO is consumed by a solution that generates Prometheus recording rules,
+> and alerts, you can imagine that the name of the alert notification gets passed as a label
+> to Alertmanager which then can be routed accordingly based on this label.
 
 ---
 
@@ -670,22 +670,5 @@ spec:
   description: string # optional up to 1050 characters
 ```
 
-[1]: #openslo
-[2]: #introduction
-[3]: #specification
-[4]: #goals
-[5]: #object-types
-[6]: #general-schema
-[7]: #notes
-[8]: #slo
-[9]: #notes-1
-[10]: #objectives
-[11]: #service
-[12]: #slo
-[13]: #service
-[14]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-[15]: #objectives
-[16]: #objectives
-[17]: #objectives
-
-[image-1]: images/openslo.png
+[logo]: images/openslo.png
+[rfc1123-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names
