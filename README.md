@@ -109,7 +109,7 @@ spec:
       isRolling: true
     # or
     # calendar aligned time window
-    - duration: duration-shorthand # duration of the window eg 1d, 28d, 366d
+    - duration: duration-shorthand # duration of the window eg 1M, 1Q, 1Y
       calendar:
         startTime: 2020-01-21 12:30:00 # date with time in 24h format, format without time zone
         timeZone: America/New_York # name as in IANA Time Zone Database
