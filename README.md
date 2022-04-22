@@ -105,7 +105,7 @@ spec:
   timeWindow:
     # exactly one item, one of possible rolling time window or calendar aligned
     ## rolling time window
-    - duration: duration-shorthand # duration of the window eg 1d, 28d
+    - duration: duration-shorthand # duration of the window eg 1d, 4w
       isRolling: true
     # or
     # calendar aligned time window
