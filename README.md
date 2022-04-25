@@ -7,6 +7,8 @@
   - [Goals](#goals)
   - [General Schema](#general-schema)
     - [Notes (General Schema)](#notes-general-schema)
+  - [Custom Data Types](#custom-data-types)
+    - [duration-shorthand](#duration-shorthand)
   - [Object Types](#object-types)
     - [DataSource](#datasource)
       - [Notes (DataSource)](#notes-datasource)
@@ -71,6 +73,32 @@ spec:
   - contain only lowercase alphanumeric characters or `-`
   - start with an alphanumeric character
   - end with an alphanumeric character
+
+### Custom Data Types
+
+#### duration-shorthand
+
+The duration shorthand is specified as a single–word string (no whitespaces) consisting
+of a positive integer `number` followed by a case–sensitive single–character `postfix`.
+
+Allowed postfixes are:
+
+- *m* – minutes
+- *h* – hours
+- *d* – days
+- *w* – weeks
+- *M* – months
+- *Q* – quarters
+- *Y* – years
+
+Examples: `12h`, `4w`, `1M`, `1Q`, `365d`, `1Y`.
+
+This specification does not put requirements on how (or whether) to implement each
+postfix, therefore implementers are free to pick an implementation that best suits
+their environments.
+
+There is however the possibility that future versions of this spec will take a more
+prescriptive stance on this issue.
 
 ### Object Types
 
