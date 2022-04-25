@@ -2,26 +2,28 @@
 
 ## Table of Contents
 
-- [OpenSLO](#openslo)
-  - [Introduction](#introduction)
-  - [Specification](#specification)
-    - [Goals](#goals)
-    - [Object Types](#object-types)
-      - [General Schema](#general-schema)
-        - [Notes](#notes)
-      - [DataSource](#datasource)
-        - [Notes](#notes-datasource)
-      - [SLO](#slo)
-        - [Notes](#notes-slo)
-        - [Objectives](#objectives)
-      - [SLI](#sli)
-        - [Notes](#notes-sli)
-        - [Ratio Metric](#ratio-metric)
-      - [Alerting](#alert-policy)
-        - [Notes](#notes-alert-policy)
-        - [Alert Conditions](#alert-condition)
-        - [Notification Targets](#alert-notification-target)
-      - [Service](#service)
+- [Introduction](#introduction)
+- [Specification](#specification)
+  - [Goals](#goals)
+  - [General Schema](#general-schema)
+    - [Notes (General Schema)](#notes-general-schema)
+  - [Object Types](#object-types)
+    - [DataSource](#datasource)
+      - [Notes (DataSource)](#notes-datasource)
+    - [SLO](#slo)
+      - [Notes (SLO)](#notes-slo)
+      - [Objectives](#objectives)
+        - [Notes (Objectives)](#notes-objectives)
+    - [SLI](#sli)
+      - [Notes (SLI)](#notes-sli)
+      - [Ratio Metric](#ratio-metric)
+    - [AlertPolicy](#alertpolicy)
+      - [Notes (AlertPolicy)](#notes-alertpolicy)
+    - [AlertCondition](#alertcondition)
+      - [Notes (AlertCondition)](#notes-alertcondition)
+    - [AlertNotificationTarget](#alertnotificationtarget)
+      - [Notes (AlertNotificationTarget)](#notes-alertnotificationtarget)
+    - [Service](#service)
 
 ## Introduction
 
@@ -47,35 +49,33 @@ designed to be extended where needed to meet the needs of the implementation.
 - Vendor-agnostic
 - Be flexible enough to be extended elsewhere
 
-### Object Types
-
-> 💡 **Note:** Specific attributes are described in detail in the **Notes** and
-> under each integration section.
-
-#### General Schema
+### General Schema
 
 ```yaml
 apiVersion: openslo/v0.1.0-beta
-kind: SLO | Service
+kind: DataSource | SLO | SLI | AlertPolicy | AlertCondition | AlertNotificationTarget
 metadata:
   name: string
   displayName: string # optional
 spec:
 ```
 
-##### Notes
+#### Notes (General Schema)
 
-- **kind** *string* - required, either [SLO][12] or [Service][13]
-- **metadata.name:** *string* - required field, convention for naming object from
-  [DNS RFC1123][14]
-  `name` should:
-
+- **kind** *string* - required, one of: [DataSource](#datasource), [SLO](#slo),
+  [SLI](#sli), [AlertPolicy](#alertpolicy), [AlertCondition](#alertcondition),
+  [AlertNotificationTarget](#alertnotificationtarget)
+- **metadata.name:** *string* - required field, follows convention for naming object
+  from  [DNS RFC1123][14]; `name` should:
   - contain at most 63 characters
   - contain only lowercase alphanumeric characters or `-`
   - start with an alphanumeric character
   - end with an alphanumeric character
 
----
+### Object Types
+
+> 💡 **Note:** Specific attributes are described in detail in the **Notes** and
+> under each integration section.
 
 #### DataSource
 
@@ -196,11 +196,11 @@ spec:
   - Occurrences method uses a ratio of counts of good events and total count of the event.
   - Timeslices method uses a ratio of good time slices vs. total time slices in a budgeting period.
 
-- **objectives[ ]** *Threshold*, required field, described in [Objectives][17]
+- **objectives[ ]** *Threshold*, required field, described in [Objectives](#objectives)
   section. If `thresholdMetric` has been defined, only one Threshold can be defined.
   However if using `ratioMetric` then any number of Thresholds can be defined.
 
-- **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alert-policy)
+- **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alertpolicy)
   section
 
 ##### Objectives
@@ -226,7 +226,7 @@ objectives:
     target: 0.98
 ```
 
-##### Notes (Objectives)
+###### Notes (Objectives)
 
 - **op** *enum(lte | gte | lt | gt)*, operator used to compare the SLI against
   the value. Only needed when using `thresholdMetric`
@@ -288,7 +288,7 @@ spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
 ```
 
-##### Notes(SLI)
+##### Notes (SLI)
 
 When filling data in `metricSource`
 
@@ -435,7 +435,7 @@ thresholdMetric:
 
 ---
 
-#### Alert Policy
+#### AlertPolicy
 
 An Alert Policy allows you to define the alert conditions for a SLO.
 
@@ -456,7 +456,7 @@ spec:
   - targetRef: # required when alert notification target is not inlined
 ```
 
-#### Notes (Alert Policy)
+##### Notes (AlertPolicy)
 
 - **alertWhenBreaching** *boolean*, `true`, `false`, whether the alert should be triggered
   when the condition is breaching
@@ -526,7 +526,7 @@ spec:
 
 ---
 
-#### Alert Condition
+#### AlertCondition
 
 An Alert Condition allows you to define in which conditions a alert of SLO
 needs to be triggered.
@@ -547,7 +547,7 @@ spec:
     alertAfter: duration-shorthand
 ```
 
-#### Notes (Alert Condition)
+##### Notes (AlertCondition)
 
 - **severity** *string* , required field describing the severity level of the alert (ex. "sev1", "page", etc.)
 - **condition**, required field. Defines the conditions of the alert
@@ -595,7 +595,7 @@ spec:
 
 ---
 
-#### Alert Notification Target
+#### AlertNotificationTarget
 
 An Alert Notification Target defines the possible targets where alert notifications
 should be delivered to. For example, this can be a web-hook, Slack or any other
@@ -636,7 +636,7 @@ spec:
   target: slack
 ```
 
-##### Notes (Alert Notification Target)
+##### Notes (AlertNotificationTarget)
 
 - **name** *string*, required, the name of the notification target
 - **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
