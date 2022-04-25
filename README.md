@@ -23,7 +23,6 @@
       - [Notes (AlertCondition)](#notes-alertcondition)
     - [AlertNotificationTarget](#alertnotificationtarget)
       - [Notes (AlertNotificationTarget)](#notes-alertnotificationtarget)
-    - [Service](#service)
 
 ## Introduction
 
@@ -653,22 +652,6 @@ spec:
 > For example, if the OpenSLO is consumed by a solution that generates Prometheus recording rules,
 > and alerts, you can imagine that the name of the alert notification gets passed as a label
 > to Alertmanager which then can be routed accordingly based on this label.
-
----
-
-#### Service
-
-A Service is a high-level grouping of SLO.
-
-```yaml
-apiVersion: openslo/v0.1.0-beta
-kind: Service
-metadata:
-  name: string
-  displayName: string # optional
-spec:
-  description: string # optional up to 1050 characters
-```
 
 [logo]: images/openslo.png
 [rfc1123-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names
