@@ -65,12 +65,15 @@ spec:
 - **kind** *string* - required, one of: [DataSource](#datasource), [SLO](#slo),
   [SLI](#sli), [AlertPolicy](#alertpolicy), [AlertCondition](#alertcondition),
   [AlertNotificationTarget](#alertnotificationtarget)
-- **metadata.name:** *string* - required field, follows convention for naming object
-  from  [RFC1123][rfc1123-names]; `name` should:
-  - contain at most 63 characters
-  - contain only lowercase alphanumeric characters or `-`
-  - start with an alphanumeric character
-  - end with an alphanumeric character
+- **metadata.name:** *string* - required field
+  - all implementations must at least support object names that follow [RFC1123][rfc1123-names]:
+    - are up to 63 characters in length
+    - contain lowercase alphanumeric characters or `-`
+    - start with an alphanumeric character
+    - end with an alphanumeric character
+  - implementations are additionally encouraged to support names that:
+    - are up to 255 characters in length
+    - contain lowercase alphanumeric characters or `-`, `.`, `|`, `/`, `\`
 
 ### Object Types
 
