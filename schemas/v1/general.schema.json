@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
-	"$id": "https://openslo.com/schemas/v1.0.0/general.schema.json",
+	"$id": "https://openslo.com/schemas/v1/general.schema.json",
 	"title": "OpenSLO: General",
 	"description": "",
 	"type": "object",
@@ -9,7 +9,7 @@
 		{
 			"properties": {
 				"apiVersion": {
-					"const": "openslo/v1.0.0",
+					"const": "openslo/v1",
 					"description": "The version of specification format for this particular entity that this is written against."
 				},
 				"kind": {
@@ -29,7 +29,7 @@
 			}
 		},
 		{
-			"$ref": "https://openslo.com/schemas/v1.0.0/metadata.schema.json"
+			"$ref": "https://openslo.com/schemas/v1/metadata.schema.json"
 		}
 	]
 }
