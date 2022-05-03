@@ -81,8 +81,52 @@
 				"budgetingMethod": {
 					"enum": ["Occurances", "Timeslices"]
 				},
-				"objectives": {},
-				"alertPolicies": {}
+				"objectives": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": ["op", "target"],
+						"properties": {
+							"displayName": {
+								"type": "string",
+								"minLength": 1
+							},
+							"op": {
+								"enum": ["lte", "gte", "lt", "gt"]
+							},
+							"value": {
+								"type": "number"
+							},
+							"target": {
+								"type": "number",
+								"minimum": 0,
+								"exclusiveMaximum": 1
+							},
+							"timeSliceTarget": {
+								"type": "number",
+								"exclusiveMinimum": 0,
+								"maximum": 1
+							},
+							"timeSliceWindow": {
+								"oneOf": [
+									{
+										"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
+									},
+									{
+										"type": "number",
+										"exclusiveMinimum": 0
+									}
+								]
+							}
+						}
+					}
+				},
+				"alertPolicies": {
+					"type": "array",
+					"items": {
+						"$ref": "https://openslo.com/schemas/v1/parts/alertpolicy.schema.json"
+					}
+				}
 			},
 			"allOf": [
 				{
