@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
-	"$id": "https://openslo.com/schemas/v1/slo-spec.schema.json",
+	"$id": "https://openslo.com/schemas/v1/parts/slo-spec.schema.json",
 	"title": "OpenSLO: SLO",
 	"description": "",
 	"type": "object",
@@ -17,22 +17,21 @@
 					"maxLength": 1050
 				},
 				"service": {
-					"type": "string",
-					"minLength": 1,
-					"maxLength": 255,
-					"pattern": "^[a-z0-9][a-z0-9.|\\/\\\\-]*[a-z0-9]*$"
+					"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
 				},
 				"indicator": {
 					"allOf": [
 						{
-							"$ref": "https://openslo.com/schemas/v1/metadata.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/metadata.schema.json"
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/sli-spec.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/sli-spec.schema.json"
 						}
 					]
 				},
-				"indicatorRef": {},
+				"indicatorRef": {
+					"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
+				},
 				"timeWindow": {},
 				"budgetingMethod": {},
 				"objectives": {},

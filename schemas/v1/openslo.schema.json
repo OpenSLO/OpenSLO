@@ -6,7 +6,7 @@
 	"type": "object",
 	"allOf": [
 		{
-			"$ref": "https://openslo.com/schemas/v1/general.schema.json"
+			"$ref": "https://openslo.com/schemas/v1/parts/general.schema.json"
 		},
 		{
 			"oneOf": [
@@ -21,7 +21,7 @@
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/alertcondition.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/alertcondition.schema.json"
 						}
 					]
 				},
@@ -36,7 +36,7 @@
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/alertnotificationtarget.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/alertnotificationtarget.schema.json"
 						}
 					]
 				},
@@ -51,7 +51,7 @@
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/alertpolicy.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/alertpolicy.schema.json"
 						}
 					]
 				},
@@ -66,7 +66,7 @@
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/datasource.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/datasource.schema.json"
 						}
 					]
 				},
@@ -81,7 +81,7 @@
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/service.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/service.schema.json"
 						}
 					]
 				},
@@ -96,7 +96,7 @@
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/sli.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/sli.schema.json"
 						}
 					]
 				},
@@ -111,7 +111,7 @@
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/slo.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/slo.schema.json"
 						}
 					]
 				}
