@@ -32,8 +32,55 @@
 				"indicatorRef": {
 					"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
 				},
-				"timeWindow": {},
-				"budgetingMethod": {},
+				"timeWindow": {
+					"type": "array",
+					"maxItems": 1,
+					"items": {
+						"type": "object",
+						"required": ["duration"],
+						"allOf": [
+							{
+								"properties": {
+									"duration": {
+										"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
+									}
+								}
+							},
+							{
+								"if": {
+									"not": {
+										"properties": {
+											"isRolling": {
+													"const": true
+												}
+											}
+										}
+									}
+								},
+								"then": {
+									"required": ["calendar"],
+									"properties": {
+										"calendar": {
+											"required": ["startTime", "timeZone"],
+											"properties": {
+												"startTime": {
+													"type": "string",
+													"pattern": "^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]) ([01]\d|2[0-3]):[0-5]\d:[0-5]\d$"
+												},
+												"timeZone": {
+													"$ref": "https://openslo.com/schemas/v1/parts/timezone.schema.json"
+												}
+											}
+										}
+									}
+								}
+							}
+						]
+					}
+				},
+				"budgetingMethod": {
+					"enum": ["Occurances", "Timeslices"]
+				},
 				"objectives": {},
 				"alertPolicies": {}
 			},

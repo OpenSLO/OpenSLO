@@ -1,0 +1,8 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json",
+	"title": "OpenSLO: Duration Shorthand",
+	"description": "",
+	"type": "string",
+	"pattern": "^[1-9][0-9]*[mhdwMQY]$"
+}
