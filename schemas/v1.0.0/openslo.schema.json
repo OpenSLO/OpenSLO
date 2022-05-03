@@ -4,27 +4,118 @@
 	"title": "OpenSLO",
 	"description": "",
 	"type": "object",
-	"oneOf": [
+	"allOf": [
 		{
-			"$ref": "https://openslo.com/schemas/v1.0.0/alertcondition.schema.json"
+			"$ref": "https://openslo.com/schemas/v1.0.0/general.schema.json"
 		},
 		{
-			"$ref": "https://openslo.com/schemas/v1.0.0/alertnotificationtarget.schema.json"
-		},
-		{
-			"$ref": "https://openslo.com/schemas/v1.0.0/alertpolicy.schema.json"
-		},
-		{
-			"$ref": "https://openslo.com/schemas/v1.0.0/datasource.schema.json"
-		},
-		{
-			"$ref": "https://openslo.com/schemas/v1.0.0/service.schema.json"
-		},
-		{
-			"$ref": "https://openslo.com/schemas/v1.0.0/sli.schema.json"
-		},
-		{
-			"$ref": "https://openslo.com/schemas/v1.0.0/slo.schema.json"
+			"oneOf": [
+				{
+					"allOf": [
+						{
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": ["AlertCondition"]
+								}
+							}
+						},
+						{
+							"$ref": "https://openslo.com/schemas/v1.0.0/alertcondition.schema.json"
+						}
+					]
+				},
+				{
+					"allOf": [
+						{
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": ["AlertNotificationTarget"]
+								}
+							}
+						},
+						{
+							"$ref": "https://openslo.com/schemas/v1.0.0/alertnotificationtarget.schema.json"
+						}
+					]
+				},
+				{
+					"allOf": [
+						{
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": ["AlertPolicy"]
+								}
+							}
+						},
+						{
+							"$ref": "https://openslo.com/schemas/v1.0.0/alertpolicy.schema.json"
+						}
+					]
+				},
+				{
+					"allOf": [
+						{
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": ["DataSource"]
+								}
+							}
+						},
+						{
+							"$ref": "https://openslo.com/schemas/v1.0.0/datasource.schema.json"
+						}
+					]
+				},
+				{
+					"allOf": [
+						{
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": ["Service"]
+								}
+							}
+						},
+						{
+							"$ref": "https://openslo.com/schemas/v1.0.0/service.schema.json"
+						}
+					]
+				},
+				{
+					"allOf": [
+						{
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": ["SLI"]
+								}
+							}
+						},
+						{
+							"$ref": "https://openslo.com/schemas/v1.0.0/sli.schema.json"
+						}
+					]
+				},
+				{
+					"allOf": [
+						{
+							"type": "object",
+							"properties": {
+								"kind": {
+									"enum": ["SLO"]
+								}
+							}
+						},
+						{
+							"$ref": "https://openslo.com/schemas/v1.0.0/slo.schema.json"
+						}
+					]
+				}
+			]
 		}
 	]
 }

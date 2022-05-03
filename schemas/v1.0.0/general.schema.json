@@ -5,83 +5,31 @@
 	"description": "",
 	"type": "object",
 	"required": ["apiVersion", "kind", "metadata", "spec"],
-	"properties": {
-		"apiVersion": {
-			"const": "openslo/v1.0.0",
-			"description": "The version of specification format for this particular entity that this is written against."
-		},
-		"kind": {
-			"enum": [
-				"AlertCondition",
-				"AlertNotificationTarget",
-				"AlertPolicy",
-				"DataSource",
-				"Service",
-				"SLI",
-				"SLO"
-			]
-		},
-		"metadata": {
-			"type": "object",
-			"required": ["name"],
+	"allOf": [
+		{
 			"properties": {
-				"name": {
-					"type": "string",
-					"minLength": 1,
-					"maxLength": 255,
-					"pattern": "^[a-z0-9][a-z0-9.|\\/\\\\-]*[a-z0-9]*$"
+				"apiVersion": {
+					"const": "openslo/v1.0.0",
+					"description": "The version of specification format for this particular entity that this is written against."
 				},
-				"displayName": {
-					"type": "string",
-					"minLength": 1
+				"kind": {
+					"enum": [
+						"AlertCondition",
+						"AlertNotificationTarget",
+						"AlertPolicy",
+						"DataSource",
+						"Service",
+						"SLI",
+						"SLO"
+					]
 				},
-				"labels": {
-					"type": "object",
-					"description": "key <> value pairs of labels that can be used as metadata relevant to users",
-					"additionalProperties": {
-						"oneOf": [
-							{
-								"type": "string",
-								"minLength": 1,
-								"maxLength": 63,
-								"pattern": "^[a-z0-9A-Z][a-z0-9A-Z._-]*[a-z0-9A-Z]*$"
-							},
-							{
-								"type": "array",
-								"additionalItems": {
-									"type": "string",
-									"minLength": 1,
-									"maxLength": 63,
-									"pattern": "^[a-z0-9A-Z][a-z0-9A-Z._-]*[a-z0-9A-Z]*$"
-								}
-							}
-						]
-					}
-				},
-				"annotations": {
-					"type": "object",
-					"description": "key <> value pairs which should be used to define implementation / system specific metadata about the SLO. For example, it can be metadata about a dashboard url, or how to name a metric created by the SLI, etc.",
-					"propertyNames": {
-						"allOf": [
-							{
-								"pattern": "^(([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/)?[a-z0-9A-Z][a-z0-9A-Z._-]*[a-z0-9A-Z]*$"
-							},
-							{
-								"pattern": "^(.{2,253}\\/)?.{1,63}$"
-							}
-						]
-					},
-					"additionalProperties": {
-						"type": "string",
-						"minLength": 1,
-						"maxLength": 63,
-						"pattern": "^[a-z0-9A-Z][a-z0-9A-Z._-]*[a-z0-9A-Z]*$"
-					}
+				"spec": {
+					"type": "object"
 				}
 			}
 		},
-		"spec": {
-			"type": "object"
+		{
+			"$ref": "https://openslo.com/schemas/v1.0.0/metadata.schema.json"
 		}
-	}
+	]
 }
