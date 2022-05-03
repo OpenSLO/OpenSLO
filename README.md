@@ -574,7 +574,7 @@ metadata:
 spec:
   description: string # optional
   severity: string # required
-  condition: # optional
+  condition: # required
     kind: string
     threshold: number
     lookbackWindow: duration-shorthand
