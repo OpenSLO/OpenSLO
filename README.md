@@ -146,6 +146,7 @@ metadata:
   name: string
   displayName: string # optional
 spec:
+  description: string # optional up to 1050 characters
   type: string # predefined type e.g. Prometheus, Datadog, etc.
   connectionDetails:
     # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
@@ -191,7 +192,7 @@ metadata:
   name: string
   displayName: string # optional
 spec:
-  description: string # optional
+  description: string # optional up to 1050 characters
   service: [service name] # name of the service to associate this SLO with
   indicator: # see SLI below for details
   indicatorRef: string # name of the SLI. Required if indicator is not given.
@@ -294,6 +295,7 @@ metadata:
   name: string
   displayName: string # optional
 spec:
+  description: string # optional up to 1050 characters
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
     metricSource:
       metricSourceRef: string # optional, this field can be used to refer to DataSource object
@@ -325,6 +327,8 @@ spec:
 ```
 
 ##### Notes (SLI)
+
+- **description** *string* optional field, contains at most 1050 characters
 
 Either `ratioMetric` or `thresholdMetric` must be used.
 
@@ -480,7 +484,7 @@ metadata:
   name: string
   displayName: string # optional
 spec:
-  description: string # optional
+  description: string # optional up to 1050 characters
   alertWhenNoData: boolean
   alertWhenResolved: boolean
   alertWhenBreaching: boolean
@@ -492,6 +496,7 @@ spec:
 
 ##### Notes (AlertPolicy)
 
+- **description** *string*, optional description about the alert policy, contains at most 1050 characters
 - **alertWhenBreaching** *boolean*, `true`, `false`, whether the alert should be triggered
   when the condition is breaching
 - **alertWhenResolved** *boolean*, `true`, `false`, whether the alert should be triggered
@@ -572,7 +577,7 @@ metadata:
   name: string
   displayName: string # optional
 spec:
-  description: string # optional
+  description: string # optional up to 1050 characters
   severity: string # required
   condition: # optional
     kind: string
@@ -583,6 +588,7 @@ spec:
 
 ##### Notes (AlertCondition)
 
+- **description** *string*, optional description about the alert contdition, contains at most 1050 characters
 - **severity** *string*, required field describing the severity level of the alert (ex. "sev1", "page", etc.)
 - **condition**, required field. Defines the conditions of the alert
   - **kind** *enum(burnrate)* the kind of alerting condition thats checked, defaults to `burnrate`
@@ -673,7 +679,7 @@ spec:
 ##### Notes (AlertNotificationTarget)
 
 - **target** *string*, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
-- **description** *string*, optional description about the notification target
+- **description** *string*, optional description about the notification target, contains at most 1050 characters
 
 > 💡 **Note:**: The way the alert notification targets are is an implementation detail of the
 > system that consumes the OpenSLO specification.
