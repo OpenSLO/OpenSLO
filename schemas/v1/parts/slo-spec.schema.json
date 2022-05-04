@@ -5,9 +5,6 @@
 	"description": "",
 	"type": "object",
 	"properties": {
-		"kind": {
-			"enum": ["SLO"]
-		},
 		"spec": {
 			"type": "object",
 			"required": [""],
