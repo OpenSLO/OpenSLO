@@ -85,7 +85,7 @@
 					"type": "array",
 					"items": {
 						"type": "object",
-						"required": ["op", "target"],
+						"required": ["target"],
 						"properties": {
 							"displayName": {
 								"type": "string",
@@ -129,6 +129,26 @@
 				}
 			},
 			"allOf": [
+				{
+					"if": {
+						"type": "object",
+						"properties": {
+							"budgetingMethod": {
+								"const": "Timeslices"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"objectives": {
+								"items": {
+									"type": "object",
+									"required": ["timeSliceWindow", "timeSliceTarget"]
+								}
+							}
+						}
+					}
+				},
 				{
 					"not": {
 						"type": "object",
