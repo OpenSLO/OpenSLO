@@ -7,7 +7,7 @@
 	"properties": {
 		"spec": {
 			"type": "object",
-			"required": [""],
+			"required": ["service", "budgetingMethod", "objectives"],
 			"properties": {
 				"description": {
 					"type": "string",
