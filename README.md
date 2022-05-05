@@ -579,7 +579,7 @@ metadata:
 spec:
   description: string # optional up to 1050 characters
   severity: string # required
-  condition: # optional
+  condition: # required
     kind: string
     threshold: number
     lookbackWindow: duration-shorthand
