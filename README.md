@@ -54,7 +54,7 @@ designed to be extended where needed to meet the needs of the implementation.
 ### General Schema
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: DataSource | SLO | SLI | AlertPolicy | AlertCondition | AlertNotificationTarget | Service
 metadata:
   name: string
@@ -140,7 +140,7 @@ prescriptive stance on this issue.
 A DataSource represents connection details with a particular metric source.
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: DataSource
 metadata:
   name: string
@@ -166,7 +166,7 @@ once common patterns start emerging from implementations.
 An example of the DataSource kind can be:
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: DataSource
 metadata:
   name: string
@@ -186,7 +186,7 @@ A service level objective (SLO) is a target value or a range of values for
 a service level that is described by a service level indicator (SLI).
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: SLO
 metadata:
   name: string
@@ -289,7 +289,7 @@ objectives:
 A service level indicator (SLI) represents how to read metrics from data sources.
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: SLI
 metadata:
   name: string
@@ -353,7 +353,7 @@ Either `ratioMetric` or `thresholdMetric` must be used.
 An example of an SLO where SLI is inlined:
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: SLO
 metadata:
   name: foo-slo
@@ -478,7 +478,7 @@ thresholdMetric:
 An Alert Policy allows you to define the alert conditions for an SLO.
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: AlertPolicy
 metadata:
   name: string
@@ -518,7 +518,7 @@ spec:
 An example of an Alert policy which refers to another Alert Condition:
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: AlertPolicy
 metadata:
   name: AlertPolicy
@@ -537,7 +537,7 @@ spec:
 An example of an Alert Policy were the Alert Condition is inlined:
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: AlertPolicy
 metadata:
   name: AlertPolicy
@@ -571,7 +571,7 @@ An Alert Condition allows you to define under which conditions an alert for an S
 needs to be triggered.
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: AlertCondition
 metadata:
   name: string
@@ -618,7 +618,7 @@ is set  to `true` the alert will be triggered.
 An example of an alert condition:
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: AlertCondition
 metadata:
   name: cpu-usage-breach
@@ -642,7 +642,7 @@ should be delivered to. For example, this can be a web-hook, Slack or any other
 custom target.
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: AlertNotificationTarget
 metadata:
   name: string
@@ -655,7 +655,7 @@ spec:
 An example Alert Notification Target:
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: AlertNotificationTarget
 metadata:
   name: OnCallDevopsMailNotification
@@ -667,7 +667,7 @@ spec:
 Alternatively, a similar notification target can be defined for Slack like this:
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: AlertNotificationTarget
 metadata:
   name: OnCallDevopsSlackNotification
@@ -695,7 +695,7 @@ spec:
 A Service is a high-level grouping of SLO.
 
 ```yaml
-apiVersion: openslo/v1.0.0
+apiVersion: openslo/v1
 kind: Service
 metadata:
   name: string
