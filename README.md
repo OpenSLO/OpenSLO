@@ -528,8 +528,7 @@ spec:
   alertWhenBreaching: true
   alertWhenResolved: false
   conditions:
-    - operator: and
-      conditionRef: cpu-usage-breach
+    - conditionRef: cpu-usage-breach
   notificationTargets:
     - targetRef: OnCallDevopsMailNotification
 ```
