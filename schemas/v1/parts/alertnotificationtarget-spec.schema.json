@@ -7,8 +7,17 @@
 	"properties": {
 		"spec": {
 			"type": "object",
-			"required": [],
-			"properties": {}
+			"required": [
+				"target"
+			],
+			"properties": {
+				"target": {
+					"type": "string"
+				},
+				"description": {
+					"$ref": "https://openslo.com/schemas/v1/parts/description.schema.json"
+				}
+			}
 		}
 	}
 }
