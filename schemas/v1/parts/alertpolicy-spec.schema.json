@@ -7,8 +7,154 @@
 	"properties": {
 		"spec": {
 			"type": "object",
-			"required": [],
-			"properties": {}
+			"required": [
+				"alertWhenNoData",
+				"alertWhenResolved",
+				"alertWhenBreaching",
+				"conditions",
+				"notificationTargets"
+			],
+			"properties": {
+				"description": {
+					"$ref": "https://openslo.com/schemas/v1/parts/description.schema.json"
+				},
+				"alertWhenNoData": {
+					"type": "boolean"
+				},
+				"alertWhenResolved": {
+					"type": "boolean"
+				},
+				"alertWhenBreaching": {
+					"type": "boolean"
+				},
+				"conditions": {
+					"type": "array",
+					"minItems": 1,
+					"maxItems": 1,
+					"items": {
+						"type": "object",
+						"properties": {
+							"conditionRef": {
+								"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
+							},
+							"kind": {
+								"const": "AlertCondition"
+							},
+							"metadata": {
+								"$ref": "https://openslo.com/schemas/v1/parts/metadata.schema.json"
+							},
+							"spec": {
+								"$ref": "https://openslo.com/schemas/v1/parts/alertcondition-spec.schema.json"
+							}
+						},
+						"allOf": [
+							{
+								"not": {
+									"type": "object",
+									"required": [
+										"conditionRef",
+										"kind",
+										"metadata",
+										"spec"
+									]
+								}
+							},
+							{
+								"oneOf": [
+									{
+										"type": "object",
+										"required": [
+											"conditionRef"
+										]
+									},
+									{
+										"type": "object",
+										"required": [
+											"kind",
+											"metadata",
+											"spec"
+										]
+									}
+								]
+							}
+						],
+						"oneOf": [
+							{
+								"required": [
+									"conditionRef"
+								]
+							},
+							{}
+						],
+						"required": [
+							"duration"
+						]
+					}
+				},
+				"notificationTargets": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"type": "object",
+						"properties": {
+							"targetRef": {
+								"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
+							},
+							"kind": {
+								"const": "AlertCondition"
+							},
+							"metadata": {
+								"$ref": "https://openslo.com/schemas/v1/parts/metadata.schema.json"
+							},
+							"spec": {
+								"$ref": "https://openslo.com/schemas/v1/parts/alertnotificationtarget-spec.schema.json"
+							}
+						},
+						"allOf": [
+							{
+								"not": {
+									"type": "object",
+									"required": [
+										"targetRef",
+										"kind",
+										"metadata",
+										"spec"
+									]
+								}
+							},
+							{
+								"oneOf": [
+									{
+										"type": "object",
+										"required": [
+											"targetRef"
+										]
+									},
+									{
+										"type": "object",
+										"required": [
+											"kind",
+											"metadata",
+											"spec"
+										]
+									}
+								]
+							}
+						],
+						"oneOf": [
+							{
+								"required": [
+									"targetRef"
+								]
+							},
+							{}
+						],
+						"required": [
+							"duration"
+						]
+					}
+				}
+			}
 		}
 	}
 }
