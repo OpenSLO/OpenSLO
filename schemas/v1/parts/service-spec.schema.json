@@ -7,8 +7,12 @@
 	"properties": {
 		"spec": {
 			"type": "object",
-			"required": [],
-			"properties": {}
+			"properties": {
+				"description": {
+					"type": "string",
+					"maxLength": 1050
+				}
+			}
 		}
 	}
 }
