@@ -9,8 +9,7 @@
 			"type": "object",
 			"properties": {
 				"description": {
-					"type": "string",
-					"maxLength": 1050
+					"$ref": "https://openslo.com/schemas/v1/parts/description.schema.json"
 				}
 			}
 		}

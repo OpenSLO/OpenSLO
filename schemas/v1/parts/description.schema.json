@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "https://openslo.com/schemas/v1/parts/description.schema.json",
+	"title": "OpenSLO: Description",
+	"type": "string",
+	"maxLength": 1050
+}
