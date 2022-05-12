@@ -7,8 +7,52 @@
 	"properties": {
 		"spec": {
 			"type": "object",
-			"required": [],
-			"properties": {}
+			"required": [
+				"severity"
+			],
+			"properties": {
+				"description": {
+					"$ref": "https://openslo.com/schemas/v1/parts/description.schema.json"
+				},
+				"severity": {
+					"type": "string"
+				},
+				"condition": {
+					"type": "object",
+					"properties": {
+						"kind": {
+							"enum": [
+								"burnrate"
+							]
+						},
+						"threshold": {
+							"type": "number"
+						},
+						"lookbackWindow": {
+							"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
+						},
+						"alertAfter": {
+							"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
+						}
+					},
+					"if": {
+						"type": "object",
+						"properties": {
+							"kind": {
+								"const": "burnrate"
+							}
+						}
+					},
+					"then": {
+						"type": "object",
+						"required": [
+							"threshold",
+							"lookbackWindow",
+							"alertAfter"
+						]
+					}
+				}
+			}
 		}
 	}
 }
