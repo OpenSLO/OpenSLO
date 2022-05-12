@@ -1,0 +1,124 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "https://openslo.com/schemas/v1/parts/sli-spec.schema.json",
+	"title": "OpenSLO: SLI",
+	"description": "",
+	"type": "object",
+	"properties": {
+		"spec": {
+			"type": "object",
+			"properties": {
+				"thresholdMetric": {
+					"type": "object",
+					"required": [
+						"metricSource"
+					],
+					"properties": {
+						"metricSource": {
+							"$ref": "https://openslo.com/schemas/v1/parts/metricsource.schema.json"
+						}
+					}
+				},
+				"rationMetric": {
+					"type": "object",
+					"required": [
+						"counter",
+						"total"
+					],
+					"properties": {
+						"counter": {
+							"type": "boolean"
+						},
+						"good": {
+							"type": "object",
+							"required": [
+								"metricSource"
+							],
+							"properties": {
+								"metricSource": {
+									"$ref": "https://openslo.com/schemas/v1/parts/metricsource.schema.json"
+								}
+							}
+						},
+						"bad": {
+							"type": "object",
+							"required": [
+								"metricSource"
+							],
+							"properties": {
+								"metricSource": {
+									"$ref": "https://openslo.com/schemas/v1/parts/metricsource.schema.json"
+								}
+							}
+						},
+						"total": {
+							"type": "object",
+							"required": [
+								"metricSource"
+							],
+							"properties": {
+								"metricSource": {
+									"$ref": "https://openslo.com/schemas/v1/parts/metricsource.schema.json"
+								}
+							}
+						}
+					},
+					"allOf": [
+						{
+							"not": {
+								"type": "object",
+								"required": [
+									"good",
+									"bad"
+								]
+							}
+						},
+						{
+							"oneOf": [
+								{
+									"type": "object",
+									"required": [
+										"good"
+									]
+								},
+								{
+									"type": "object",
+									"required": [
+										"bad"
+									]
+								}
+							]
+						}
+					]
+				}
+			},
+			"allOf": [
+				{
+					"not": {
+						"type": "object",
+						"required": [
+							"thresholdMetric",
+							"rationMetric"
+						]
+					}
+				},
+				{
+					"oneOf": [
+						{
+							"type": "object",
+							"required": [
+								"thresholdMetric"
+							]
+						},
+						{
+							"type": "object",
+							"required": [
+								"rationMetric"
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+}
