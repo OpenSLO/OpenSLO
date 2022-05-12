@@ -16,12 +16,12 @@
 							"type": "object",
 							"properties": {
 								"kind": {
-									"enum": ["AlertCondition"]
+									"const": "AlertCondition"
 								}
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/parts/alertcondition.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/alertcondition-spec.schema.json"
 						}
 					]
 				},
@@ -31,12 +31,12 @@
 							"type": "object",
 							"properties": {
 								"kind": {
-									"enum": ["AlertNotificationTarget"]
+									"const": "AlertNotificationTarget"
 								}
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/parts/alertnotificationtarget.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/alertnotificationtarget-spec.schema.json"
 						}
 					]
 				},
@@ -46,12 +46,12 @@
 							"type": "object",
 							"properties": {
 								"kind": {
-									"enum": ["AlertPolicy"]
+									"const": "AlertPolicy"
 								}
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/parts/alertpolicy.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/alertpolicy-spec.schema.json"
 						}
 					]
 				},
@@ -61,12 +61,12 @@
 							"type": "object",
 							"properties": {
 								"kind": {
-									"enum": ["DataSource"]
+									"const": "DataSource"
 								}
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/parts/datasource.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/datasource-spec.schema.json"
 						}
 					]
 				},
@@ -76,12 +76,12 @@
 							"type": "object",
 							"properties": {
 								"kind": {
-									"enum": ["Service"]
+									"const": "Service"
 								}
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/parts/service.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/service-spec.schema.json"
 						}
 					]
 				},
@@ -91,12 +91,12 @@
 							"type": "object",
 							"properties": {
 								"kind": {
-									"enum": ["SLI"]
+									"const": "SLI"
 								}
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/parts/sli.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/sli-spec.schema.json"
 						}
 					]
 				},
@@ -106,12 +106,12 @@
 							"type": "object",
 							"properties": {
 								"kind": {
-									"enum": ["SLO"]
+									"const": "SLO"
 								}
 							}
 						},
 						{
-							"$ref": "https://openslo.com/schemas/v1/parts/slo.schema.json"
+							"$ref": "https://openslo.com/schemas/v1/parts/slo-spec.schema.json"
 						}
 					]
 				}
