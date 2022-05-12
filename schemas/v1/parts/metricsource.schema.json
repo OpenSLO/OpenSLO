@@ -12,7 +12,7 @@
 			"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
 		},
 		"type": {
-			"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
+			"type": "string"
 		},
 		"spec": {
 			"type": "object"

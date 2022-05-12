@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "https://openslo.com/schemas/v1/parts/datasource-spec.schema.json",
+	"title": "OpenSLO: Data Source",
+	"description": "",
+	"type": "object",
+	"properties": {
+		"spec": {
+			"type": "object",
+			"required": [
+				"type",
+				"connectionDetails"
+			],
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"connectionDetails": {
+					"type": "object"
+				}
+			}
+		}
+	}
+}
