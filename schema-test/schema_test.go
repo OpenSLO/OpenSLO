@@ -79,7 +79,7 @@ func TestSchemas(t *testing.T) {
 	}{
 		{
 			name:    "invalid apiVersion",
-			files:   []string{"./spec-files/invalid-apiversion.yaml"},
+			files:   []string{"invalid-apiversion.yaml"},
 			wantErr: true,
 		},
 		{
@@ -240,10 +240,10 @@ func TestSchemas(t *testing.T) {
 						t.Error("Expected template to be invalid but it was not")
 						return
 					}
-					t.Logf("Spec CORRECTLY found to be invalid:\n%s", makeValidationErrorReport(result.Errors()))
+					t.Logf("Document CORRECTLY found to be invalid:\n%s", makeValidationErrorReport(result.Errors()))
 				} else {
 					if !result.Valid() {
-						t.Errorf("Spec found to be invalid:\n%s", makeValidationErrorReport(result.Errors()))
+						t.Errorf("Document found to be invalid:\n%s", makeValidationErrorReport(result.Errors()))
 					}
 				}
 			})
