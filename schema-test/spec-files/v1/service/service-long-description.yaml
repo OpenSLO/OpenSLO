@@ -1,0 +1,7 @@
+apiVersion: openslo/v1
+kind: Service
+metadata:
+  name: my-rad-service
+spec:
+  # description is max 1050 characters
+  description: Lorem ipsum dolor sit amet, aliquet eget, habitasse nec tincidunt nibh, nulla cras lacus sed accumsan eu sollicitudin, condimentum est in ut. Fames tincidunt, eu eget fermentum, arcu leo. Eu vitae consectetuer, in faucibus ligula. Maecenas vitae nonummy nulla ac, tincidunt sed tristique quis, luctus tortor proin nam litora. Sodales leo, sit tellus. Lectus arcu a sed sem neque tellus, habitasse cras tristique consequat risus est, aenean arcu, suspendisse augue sapien suscipit consequat, quisque ante tellus tempus ut a. Ac et aenean, nulla ultricies venenatis neque commodo donec, etiam et, leo mollis ac a at sapien. Nunc dolor sed nam dolor, vulputate massa, a sit quam, a quisque praesent tristique. Urna sed augue curabitur ac, id tortor fringilla, diam egestas, eros arcu proident sollicitudin libero volutpat diam. Est in lacinia, mus a orci, parturient nisl sed sed odio, lacinia netus, sem rutrum id tincidunt. At sem, morbi donec. Sapien id vestibulum semper purus pellentesque hendrerit, nullam sed anim congue massa proin sed. Sit donec elit urna a mollis, nibh viverra nunc ornare etiam, ridiculus pretium taciti ipsum et malesuada. Mauris vitae. Phasellus consequat felis elit turpis, ultrices in nullam augue, et viverra, ultricies in erat porta pharetra rutrum, tempor et amet porttitor id rhoncus. Rerum sagittis vel purus nulla congue semper, aenean tempus, molestie tortor, a maecenas cras nulla.

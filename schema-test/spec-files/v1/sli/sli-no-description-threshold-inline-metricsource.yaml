@@ -1,0 +1,16 @@
+apiVersion: openslo/v1
+kind: SLI
+metadata:
+  name: GreatSLI
+  displayName: Great SLI
+spec:
+  thresholdMetric:
+    metricSource:
+      type: Redshift
+      spec:
+        region: eu-central-1
+        clusterId: metrics-cluster
+        databaseName: metrics-db
+        query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
+        accessKeyID: accessKey
+        secretAccessKey: secretAccessKey

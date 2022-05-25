@@ -1,0 +1,6 @@
+apiVersion: openslo/v1
+kind: Service
+metadata:
+  name: my-rad-service
+spec:
+  description: This is a great description of an even better service.

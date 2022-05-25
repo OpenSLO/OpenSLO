@@ -1,0 +1,6 @@
+apiVersion: openslo/v1
+kind: AlertNotificationTarget
+metadata:
+  name: OnCallDevopsMailNotification
+spec:
+  target: email

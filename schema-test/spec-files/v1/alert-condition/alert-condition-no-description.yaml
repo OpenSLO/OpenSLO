@@ -1,0 +1,12 @@
+apiVersion: openslo/v1
+kind: AlertCondition
+metadata:
+  name: Alert Condition
+  displayName: Alert Condition
+spec:
+  severity: sev1 # required
+  condition: # optional
+    kind: burnrate
+    threshold: 24
+    lookbackWindow: 15m
+    alertAfter: 3m

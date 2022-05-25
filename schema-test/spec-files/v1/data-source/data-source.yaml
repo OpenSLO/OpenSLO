@@ -1,0 +1,10 @@
+apiVersion: openslo/v1
+kind: DataSource
+metadata:
+  name: TestDataSource
+  displayName: Test Data Source
+spec:
+  type: CloudWatch
+  connectionDetails:
+    accessKeyID: accessKey
+    secretAccessKey: secretAccessKey

@@ -1,0 +1,36 @@
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: TestSLO
+  displayName: Test SLO
+spec:
+  description: This is a great description
+  service: TheServiceName
+  indicator:
+    metadata:
+      name: foo-error
+      displayName: Foo Error
+    spec:
+      ratioMetric:
+        counter: true
+        good:
+          metricSource:
+            metricSourceRef: datadog-datasource
+            type: Datadog
+            spec:
+              query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
+        total:
+          metricSource:
+            metricSourceRef: datadog-datasource
+            type: Datadog
+            spec:
+              query: sum:trace.http.request.hits.by_http_status{*}.as_count()
+  timeWindow:
+    - duration: 1M
+      isRolling: true
+  budgetingMethod: Occurrences
+  objectives:
+    - displayName: Foo Total Errors
+      target: 0.98
+  alertPolicies:
+    - FooAlertPolicy

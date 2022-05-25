@@ -1,0 +1,30 @@
+apiVersion: openslo/v1
+kind: AlertPolicy
+metadata:
+  name: AlertPolicy
+  displayName: Alert Policy
+spec:
+  description: Alert policy for cpu usage breaches, notifies on-call devops via email
+  alertWhenBreaching: true
+  alertWhenResolved: false
+  conditions:
+    - operator: and
+      conditionRef: cpu-usage-breach
+    - operator: and
+      conditionRef: cpu-usage-breach
+    - operator: and
+      conditionRef: cpu-usage-breach
+    - operator: and
+      conditionRef: cpu-usage-breach
+    - operator: and
+      conditionRef: cpu-usage-breach
+    - operator: and
+      conditionRef: cpu-usage-breach
+    - operator: and
+      conditionRef: cpu-usage-breach
+    - operator: and
+      conditionRef: cpu-usage-breach
+    - operator: and
+      conditionRef: cpu-usage-breach
+  notificationTargets:
+    - targetRef: OnCallDevopsMailNotification

@@ -1,0 +1,20 @@
+apiVersion: openslo/v1
+kind: SLI
+metadata:
+  name: GreatSLI
+  displayName: Great SLI
+spec:
+  ratioMetric:
+    counter: true
+    good:
+      metricSource:
+        type: Prometheus
+        metricSourceRef: prometheus-datasource
+        spec:
+          query: sum(localhost_server_requests{code=~"2xx|3xx",host="*",instance="127.0.0.1:9090"})
+    total:
+      metricSource:
+        type: Prometheus
+        metricSourceRef: prometheus-datasource
+        spec:
+          query: localhost_server_requests{code="total",host="*",instance="127.0.0.1:9090"}
