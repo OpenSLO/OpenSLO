@@ -78,11 +78,6 @@ func TestSchemas(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "invalid apiVersion",
-			files:   []string{"invalid-apiversion.yaml"},
-			wantErr: true,
-		},
-		{
 			name:    "v1alpha gets v1 Kind",
 			version: v1,
 			files:   []string{"invalid-apiversion.yaml"},
