@@ -220,24 +220,24 @@ func TestSchemas(t *testing.T) {
 			t.Run(fmt.Sprintf("%s [%s]", test.name, filePath), func(t *testing.T) {
 				content, err := ioutil.ReadFile(filePath)
 				if err != nil {
-					t.Errorf("Could not read test spec file: %v", err)
+					t.Errorf("Could not read test document: %v", err)
 					return
 				}
 				jsonContent, err := yaml.YAMLToJSON(content)
 				if err != nil {
-					t.Errorf("Could not convert spec to JSON: %v", err)
+					t.Errorf("Could not convert document to JSON: %v", err)
 					return
 				}
 				documentLoader := gojsonschema.NewStringLoader(string(jsonContent))
 
 				result, err := schemaVersions[test.version].Validate(documentLoader)
 				if err != nil {
-					t.Errorf("Could not perform validation of spec: %v", err)
+					t.Errorf("Could not perform validation of document: %v", err)
 				}
 
 				if test.wantErr {
 					if result.Valid() {
-						t.Error("Expected template to be invalid but it was not")
+						t.Error("Expected document to be invalid but it was not")
 						return
 					}
 					t.Logf("Document CORRECTLY found to be invalid:\n%s", makeValidationErrorReport(result.Errors()))
