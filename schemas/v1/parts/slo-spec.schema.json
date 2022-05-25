@@ -58,145 +58,144 @@
 											}
 										}
 									}
-								}
-							},
-							"then": {
-								"required": [
-									"calendar"
-								],
-								"properties": {
-									"calendar": {
-										"required": [
-											"startTime",
-											"timeZone"
-										],
-										"properties": {
-											"startTime": {
-												"type": "string",
-												"pattern": "^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]) ([01]\d|2[0-3]):[0-5]\d:[0-5]\d$"
-											},
-											"timeZone": {
-												"type": "string",
-												"pattern": "[A-Z][a-zA-Z_]+\/[A-Z][a-zA-Z_]+"
+								},
+								"then": {
+									"required": [
+										"calendar"
+									],
+									"properties": {
+										"calendar": {
+											"required": [
+												"startTime",
+												"timeZone"
+											],
+											"properties": {
+												"startTime": {
+													"type": "string",
+													"pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]) ([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$"
+												},
+												"timeZone": {
+													"type": "string",
+													"pattern": "[A-Z][a-zA-Z_]+\\/[A-Z][a-zA-Z_]+"
+												}
 											}
 										}
 									}
 								}
 							}
-						}
-					]
-				}
-			},
-			"budgetingMethod": {
-				"enum": [
-					"Occurances",
-					"Timeslices"
-				]
-			},
-			"objectives": {
-				"type": "array",
-				"items": {
-					"type": "object",
-					"required": [
-						"target"
-					],
-					"properties": {
-						"displayName": {
-							"type": "string",
-							"minLength": 1
-						},
-						"op": {
-							"enum": [
-								"lte",
-								"gte",
-								"lt",
-								"gt"
-							]
-						},
-						"value": {
-							"type": "number"
-						},
-						"target": {
-							"type": "number",
-							"minimum": 0,
-							"exclusiveMaximum": 1
-						},
-						"timeSliceTarget": {
-							"type": "number",
-							"exclusiveMinimum": 0,
-							"maximum": 1
-						},
-						"timeSliceWindow": {
-							"oneOf": [
-								{
-									"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
-								},
-								{
-									"type": "number",
-									"exclusiveMinimum": 0
-								}
-							]
-						}
-					}
-				}
-			},
-			"alertPolicies": {
-				"type": "array",
-				"items": {
-					"$ref": "https://openslo.com/schemas/v1/parts/alertpolicy.schema.json"
-				}
-			}
-		},
-		"allOf": [
-			{
-				"if": {
-					"type": "object",
-					"properties": {
-						"budgetingMethod": {
-							"const": "Timeslices"
-						}
+						]
 					}
 				},
-				"then": {
-					"properties": {
-						"objectives": {
-							"items": {
-								"type": "object",
-								"required": [
-									"timeSliceWindow",
-									"timeSliceTarget"
+				"budgetingMethod": {
+					"enum": [
+						"Occurances",
+						"Timeslices"
+					]
+				},
+				"objectives": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"target"
+						],
+						"properties": {
+							"displayName": {
+								"type": "string",
+								"minLength": 1
+							},
+							"op": {
+								"enum": [
+									"lte",
+									"gte",
+									"lt",
+									"gt"
+								]
+							},
+							"value": {
+								"type": "number"
+							},
+							"target": {
+								"type": "number",
+								"minimum": 0,
+								"exclusiveMaximum": 1
+							},
+							"timeSliceTarget": {
+								"type": "number",
+								"exclusiveMinimum": 0,
+								"maximum": 1
+							},
+							"timeSliceWindow": {
+								"oneOf": [
+									{
+										"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
+									},
+									{
+										"type": "number",
+										"exclusiveMinimum": 0
+									}
 								]
 							}
 						}
 					}
+				},
+				"alertPolicies": {
+					"type": "array",
+					"items": {
+						"$ref": "https://openslo.com/schemas/v1/parts/alertpolicy-spec.schema.json"
+					}
 				}
 			},
-			{
-				"not": {
-					"type": "object",
-					"required": [
-						"indicator",
-						"indicatorRef"
-					]
-				}
-			},
-			{
-				"oneOf": [
-					{
+			"allOf": [
+				{
+					"if": {
 						"type": "object",
-						"required": [
-							"indicator"
-						]
+						"properties": {
+							"budgetingMethod": {
+								"const": "Timeslices"
+							}
+						}
 					},
-					{
+					"then": {
+						"properties": {
+							"objectives": {
+								"items": {
+									"type": "object",
+									"required": [
+										"timeSliceWindow",
+										"timeSliceTarget"
+									]
+								}
+							}
+						}
+					}
+				},
+				{
+					"not": {
 						"type": "object",
 						"required": [
+							"indicator",
 							"indicatorRef"
 						]
 					}
-				]
-			}
-		]
+				},
+				{
+					"oneOf": [
+						{
+							"type": "object",
+							"required": [
+								"indicator"
+							]
+						},
+						{
+							"type": "object",
+							"required": [
+								"indicatorRef"
+							]
+						}
+					]
+				}
+			]
+		}
 	}
-}
 }
