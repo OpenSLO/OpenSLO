@@ -35,12 +35,11 @@ func makeValidationErrorReport(errs []gjs.ResultError) string {
 }
 
 func loadSchema(
-	version string,
+	version apiVersion,
 	sl *gjs.SchemaLoader,
 	t *testing.T,
 ) (schema *gjs.Schema, err error) {
 	schemaRoot := fmt.Sprintf("../schemas/%s", version)
-	schemas := make([]gjs.JSONLoader, 0, 64)
 
 	err = filepath.Walk(
 		schemaRoot,
@@ -54,18 +53,16 @@ func loadSchema(
 				return err
 			}
 
-			schemas = append(schemas, gjs.NewStringLoader(string(content)))
+			if err = sl.AddSchemas(gjs.NewStringLoader(string(content))); err != nil {
+				if sl.Validate {
+					t.Fatalf("Schema (%s) failed Meta-Schema Validation: %s", path, err)
+				}
+				return err
+			}
 			return nil
 		},
 	)
 	if err != nil {
-		return
-	}
-
-	if err = sl.AddSchemas(schemas...); err != nil {
-		if sl.Validate {
-			t.Fatalf("Schemas failed Meta-Schema Validation: %s", err)
-		}
 		return
 	}
 
@@ -210,6 +207,7 @@ func TestSchemas(t *testing.T) {
 	for v, _ := range schemaVersions {
 		sl := gjs.NewSchemaLoader()
 		sl.Validate = true
+		var err error
 		schemaVersions[v], err = loadSchema(v, sl, t)
 		if err != nil {
 			t.Fatalf("Failed to load schemas: %v", err)
