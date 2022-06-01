@@ -2,7 +2,7 @@
 build:
 	go build
 
-.PHONY: install/checks/spell-and-markdow
+.PHONY: install/checks/spell-and-markdown
 install/checks/spell-and-markdown:
 	yarn
 
