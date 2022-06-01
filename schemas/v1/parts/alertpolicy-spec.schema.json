@@ -77,17 +77,6 @@
 									}
 								]
 							}
-						],
-						"oneOf": [
-							{
-								"required": [
-									"conditionRef"
-								]
-							},
-							{}
-						],
-						"required": [
-							"duration"
 						]
 					}
 				},
@@ -140,17 +129,6 @@
 									}
 								]
 							}
-						],
-						"oneOf": [
-							{
-								"required": [
-									"targetRef"
-								]
-							},
-							{}
-						],
-						"required": [
-							"duration"
 						]
 					}
 				}

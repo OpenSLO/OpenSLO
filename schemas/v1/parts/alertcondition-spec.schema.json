@@ -8,7 +8,8 @@
 		"spec": {
 			"type": "object",
 			"required": [
-				"severity"
+				"severity",
+				"condition"
 			],
 			"properties": {
 				"description": {

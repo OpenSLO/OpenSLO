@@ -98,7 +98,7 @@
 						"type": "object",
 						"required": [
 							"thresholdMetric",
-							"rationMetric"
+							"ratioMetric"
 						]
 					}
 				},
@@ -113,7 +113,7 @@
 						{
 							"type": "object",
 							"required": [
-								"rationMetric"
+								"ratioMetric"
 							]
 						}
 					]

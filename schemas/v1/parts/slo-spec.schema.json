@@ -88,7 +88,7 @@
 				},
 				"budgetingMethod": {
 					"enum": [
-						"Occurances",
+						"Occurrences",
 						"Timeslices"
 					]
 				},
@@ -142,7 +142,7 @@
 				"alertPolicies": {
 					"type": "array",
 					"items": {
-						"$ref": "https://openslo.com/schemas/v1/parts/alertpolicy-spec.schema.json"
+						"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
 					}
 				}
 			},

@@ -1,7 +1,7 @@
 apiVersion: openslo/v1
 kind: AlertCondition
 metadata:
-  name: Alert Condition
+  name: alert-condition
   displayName: Alert Condition
 spec:
   severity: sev1 # required
