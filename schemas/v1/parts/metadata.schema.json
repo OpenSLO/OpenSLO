@@ -1,13 +1,14 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"$id": "https://openslo.com/schemas/v1/parts/metadata.schema.json",
-	"title": "OpenSLO: Metadata",
-	"description": "",
+	"title": "OpenSLO: Part -> Metadata",
 	"type": "object",
 	"properties": {
 		"metadata": {
 			"type": "object",
-			"required": ["name"],
+			"required": [
+				"name"
+			],
 			"properties": {
 				"name": {
 					"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
@@ -51,12 +52,6 @@
 								"pattern": "^(.{2,253}\\/)?.{1,63}$"
 							}
 						]
-					},
-					"additionalProperties": {
-						"type": "string",
-						"minLength": 1,
-						"maxLength": 63,
-						"pattern": "^[a-z0-9A-Z][a-z0-9A-Z._-]*[a-z0-9A-Z]*$"
 					}
 				}
 			}

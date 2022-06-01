@@ -2,7 +2,7 @@
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"$id": "https://openslo.com/schemas/v1/openslo.schema.json",
 	"title": "OpenSLO",
-	"description": "",
+	"description": "The goal of OpenSLO is to provide an open specification for defining SLOs to enable a common, vendor–agnostic approach to tracking and interfacing with SLOs. Platform-specific implementation details are purposefully excluded from the scope of this specification.",
 	"type": "object",
 	"allOf": [
 		{

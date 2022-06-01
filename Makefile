@@ -19,4 +19,4 @@ install/checks/schema-validation:
 
 .PHONY: run/checks/schema-validation
 run/checks/schema-validation:
-	cd schema-test && go test .
+	cd schema-test && go clean -testcache && go test .

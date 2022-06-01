@@ -1,8 +1,8 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"$id": "https://openslo.com/schemas/v1/parts/alertcondition-spec.schema.json",
-	"title": "OpenSLO: AlertCondition",
-	"description": "",
+	"title": "OpenSLO: Part -> AlertCondition Spec",
+	"description": "An Alert Condition allows you to define under which conditions an alert for an SLO needs to be triggered.",
 	"type": "object",
 	"properties": {
 		"spec": {
