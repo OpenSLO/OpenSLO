@@ -68,7 +68,7 @@ type apiVersion string
 
 const (
   v1 apiVersion = "v1"
-  v2beta apiVersion = "v2beta" # New constant.
+  v2beta apiVersion = "v2beta" // New constant.
 )
 ```
 

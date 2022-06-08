@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/xeipuuv/gojsonschema"
 	gjs "github.com/xeipuuv/gojsonschema"
 	"sigs.k8s.io/yaml"
 )
@@ -223,7 +222,7 @@ func TestSchemas(t *testing.T) {
 					t.Errorf("Could not convert document to JSON: %v", err)
 					return
 				}
-				documentLoader := gojsonschema.NewStringLoader(string(jsonContent))
+				documentLoader := gjs.NewStringLoader(string(jsonContent))
 
 				result, err := schemaVersions[test.version].Validate(documentLoader)
 				if err != nil {
