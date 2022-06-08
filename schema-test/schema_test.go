@@ -2,7 +2,6 @@ package schematest
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -47,7 +46,7 @@ func loadSchema(
 				return err
 			}
 
-			content, err := ioutil.ReadFile(path)
+			content, err := os.ReadFile(path)
 			if err != nil {
 				return err
 			}
@@ -212,7 +211,7 @@ func TestSchemas(t *testing.T) {
 		for _, file := range test.files {
 			filePath := fmt.Sprintf("%s%s/%s", testSpecsPath, test.version, file)
 			t.Run(fmt.Sprintf("%s [%s]", test.name, filePath), func(t *testing.T) {
-				content, err := ioutil.ReadFile(filePath)
+				content, err := os.ReadFile(filePath)
 				if err != nil {
 					t.Errorf("Could not read test document: %v", err)
 					return
