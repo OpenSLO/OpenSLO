@@ -1,0 +1,201 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "https://openslo.com/schemas/v1/parts/slo-spec.schema.json",
+	"title": "OpenSLO: Part -> SLO Spec",
+	"description": "A service level objective (SLO) is a target value or a range of values for a service level that is described by a service level indicator (SLI).",
+	"type": "object",
+	"properties": {
+		"spec": {
+			"type": "object",
+			"required": [
+				"service",
+				"budgetingMethod",
+				"objectives"
+			],
+			"properties": {
+				"description": {
+					"$ref": "https://openslo.com/schemas/v1/parts/description.schema.json"
+				},
+				"service": {
+					"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
+				},
+				"indicator": {
+					"allOf": [
+						{
+							"$ref": "https://openslo.com/schemas/v1/parts/metadata.schema.json"
+						},
+						{
+							"$ref": "https://openslo.com/schemas/v1/parts/sli-spec.schema.json"
+						}
+					]
+				},
+				"indicatorRef": {
+					"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
+				},
+				"timeWindow": {
+					"type": "array",
+					"maxItems": 1,
+					"items": {
+						"type": "object",
+						"required": [
+							"duration"
+						],
+						"allOf": [
+							{
+								"properties": {
+									"duration": {
+										"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
+									}
+								}
+							},
+							{
+								"if": {
+									"not": {
+										"type": "object",
+										"properties": {
+											"isRolling": {
+												"const": true
+											}
+										}
+									}
+								},
+								"then": {
+									"required": [
+										"calendar"
+									],
+									"properties": {
+										"calendar": {
+											"required": [
+												"startTime",
+												"timeZone"
+											],
+											"properties": {
+												"startTime": {
+													"type": "string",
+													"pattern": "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]) ([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$"
+												},
+												"timeZone": {
+													"type": "string",
+													"pattern": "[A-Z][a-zA-Z_]+\\/[A-Z][a-zA-Z_]+"
+												}
+											}
+										}
+									}
+								}
+							}
+						]
+					}
+				},
+				"budgetingMethod": {
+					"enum": [
+						"Occurrences",
+						"Timeslices"
+					]
+				},
+				"objectives": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"target"
+						],
+						"properties": {
+							"displayName": {
+								"type": "string",
+								"minLength": 1
+							},
+							"op": {
+								"enum": [
+									"lte",
+									"gte",
+									"lt",
+									"gt"
+								]
+							},
+							"value": {
+								"type": "number"
+							},
+							"target": {
+								"type": "number",
+								"minimum": 0,
+								"exclusiveMaximum": 1
+							},
+							"timeSliceTarget": {
+								"type": "number",
+								"exclusiveMinimum": 0,
+								"maximum": 1
+							},
+							"timeSliceWindow": {
+								"oneOf": [
+									{
+										"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
+									},
+									{
+										"type": "number",
+										"exclusiveMinimum": 0
+									}
+								]
+							}
+						}
+					}
+				},
+				"alertPolicies": {
+					"type": "array",
+					"items": {
+						"$ref": "https://openslo.com/schemas/v1/parts/name.schema.json"
+					}
+				}
+			},
+			"allOf": [
+				{
+					"if": {
+						"type": "object",
+						"properties": {
+							"budgetingMethod": {
+								"const": "Timeslices"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"objectives": {
+								"items": {
+									"type": "object",
+									"required": [
+										"timeSliceWindow",
+										"timeSliceTarget"
+									]
+								}
+							}
+						}
+					}
+				},
+				{
+					"not": {
+						"type": "object",
+						"required": [
+							"indicator",
+							"indicatorRef"
+						]
+					}
+				},
+				{
+					"oneOf": [
+						{
+							"type": "object",
+							"required": [
+								"indicator"
+							]
+						},
+						{
+							"type": "object",
+							"required": [
+								"indicatorRef"
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+}
