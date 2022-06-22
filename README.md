@@ -210,7 +210,7 @@ spec:
       isRolling: false # if omitted assumed `false` if `calendar:` is present
   budgetingMethod: Occurrences | Timeslices
   objectives: # see objectives below for details
-  alertPolicies: # see alert policies below details
+  alertPolicies: # see alert policies below for details
 ```
 
 ##### Notes (SLO)
@@ -237,8 +237,10 @@ spec:
   section. If `thresholdMetric` has been defined, only one Threshold can be defined.
   However if using `ratioMetric` then any number of Thresholds can be defined.
 
-- **alertPolicies\[ \]** *AlertPolicy*, optional field, described in [Alert Policies](#alertpolicy)
-  section.
+- **alertPolicies\[ \]** *AlertPolicy*, optional field.
+  section. An alert policy can be defined inline or can refer to an [Alert Policies](#alertpolicy) object,
+  in which case the following are required:
+  - **alertPolicyRef** *string*: this is the name or path to the AlertPolicy
 
 ##### Objectives
 
