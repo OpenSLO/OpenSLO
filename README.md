@@ -193,7 +193,7 @@ metadata:
   displayName: string # optional
 spec:
   description: string # optional up to 1050 characters
-  service: string # name of the service to associate this SLO with, refers to existing object Kind: Service
+  service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
   indicator: # see SLI below for details
   indicatorRef: string # name of the SLI. Required if indicator is not given.
   timeWindow:
@@ -694,7 +694,7 @@ spec:
 
 #### Service
 
-A Service is a high-level grouping of SLO. It has to be defined before creating SLO to be able to refer to it in SLO's `spec.service`.
+A Service is a high-level grouping of SLO. It may be defined before creating SLO to be able to refer to it in SLO's `spec.service`.
 Multiple SLOs can refer to the same Service.
 
 ```yaml
