@@ -280,9 +280,9 @@ objectives:
   method is set to TimeSlices
 
 - **timeSliceWindow** *(numeric | duration-shorthand)*, required only when budgeting
-  method is set to TimeSlices. Denotes the size of timeslice for which data will be
+  method is set to TimeSlices. Denotes the size of a time slice for which data will be
   evaluated e.g. 5, 1m, 10m, 2h, 1d. Also ascertains the frequency at which to run the
-  queries. Default interpretation of unit if specified as a number is minutes.
+  queries. Default interpretation of unit if specified as a number in minutes.
 
 ---
 
