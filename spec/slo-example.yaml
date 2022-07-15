@@ -1,0 +1,15 @@
+apiVersion: openslo/v1alpha1
+kind: SLO
+metadata:
+  name: "a_name"
+  displayName: "a display name"
+spec:
+  service: "name"
+  description: "1234567890"
+  timeWindow:
+    unit: "Day"
+    count: numeric
+    isRolling: true
+    calendar:
+      startTime: "2009-11-10T23:00:00Z"
+  budgetingMethod: Occurrences
