@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"$id": "https://openslo.com/schemas/v1/parts/name.schema.json",
-	"title": "OpenSLO: Part -> Name",
+	"title": "Type: Name",
 	"type": "string",
 	"minLength": 1,
 	"maxLength": 255,

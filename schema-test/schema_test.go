@@ -42,7 +42,7 @@ func loadSchema(
 	err = filepath.Walk(
 		schemaRoot,
 		func(path string, info os.FileInfo, err error) error {
-			if err != nil || info.IsDir() {
+			if err != nil || info.IsDir() || !strings.HasSuffix(info.Name(), ".schema.json") {
 				return err
 			}
 

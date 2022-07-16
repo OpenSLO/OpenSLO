@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"$id": "https://openslo.com/schemas/v1/parts/metadata.schema.json",
-	"title": "OpenSLO: Part -> Metadata",
+	"title": "Metadata",
 	"type": "object",
 	"properties": {
 		"metadata": {
@@ -30,7 +30,7 @@
 							},
 							{
 								"type": "array",
-								"additionalItems": {
+								"items": {
 									"type": "string",
 									"minLength": 1,
 									"maxLength": 63,
@@ -52,7 +52,10 @@
 								"pattern": "^(.{2,253}\\/)?.{1,63}$"
 							}
 						]
-					}
+					},
+					"additionalProperties": {
+            "type": "string"
+          }
 				}
 			}
 		}

@@ -1,8 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
-	"$id": "https://openslo.com/schemas/v1/parts/general.schema.json",
-	"title": "OpenSLO: Part -> General Schema",
-	"description": "The OpenSLO General Schema lays out the basic structure of an OpenSLO document.",
+	"$id": "https://openslo.com/schemas/v1/parts/header.schema.json",
+	"title": "Header",
 	"type": "object",
 	"required": [
 		"apiVersion",
@@ -15,6 +14,7 @@
 			"properties": {
 				"apiVersion": {
 					"const": "openslo/v1",
+					"type": "string",
 					"description": "The version of specification format for this particular entity that this is written against."
 				},
 				"kind": {
@@ -26,7 +26,8 @@
 						"Service",
 						"SLI",
 						"SLO"
-					]
+					],
+					"type": "string"
 				},
 				"spec": {
 					"type": "object"

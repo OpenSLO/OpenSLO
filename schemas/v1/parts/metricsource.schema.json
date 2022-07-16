@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema",
 	"$id": "https://openslo.com/schemas/v1/parts/metricsource.schema.json",
-	"title": "OpenSLO: Part -> MetricSource",
+	"title": "MetricSource",
 	"type": "object",
 	"required": [
 		"spec"
