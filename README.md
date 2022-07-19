@@ -252,7 +252,8 @@ objectives:
   - displayName: string # optional
     op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
     value: numeric # optional, value used to compare threshold metrics. Only needed when using a thresholdMetric
-    target: numeric [0.0, 1.0) # budget target for given objective of the SLO
+    target: numeric [0.0, 1.0) # budget target for given objective of the SLO, can't be used with targetPercent
+    targetPercent: numeric [0.0, 100) # budget target for given objective of the SLO, can't be used with target
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices
 ```
@@ -263,6 +264,8 @@ Example:
 objectives:
   - displayName: Foo Total Errors
     target: 0.98
+  - displayName: Bar Total Errors
+    targetPercent: 99.99
 ```
 
 ###### Notes (Objectives)
@@ -273,8 +276,15 @@ objectives:
 - **value** *numeric*, required field, used to compare values gathered from
   metric source. Only needed when using a `thresholdMetric`.
 
-- **target** *numeric [0.0, 1.0)*, required, budget target for given objective
-  of the SLO
+Either `target` or `targetPercent` must be used.
+
+- **target** *numeric [0.0, 1.0)*, optional, but either this or `targetPercent` must
+  be used. Budget target for a given objective of the SLO. A `target: 0.9995` is
+  equivalent to `targetPercent: 99.95`.
+
+- **targetPercent**: *numeric [0.0, 100)*, optional, but either this or `target` must
+  be used. Budget target for a given objective of the SLO. A `targetPercent: 99.95`
+  is equivalent to `target: 0.9995`.
 
 - **timeSliceTarget** *numeric [0.0, 1.0]*, required only when budgeting
   method is set to TimeSlices
