@@ -6,114 +6,86 @@
 	"type": "object",
 	"allOf": [
 		{
-			"$ref": "https://openslo.com/schemas/v1/parts/general.schema.json"
+			"$ref": "https://openslo.com/schemas/v1/parts/header.schema.json"
 		},
 		{
 			"oneOf": [
 				{
-					"allOf": [
-						{
-							"type": "object",
-							"properties": {
-								"kind": {
-									"const": "AlertCondition"
-								}
-							}
+					"type": "object",
+					"properties": {
+						"kind": {
+							"const": "AlertCondition"
 						},
-						{
-							"$ref": "https://openslo.com/schemas/v1/parts/alertcondition-spec.schema.json"
+						"spec": {
+							"$ref": "https://openslo.com/schemas/v1/parts/specs/alertcondition-spec.schema.json"
 						}
-					]
+					}
 				},
 				{
-					"allOf": [
-						{
-							"type": "object",
-							"properties": {
-								"kind": {
-									"const": "AlertNotificationTarget"
-								}
-							}
+					"type": "object",
+					"properties": {
+						"kind": {
+							"const": "AlertNotificationTarget"
 						},
-						{
-							"$ref": "https://openslo.com/schemas/v1/parts/alertnotificationtarget-spec.schema.json"
+						"spec": {
+							"$ref": "https://openslo.com/schemas/v1/parts/specs/alertnotificationtarget-spec.schema.json"
 						}
-					]
+					}
 				},
 				{
-					"allOf": [
-						{
-							"type": "object",
-							"properties": {
-								"kind": {
-									"const": "AlertPolicy"
-								}
-							}
+					"type": "object",
+					"properties": {
+						"kind": {
+							"const": "AlertPolicy"
 						},
-						{
-							"$ref": "https://openslo.com/schemas/v1/parts/alertpolicy-spec.schema.json"
+						"spec": {
+							"$ref": "https://openslo.com/schemas/v1/parts/specs/alertpolicy-spec.schema.json"
 						}
-					]
+					}
 				},
 				{
-					"allOf": [
-						{
-							"type": "object",
-							"properties": {
-								"kind": {
-									"const": "DataSource"
-								}
-							}
+					"type": "object",
+					"properties": {
+						"kind": {
+							"const": "DataSource"
 						},
-						{
-							"$ref": "https://openslo.com/schemas/v1/parts/datasource-spec.schema.json"
+						"spec": {
+							"$ref": "https://openslo.com/schemas/v1/parts/specs/datasource-spec.schema.json"
 						}
-					]
+					}
 				},
 				{
-					"allOf": [
-						{
-							"type": "object",
-							"properties": {
-								"kind": {
-									"const": "Service"
-								}
-							}
+					"type": "object",
+					"properties": {
+						"kind": {
+							"const": "Service"
 						},
-						{
-							"$ref": "https://openslo.com/schemas/v1/parts/service-spec.schema.json"
+						"spec": {
+							"$ref": "https://openslo.com/schemas/v1/parts/specs/service-spec.schema.json"
 						}
-					]
+					}
 				},
 				{
-					"allOf": [
-						{
-							"type": "object",
-							"properties": {
-								"kind": {
-									"const": "SLI"
-								}
-							}
+					"type": "object",
+					"properties": {
+						"kind": {
+							"const": "SLI"
 						},
-						{
-							"$ref": "https://openslo.com/schemas/v1/parts/sli-spec.schema.json"
+						"spec": {
+							"$ref": "https://openslo.com/schemas/v1/parts/specs/sli-spec.schema.json"
 						}
-					]
+					}
 				},
 				{
-					"allOf": [
-						{
-							"type": "object",
-							"properties": {
-								"kind": {
-									"const": "SLO"
-								}
-							}
+					"type": "object",
+					"properties": {
+						"kind": {
+							"const": "SLO"
 						},
-						{
-							"$ref": "https://openslo.com/schemas/v1/parts/slo-spec.schema.json"
+						"spec": {
+							"$ref": "https://openslo.com/schemas/v1/parts/specs/slo-spec.schema.json"
 						}
-					]
+					}
 				}
 			]
 		}

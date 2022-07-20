@@ -20,3 +20,7 @@ install/checks/schema-validation:
 .PHONY: run/checks/schema-validation
 run/checks/schema-validation:
 	cd schema-test && go clean -testcache && go test .
+
+.PHONY: gen/v1/go
+gen/v1/go:
+	cd schemas/v1 && quicktype -l go -t OpenSLO -o openslo.go --package v1 --just-types-and-package -s schema openslo.schema.json $$(find kinds -name '*.schema.json' | xargs -I {} echo -n ' -S {}')  $$(find parts -name '*.schema.json' | xargs -I {} echo -n ' -S {}')

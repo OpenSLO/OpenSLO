@@ -1,0 +1,55 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "https://openslo.com/schemas/v1/parts/specs/alertcondition-spec.schema.json",
+	"title": "Spec: AlertCondition",
+	"description": "An Alert Condition allows you to define under which conditions an alert for an SLO needs to be triggered.",
+	"type": "object",
+	"required": [
+		"severity",
+		"condition"
+	],
+	"properties": {
+		"description": {
+			"$ref": "https://openslo.com/schemas/v1/parts/description.schema.json"
+		},
+		"severity": {
+			"type": "string"
+		},
+		"condition": {
+			"title": "AC: Condition",
+			"type": "object",
+			"properties": {
+				"kind": {
+					"enum": [
+						"burnrate"
+					]
+				},
+				"threshold": {
+					"type": "number"
+				},
+				"lookbackWindow": {
+					"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
+				},
+				"alertAfter": {
+					"$ref": "https://openslo.com/schemas/v1/parts/duration-shorthand.schema.json"
+				}
+			},
+			"if": {
+				"type": "object",
+				"properties": {
+					"kind": {
+						"const": "burnrate"
+					}
+				}
+			},
+			"then": {
+				"type": "object",
+				"required": [
+					"threshold",
+					"lookbackWindow",
+					"alertAfter"
+				]
+			}
+		}
+	}
+}
