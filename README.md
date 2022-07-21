@@ -308,6 +308,10 @@ spec:
   ratioMetric: # either thresholdMetric or ratioMetric must be provided
     counter: true | false # true if the metric is a monotonically increasing counter,
                           # or false, if it is a single number that can arbitrarily go up or down
+                          # ignored when using "raw"
+    type: success | failure # required with "raw", indicates how the stored ratio was calculated:
+                            #  success – good/total
+                            #  failure – bad/total
     good: # the numerator, either "good" or "bad" must be provided
       metricSource:
         metricSourceRef: string # optional
@@ -321,6 +325,12 @@ spec:
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
     total: # the denominator, required
+      metricSource:
+        metricSourceRef: string # optional
+        type: string # optional
+        spec:
+          # arbitrary chosen fields for every data source type to make it comfortable to use.
+    raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
       metricSource:
         metricSourceRef: string # optional
         type: string # optional
