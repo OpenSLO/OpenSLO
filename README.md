@@ -208,7 +208,7 @@ spec:
         startTime: 2020-01-21 12:30:00 # date with time in 24h format, format without time zone
         timeZone: America/New_York # name as in IANA Time Zone Database
       isRolling: false # if omitted assumed `false` if `calendar:` is present
-  budgetingMethod: Occurrences | Timeslices
+  budgetingMethod: Occurrences | Timeslices | RatioTimeslices
   objectives: # see objectives below for details
   alertPolicies: # see alert policies below for details
 ```
@@ -229,9 +229,10 @@ spec:
 
 - **description** *string* optional field, contains at most 1050 characters
 
-- **budgetingMethod** *enum(Occurrences \| Timeslices)*, required field
+- **budgetingMethod** *enum(Occurrences \| Timeslices \| RatioTimeslices)*, required field
   - Occurrences method uses a ratio of counts of good events to the total count of the events.
-  - Timeslices method uses a ratio of good time slices vs. total time slices in a budgeting period.
+  - Timeslices method uses a ratio of good time slices to total time slices in a budgeting period.
+  - RatioTimeslices method uses an average of all time slices' success ratios in a budgeting period.
 
 - **objectives[ ]** *Threshold*, required field, described in [Objectives](#objectives)
   section. If `thresholdMetric` has been defined, only one Threshold can be defined.
@@ -255,7 +256,7 @@ objectives:
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO, can't be used with targetPercent
     targetPercent: numeric [0.0, 100) # budget target for given objective of the SLO, can't be used with target
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
-    timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices
+    timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
 ```
 
 Example:
@@ -290,9 +291,10 @@ Either `target` or `targetPercent` must be used.
   method is set to TimeSlices
 
 - **timeSliceWindow** *(numeric | duration-shorthand)*, required only when budgeting
-  method is set to TimeSlices. Denotes the size of a time slice for which data will be
-  evaluated e.g. 5, 1m, 10m, 2h, 1d. Also ascertains the frequency at which to run the
-  queries. Default interpretation of unit if specified as a number in minutes.
+  method is set to TimeSlices or RatioTimeslices. Denotes the size of a time slice for
+  which data will be evaluated e.g. 5, 1m, 10m, 2h, 1d. Also ascertains the frequency
+  at which to run the queries. Default interpretation of unit if specified as a number
+  in minutes.
 
 ---
 
