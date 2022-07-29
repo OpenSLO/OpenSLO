@@ -350,13 +350,16 @@ Either `ratioMetric` or `thresholdMetric` must be used.
 
 - **ratioMetric** *Metric {good, total} or {bad, total}*.
 
+  - **counter** *enum(true \| false)*, specifies whether the metric is a monotonically
+   increasing counter. Has no effect when using a `raw` query.
+
   - **good** represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
-   values to find good values. If `Bad` is defined then `Good` must not be set.
+   values to find good values. If `bad` is defined then `good` must not be set.
 
   - **bad** represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
-   values to find bad values. If `Good` is defined then `Bad` must not be set.
+   values to find bad values. If `good` is defined then `bad` must not be set.
 
   - **total** represents the query used for gathering data from metric sources
    that is used as the denominator. Received data is used to compare objectives
