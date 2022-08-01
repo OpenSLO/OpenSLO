@@ -318,19 +318,30 @@ spec:
   ratioMetric: # either thresholdMetric or ratioMetric must be provided
     counter: true | false # true if the metric is a monotonically increasing counter,
                           # or false, if it is a single number that can arbitrarily go up or down
-    good: # the numerator, either "good" or "bad" must be provided
+                          # ignored when using "raw"
+    good: # the numerator, either "good" or "bad" must be provided if "total" is used
       metricSource:
         metricSourceRef: string # optional
         type: string # optional
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
-    bad: # the numerator, either "good" or "bad" must be provided
+    bad: # the numerator, either "good" or "bad" must be provided if "total" is used
       metricSource:
         metricSourceRef: string # optional
         type: string # optional
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
-    total: # the denominator, required
+    total: # the denominator used with either "good" or "bad", either this or "raw" must be used
+      metricSource:
+        metricSourceRef: string # optional
+        type: string # optional
+        spec:
+          # arbitrary chosen fields for every data source type to make it comfortable to use.
+
+    rawType: success | failure # required with "raw", indicates how the stored ratio was calculated:
+                               #  success – good/total
+                               #  failure – bad/total
+    raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
       metricSource:
         metricSourceRef: string # optional
         type: string # optional
@@ -348,19 +359,30 @@ Either `ratioMetric` or `thresholdMetric` must be used.
   gathering data from metric sources. Raw data is used to compare objectives
   (threshold) values.
 
-- **ratioMetric** *Metric {good, total} or {bad, total}*.
+- **ratioMetric** *Metric {good, total}, {bad, total} or raw*.
+
+  - **counter** *enum(true \| false)*, specifies whether the metric is a monotonically
+   increasing counter. Has no effect when using a `raw` query.
 
   - **good** represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
-   values to find good values. If `Bad` is defined then `Good` must not be set.
+   values to find good values. If `bad` is defined then `good` must not be set.
 
   - **bad** represents the query used for gathering data from metric sources used
    as the numerator. Received data is used to compare objectives (threshold)
-   values to find bad values. If `Good` is defined then `Bad` must not be set.
+   values to find bad values. If `good` is defined then `bad` must not be set.
 
   - **total** represents the query used for gathering data from metric sources
    that is used as the denominator. Received data is used to compare objectives
    (threshold) values to find total number of metrics.
+
+  - **rawType** *enum(success \| failure)*, required when using `raw`, specifies
+   whether the ratios represented by the "raw" ratio metric are of successes or failures.
+   Not to be used with `good` and `bad` as picking one of those determines the type of
+   ratio.
+
+  - **raw** represents the query used for gathering already precomputed ratios.
+   The type of ratio (*success* or *failure*) is specified using `rawType`.
 
 An example of an SLO where SLI is inlined:
 
