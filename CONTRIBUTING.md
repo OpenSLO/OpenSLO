@@ -11,7 +11,7 @@ We encourage and welcome any and all feedback from the community.
 
 ## Slack
 
-Email ian@nobl9.com to get an invite to our slack channel
+Use the button `Join our Slack` from the official website [openslo.com](https://openslo.com/).
 
 ## Making a pull request
 

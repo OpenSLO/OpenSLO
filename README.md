@@ -43,6 +43,8 @@ specification is not controlled by a single company or individual or by a group
 with discriminatory membership criteria.  Additionally, this specification is
 designed to be extended where needed to meet the needs of the implementation.
 
+Before making a contribute please read our [contribution guideline](https://github.com/OpenSLO/OpenSLO/blob/main/CONTRIBUTING.md).
+
 ## Specification
 
 ### Goals
