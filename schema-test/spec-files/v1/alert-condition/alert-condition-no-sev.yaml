@@ -2,11 +2,12 @@ apiVersion: openslo/v1
 kind: AlertCondition
 metadata:
   name: alert-condition
-  displayName: Alert Condition
+  displayName: Alert Condition # optional
 spec:
-  description: A great description # optional
-  condition:
+  description: A great description # optional up to 1050 characters
+  condition: # required
     kind: burnrate
+    op: lte
     threshold: 24
     lookbackWindow: 15m
     alertAfter: 3m
