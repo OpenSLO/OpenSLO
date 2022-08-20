@@ -273,8 +273,7 @@ objectives:
 
 ###### Notes (Objectives)
 
-- **op** *enum(lte | gte | lt | gt)*, operator used to compare the SLI against
-  the value. Only needed when using a `thresholdMetric`
+- **op** *enum( lte | gte | lt | gt )*, operator used to compare the SLI against the value. Only needed when using a `thresholdMetric`
 
 - **value** *numeric*, required field, used to compare values gathered from
   metric source. Only needed when using a `thresholdMetric`.
@@ -632,10 +631,10 @@ spec:
 - **severity** *string*, required field describing the severity level of the alert (ex. "sev1", "page", etc.)
 - **condition**, required field. Defines the conditions of the alert
   - **kind** *enum(burnrate)* the kind of alerting condition thats checked, defaults to `burnrate`
-  
+
 If the kind is `burnrate` the following fields are required:
 
-- **op** *enum(lte | gte | lt | gt)*, required field, the conditional operator used to compare against the threshold 
+- **op** *enum(lte | gte | lt | gt)*, required field, the conditional operator used to compare against the threshold
 - **threshold** *number*, required field, the threshold that you want alert on
 - **lookbackWindow** *duration-shorthand*, required field, the time-frame for which to calculate the threshold e.g. `5m`
 - **alertAfter** *duration-shorthand*: required field, the duration the condition needs to be valid for before alerting, defaults to `0m`
