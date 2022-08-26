@@ -4,5 +4,5 @@ metadata:
   name: alert-condition
   displayName: Alert Condition
 spec:
-  description: A great description # optional
+  description: A great description # optional up to 1050 characters
   severity: sev1 # required

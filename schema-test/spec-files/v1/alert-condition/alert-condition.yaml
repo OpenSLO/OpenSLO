@@ -4,10 +4,11 @@ metadata:
   name: alert-condition
   displayName: Alert Condition
 spec:
-  description: A great description # optional
+  description: A great description # optional up to 1050 characters
   severity: sev1 # required
-  condition: # optional
+  condition: # required
     kind: burnrate
+    op: lte
     threshold: 24
     lookbackWindow: 15m
     alertAfter: 3m

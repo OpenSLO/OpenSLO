@@ -26,6 +26,14 @@
 								"burnrate"
 							]
 						},
+						"op": {
+							"enum": [
+								"lte",
+								"gte",
+								"lt",
+								"gt"
+							]
+						},
 						"threshold": {
 							"type": "number"
 						},
@@ -47,6 +55,7 @@
 					"then": {
 						"type": "object",
 						"required": [
+							"op",
 							"threshold",
 							"lookbackWindow",
 							"alertAfter"

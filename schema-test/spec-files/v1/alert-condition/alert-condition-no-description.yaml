@@ -5,8 +5,9 @@ metadata:
   displayName: Alert Condition
 spec:
   severity: sev1 # required
-  condition: # optional
+  condition: # required
     kind: burnrate
+    op: lte
     threshold: 24
     lookbackWindow: 15m
     alertAfter: 3m
