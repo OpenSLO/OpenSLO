@@ -36,11 +36,11 @@ to enable a common, vendor–agnostic approach to tracking and interfacing with
 SLOs. Platform-specific implementation details are purposefully excluded from
 the scope of this specification.
 
-OpenSLO is an open specification-i.e., it is a specification created and
+OpenSLO is an open specification i.e., it is a specification created and
 controlled, in an open and fair process, by an association or a standardization
 body intending to achieve interoperability and interchangeability. An open
 specification is not controlled by a single company or individual or by a group
-with discriminatory membership criteria.  Additionally, this specification is
+with discriminatory membership criteria. Additionally, this specification is
 designed to be extended where needed to meet the needs of the implementation.
 
 Before making a contribute please read our [contribution guideline](https://github.com/OpenSLO/OpenSLO/blob/main/CONTRIBUTING.md).
@@ -49,7 +49,7 @@ Before making a contribute please read our [contribution guideline](https://gith
 
 ### Goals
 
-- Compliance with the Kubernetes YAML format.
+- Compliance with the Kubernetes YAML format
 - Vendor-agnostic
 - Be flexible enough to be extended elsewhere
 
@@ -451,7 +451,7 @@ If we have 1 error out of a total of 100 requests, the calculated value for
 the indicator would be: `(100 - 1 )  = 0.99`. This represents 99% on a 0-100 scale
 using the formula `0.99 * 100 = 99`.
 
-> 💡 **Note:** : As you can see for both query combinations we end up with the same calculated
+> 💡 **Note:** As you can see for both query combinations we end up with the same calculated
 > value for the service level indicator.
 
 The required `spec` key will be used to pass extraneous data to the data source. The goal of this approach
@@ -549,7 +549,7 @@ spec:
   object, in which case the following are required:
   - **targetRef** *string*: this is the name or path to the AlertNotificationTarget
 
-> 💡 **Note:**: The `conditions` field is of the type `array` of *AlertCondition*
+> 💡 **Note:** The `conditions` field is of the type `array` of *AlertCondition*
 > but only allows one single condition to be defined.
 > The use of an array is for future-proofing purposes.
 
@@ -650,7 +650,7 @@ no value for the burn rate, for example, due to the service level indicators
 missing data (e.g. no time series being returned) and the `alertWhenNoData`
 is set  to `true` the alert will be triggered.
 
-> 💡 **Note:**: The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
+> 💡 **Note:** The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
 > if you want an alert to trigger whenever at least one of these conditions is true.
 
 ---
@@ -722,7 +722,7 @@ spec:
 - **target** *string*, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
 - **description** *string*, optional description about the notification target, contains at most 1050 characters
 
-> 💡 **Note:**: The way the alert notification targets are is an implementation detail of the
+> 💡 **Note:** The way the alert notification targets are is an implementation detail of the
 > system that consumes the OpenSLO specification.
 >
 > For example, if the OpenSLO is consumed by a solution that generates Prometheus recording rules,
