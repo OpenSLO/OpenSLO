@@ -157,10 +157,9 @@ metadata:
   displayName: string # optional
 spec:
   description: string # optional up to 1050 characters
-  type: string # predefined type e.g. Prometheus, Datadog, etc.
-  connectionDetails:
-    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-    # everything that is valid YAML can be put here
+  <<dataSourceName>>: # e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+      # everything that is valid YAML can be put here
 
 ```
 
@@ -180,10 +179,8 @@ apiVersion: openslo/v1
 kind: DataSource
 metadata:
   name: string
-  displayName: string # optional
 spec:
-  type: CloudWatch
-  connectionDetails:
+  cloudWatch:
     accessKeyID: accessKey
     secretAccessKey: secretAccessKey
 ```
@@ -193,7 +190,7 @@ spec:
 #### SLO
 
 A service level objective (SLO) is a target value or a range of values for
-a service level that is described by a service level indicator (SLI).
+a service level that is described by a Service Level Indicator (SLI).
 
 ```yaml
 apiVersion: openslo/v1
@@ -204,8 +201,8 @@ metadata:
 spec:
   description: string # optional up to 1050 characters
   service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
-  indicator: # see SLI below for details
-  indicatorRef: string # name of the SLI. Required if indicator is not given.
+  sli: # see SLI below for details
+  sliRef: string # name of the SLI, required if indicator is not given and you want to reference to existing SLI
   timeWindow:
     # exactly one item; one of possible: rolling or calendar–aligned time window
     ## rolling time window
@@ -225,11 +222,11 @@ spec:
 
 ##### Notes (SLO)
 
-- **indicator** optional, represents the Service Level Indicator (SLI),
+- **sli** optional, represents the Service Level Indicator (SLI),
   described in [SLI](#sli) section.
-  One of `indicator` or `indicatorRef` must be given.
-- **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
-  One of `indicator` or `indicatorRef` must be given.
+  One of `sli` or `sliRef` must be given.
+- **sliRef** optional, this is the name of Service Level Indicator (SLI).
+  One of `sli` or `sliRef` must be given.
 - **timeWindow[ ]** optional, *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
   - Rolling time window. Duration should be provided in shorthand format
@@ -320,44 +317,58 @@ metadata:
 spec:
   description: string # optional up to 1050 characters
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
-    metricSource:
-      metricSourceRef: string # optional, this field can be used to refer to DataSource object
-      type: string # optional, this field describes predefined metric source type e.g. Prometheus, Datadog, etc.
-      spec:
-        # arbitrary chosen fields for every data source type to make it comfortable to use
-        # anything that is valid YAML can be put here.
+    # either dataSourceRef or <<dataSourceName>> must be provided
+    dataSourceRef: string # refer to already defined DataSource object
+    <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+      # everything that is valid YAML can be put here
+    spec:
+      # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+      # anything that is valid YAML can be put here.
   ratioMetric: # either thresholdMetric or ratioMetric must be provided
     counter: true | false # true if the metric is a monotonically increasing counter,
                           # or false, if it is a single number that can arbitrarily go up or down
                           # ignored when using "raw"
     good: # the numerator, either "good" or "bad" must be provided if "total" is used
-      metricSource:
-        metricSourceRef: string # optional
-        type: string # optional
-        spec:
-          # arbitrary chosen fields for every data source type to make it comfortable to use.
+      # either dataSourceRef or <<dataSourceName>> must be provided
+      dataSourceRef: string # refer to already defined DataSource object
+      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+        # everything that is valid YAML can be put here
+      spec:
+        # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+        # anything that is valid YAML can be put here.
     bad: # the numerator, either "good" or "bad" must be provided if "total" is used
-      metricSource:
-        metricSourceRef: string # optional
-        type: string # optional
-        spec:
-          # arbitrary chosen fields for every data source type to make it comfortable to use.
+      # either dataSourceRef or <<dataSourceName>> must be provided
+      dataSourceRef: string # refer to already defined DataSource object
+      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+        # everything that is valid YAML can be put here
+      spec:
+        # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+        # anything that is valid YAML can be put here
     total: # the denominator used with either "good" or "bad", either this or "raw" must be used
-      metricSource:
-        metricSourceRef: string # optional
-        type: string # optional
-        spec:
-          # arbitrary chosen fields for every data source type to make it comfortable to use.
+      # either dataSourceRef or <<dataSourceName>> must be provided
+      dataSourceRef: string # refer to already defined DataSource object
+      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+        # everything that is valid YAML can be put here
+      spec:
+        # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+        # anything that is valid YAML can be put here
 
     rawType: success | failure # required with "raw", indicates how the stored ratio was calculated:
                                #  success – good/total
                                #  failure – bad/total
     raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
-      metricSource:
-        metricSourceRef: string # optional
-        type: string # optional
-        spec:
-          # arbitrary chosen fields for every data source type to make it comfortable to use.
+      # either dataSourceRef or <<dataSourceName>> must be provided
+      dataSourceRef: string # refer to already defined DataSource object
+      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+        # everything that is valid YAML can be put here
+      spec:
+        # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+        # anything that is valid YAML can be put here
 ```
 
 ##### Notes (SLI)
@@ -413,17 +424,13 @@ spec:
       ratioMetric:
         counter: true
         good:
-          metricSource:
-            metricSourceRef: datadog-datasource
-            type: Datadog
-            spec:
-              query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
+          dataSourceRef: datadog-datasource
+          spec:
+            query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
         total:
-          metricSource:
-            metricSourceRef: datadog-datasource
-            type: Datadog
-            spec:
-              query: sum:trace.http.request.hits.by_http_status{*}.as_count()
+          dataSourceRef: datadog-datasource
+          spec:
+            query: sum:trace.http.request.hits.by_http_status{*}.as_count()
   objectives:
     - displayName: Foo Total Errors
       target: 0.98
@@ -456,7 +463,7 @@ indicatorValue = ( total - bad ) / total
 ```
 
 If we have 1 error out of a total of 100 requests, the calculated value for
-the indicator would be: `(100 - 1 )  = 0.99`. This represents 99% on a 0-100 scale
+the indicator would be: `(100 - 1) = 0.99`. This represents 99% on a 0-100 scale
 using the formula `0.99 * 100 = 99`.
 
 > 💡 **Note:** As you can see for both query combinations we end up with the same calculated
@@ -472,50 +479,40 @@ An example of **ratioMetric**:
 ratioMetric:
   counter: true
   good:
-    metricSource:
-      type: Prometheus
-      metricSourceRef: prometheus-datasource
-      spec:
-        query: sum(localhost_server_requests{code=~"2xx|3xx",host="*",instance="127.0.0.1:9090"})
+    dataSourceRef: prometheus-datasource
+    spec:
+      query: sum(localhost_server_requests{code=~"2xx|3xx",host="*",instance="127.0.0.1:9090"})
   total:
-    metricSource:
-      type: Prometheus
-      metricSourceRef: prometheus-datasource
-      spec:
-        query: localhost_server_requests{code="total",host="*",instance="127.0.0.1:9090"}
+    dataSourceRef: prometheus-datasource
+    spec:
+      query: localhost_server_requests{code="total",host="*",instance="127.0.0.1:9090"}
 ```
 
 An example of **thresholdMetric**:
 
 ```yaml
 thresholdMetric:
-  metricSource:
-    metricSourceRef: redshift-datasource
-    spec:
-      region: eu-central-1
-      clusterId: metrics-cluster
-      databaseName: metrics-db
-      query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
+  dataSourceRef: redshift-datasource
+  spec:
+    region: eu-central-1
+    clusterId: metrics-cluster
+    databaseName: metrics-db
+    query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
 ```
 
-Field `type` can be omitted because the type will be inferred from the DataSource when `metricSourceRef` is specified.
-
-An example **thresholdMetric** that does not reference a defined DataSource:
+An example **thresholdMetric** that does not reference a defined DataSource (it has DataSource inlined):
 
 ```yaml
 thresholdMetric:
-  metricSource:
-    type: Redshift
-    spec:
-      region: eu-central-1
-      clusterId: metrics-cluster
-      databaseName: metrics-db
-      query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
-      accessKeyID: accessKey
-      secretAccessKey: secretAccessKey
+  redshift:
+    accessKeyID: accessKey
+    secretAccessKey: secretAccessKey
+  spec:
+    region: eu-central-1
+    clusterId: metrics-cluster
+    databaseName: metrics-db
+    query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
  ```
-
- Field `type` can't be omitted because the reference to an existing DataSource is not specified.
 
 ---
 
