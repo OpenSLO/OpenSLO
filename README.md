@@ -179,6 +179,7 @@ apiVersion: openslo/v1
 kind: DataSource
 metadata:
   name: string
+  displayName: string # optional
 spec:
   cloudWatch:
     accessKeyID: accessKey
@@ -190,7 +191,7 @@ spec:
 #### SLO
 
 A service level objective (SLO) is a target value or a range of values for
-a service level that is described by a Service Level Indicator (SLI).
+a service level that is described by a service level indicator (SLI).
 
 ```yaml
 apiVersion: openslo/v1
@@ -222,10 +223,10 @@ spec:
 
 ##### Notes (SLO)
 
-- **sli** optional, represents the Service Level Indicator (SLI),
+- **sli** optional, represents the service level indicator (SLI),
   described in [SLI](#sli) section.
   One of `sli` or `sliRef` must be given.
-- **sliRef** optional, this is the name of Service Level Indicator (SLI).
+- **sliRef** optional, this is the name of service level indicator (SLI).
   One of `sli` or `sliRef` must be given.
 - **timeWindow[ ]** optional, *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
@@ -323,7 +324,7 @@ spec:
       # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
       # everything that is valid YAML can be put here
     spec:
-      # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+     # arbitrary chosen fields for every DataSource type to make it comfortable to use
       # anything that is valid YAML can be put here.
   ratioMetric: # either thresholdMetric or ratioMetric must be provided
     counter: true | false # true if the metric is a monotonically increasing counter,
@@ -336,7 +337,7 @@ spec:
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
-        # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+        # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here.
     bad: # the numerator, either "good" or "bad" must be provided if "total" is used
       # either dataSourceRef or <<dataSourceName>> must be provided
@@ -345,7 +346,7 @@ spec:
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
-        # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+        # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
     total: # the denominator used with either "good" or "bad", either this or "raw" must be used
       # either dataSourceRef or <<dataSourceName>> must be provided
@@ -354,7 +355,7 @@ spec:
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
-        # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+        # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
 
     rawType: success | failure # required with "raw", indicates how the stored ratio was calculated:
@@ -367,7 +368,7 @@ spec:
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
-        # arbitrary chosen fields for every DataSource type to make it comfortable to use (query)
+        # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
 ```
 
