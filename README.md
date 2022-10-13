@@ -750,5 +750,4 @@ spec:
   description: string # optional up to 1050 characters
 ```
 
-[logo]: images/openslo.png
 [rfc1123-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names
