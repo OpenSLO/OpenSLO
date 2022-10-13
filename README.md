@@ -1,4 +1,6 @@
 #
+
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="images/openslo_light.png">
   <img alt="OpenSLO light theme" src="images/openslo.png">
