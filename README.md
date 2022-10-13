@@ -1,4 +1,11 @@
-# ![ OpenSLO ][logo]
+#
+
+<!-- markdownlint-disable MD033-->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="images/openslo_light.png">
+  <img alt="OpenSLO light theme" src="images/openslo.png">
+</picture>
+<!-- markdownlint-enable MD033-->
 
 ## Table of Contents
 
@@ -746,5 +753,4 @@ spec:
   description: string # optional up to 1050 characters
 ```
 
-[logo]: images/openslo.png
 [rfc1123-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names
