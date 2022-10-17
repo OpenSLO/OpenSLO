@@ -235,7 +235,7 @@ spec:
   described in [SLI](#sli) section.
   One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`.
 - **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
-  One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`. 
+  One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`.
 - **timeWindow[ ]** optional, *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
   - Rolling time window. Duration should be provided in shorthand format
