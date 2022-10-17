@@ -274,7 +274,7 @@ objectives:
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
     indicator: # required only when creating composite SLO, see SLI below for more details
-    indicatorRef: string # required only when creating composite SLO, required if indicator is not given. 
+    indicatorRef: string # required only when creating composite SLO, required if indicator is not given.
 ```
 
 Example:
@@ -321,10 +321,8 @@ Either `target` or `targetPercent` must be used.
   One of `indicator` or `indicatorRef` must be given when creating composite SLO.
 
 - **Composite SLO** goal of composite SLO is to enable user an end-to-end journey, it is done by defining many
-  independent objectives. Each objective can have different queries, data sources and targets. Basic implementation of 
-  composite SLO assume that if any of SLOs included in composite SLO burns its error budget whole composite should do it as well. 
-
-
+  independent objectives. Each objective can have different queries, data sources and targets. Basic implementation of
+  composite SLO assume that if any of SLOs included in composite SLO burns its error budget whole composite should do it as well.
 
 ---
 
