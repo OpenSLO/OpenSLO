@@ -233,9 +233,9 @@ spec:
 
 - **indicator** optional, represents the Service Level Indicator (SLI),
   described in [SLI](#sli) section.
-  One of `indicator` or `indicatorRef` must be given.
+  One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`.
 - **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
-  One of `indicator` or `indicatorRef` must be given.
+  One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`. 
 - **timeWindow[ ]** optional, *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
   - Rolling time window. Duration should be provided in shorthand format
@@ -252,7 +252,7 @@ spec:
 
 - **objectives[ ]** *Threshold*, required field, described in [Objectives](#objectives)
   section. If `thresholdMetric` has been defined, only one Threshold can be defined.
-  However if using `ratioMetric` then any number of Thresholds can be defined.
+  However, if using `ratioMetric` then any number of Thresholds can be defined.
 
 - **alertPolicies\[ \]** *AlertPolicy*, optional field.
   section. An alert policy can be defined inline or can refer to an [Alert Policies](#alertpolicy) object,
@@ -273,6 +273,8 @@ objectives:
     targetPercent: numeric [0.0, 100) # budget target for given objective of the SLO, can't be used with target
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
+    indicator: # required only when creating composite SLO, see SLI below for more details
+    indicatorRef: string # required only when creating composite SLO, required if indicator is not given. 
 ```
 
 Example:
@@ -310,6 +312,19 @@ Either `target` or `targetPercent` must be used.
   which data will be evaluated e.g. 5, 1m, 10m, 2h, 1d. Also ascertains the frequency
   at which to run the queries. Default interpretation of unit if specified as a number
   in minutes.
+
+- **indicator** optional, represents the Service Level Indicator (SLI),
+  described in [SLI](#sli) section.
+  One of `indicator` or `indicatorRef` must be given in objective when creating composite SLO.
+
+- **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
+  One of `indicator` or `indicatorRef` must be given when creating composite SLO.
+
+- **Composite SLO** goal of composite SLO is to enable user an end-to-end journey, it is done by defining many
+  independent objectives. Each objective can have different queries, data sources and targets. Basic implementation of 
+  composite SLO assume that if any of SLOs included in composite SLO burns its error budget whole composite should do it as well. 
+
+
 
 ---
 
