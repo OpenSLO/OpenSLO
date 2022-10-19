@@ -19,7 +19,7 @@
 						}
 					}
 				},
-				"rationMetric": {
+				"ratioMetric": {
 					"type": "object",
 					"required": [
 						"counter",
