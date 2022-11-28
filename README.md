@@ -33,6 +33,7 @@
     - [AlertNotificationTarget](#alertnotificationtarget)
       - [Notes (AlertNotificationTarget)](#notes-alertnotificationtarget)
     - [Service](#service)
+- [Examples](examples/README.md)
 
 ## Introduction
 
