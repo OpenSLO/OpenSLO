@@ -34,6 +34,8 @@
       - [Notes (AlertNotificationTarget)](#notes-alertnotificationtarget)
     - [Service](#service)
 - [Examples](examples/README.md)
+- Work in progress for future versions
+  - [v2alpha1](enhancements/v2alpha1.md)
 
 ## Introduction
 
@@ -149,6 +151,8 @@ prescriptive stance on this issue.
 
 A DataSource represents connection details with a particular metric source.
 
+> [Check work in progress for v2.](enhancements/v2alpha1.md#datasource)
+
 ```yaml
 apiVersion: openslo/v1
 kind: DataSource
@@ -157,10 +161,10 @@ metadata:
   displayName: string # optional
 spec:
   description: string # optional up to 1050 characters
-  <<dataSourceName>>: # e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-      # everything that is valid YAML can be put here
-
+  type: string # predefined type e.g. Prometheus, Datadog, etc.
+  connectionDetails:
+    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+    # everything that is valid YAML can be put here
 ```
 
 ##### Notes (DataSource)
@@ -181,7 +185,8 @@ metadata:
   name: string
   displayName: string # optional
 spec:
-  cloudWatch:
+  type: CloudWatch
+  connectionDetails:
     accessKeyID: accessKey
     secretAccessKey: secretAccessKey
 ```
@@ -193,6 +198,8 @@ spec:
 A service level objective (SLO) is a target value or a range of values for
 a service level that is described by a service level indicator (SLI).
 
+> [Check work in progress for v2.](enhancements/v2alpha1.md#slo)
+
 ```yaml
 apiVersion: openslo/v1
 kind: SLO
@@ -202,8 +209,8 @@ metadata:
 spec:
   description: string # optional up to 1050 characters
   service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
-  sli: # see SLI below for details
-  sliRef: string # name of the SLI, required if indicator is not given and you want to reference to existing SLI
+  indicator: # see SLI below for details
+  indicatorRef: string # name of the SLI. Required if indicator is not given.
   timeWindow:
     # exactly one item; one of possible: rolling or calendar–aligned time window
     ## rolling time window
@@ -223,11 +230,11 @@ spec:
 
 ##### Notes (SLO)
 
-- **sli** optional, represents the service level indicator (SLI),
+- **indicator** optional, represents the Service Level Indicator (SLI),
   described in [SLI](#sli) section.
-  One of `sli` or `sliRef` must be given.
-- **sliRef** optional, this is the name of service level indicator (SLI).
-  One of `sli` or `sliRef` must be given.
+  One of `indicator` or `indicatorRef` must be given.
+- **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
+  One of `indicator` or `indicatorRef` must be given.
 - **timeWindow[ ]** optional, *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
   - Rolling time window. Duration should be provided in shorthand format
@@ -309,6 +316,8 @@ Either `target` or `targetPercent` must be used.
 
 A service level indicator (SLI) represents how to read metrics from data sources.
 
+> [Check work in progress for v2.](enhancements/v2alpha1.md#sli)
+
 ```yaml
 apiVersion: openslo/v1
 kind: SLI
@@ -318,58 +327,44 @@ metadata:
 spec:
   description: string # optional up to 1050 characters
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
-    # either dataSourceRef or <<dataSourceName>> must be provided
-    dataSourceRef: string # refer to already defined DataSource object
-    <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-      # everything that is valid YAML can be put here
-    spec:
-     # arbitrary chosen fields for every DataSource type to make it comfortable to use
-      # anything that is valid YAML can be put here.
+    metricSource:
+      metricSourceRef: string # optional, this field can be used to refer to DataSource object
+      type: string # optional, this field describes predefined metric source type e.g. Prometheus, Datadog, etc.
+      spec:
+        # arbitrary chosen fields for every data source type to make it comfortable to use
+        # anything that is valid YAML can be put here.
   ratioMetric: # either thresholdMetric or ratioMetric must be provided
     counter: true | false # true if the metric is a monotonically increasing counter,
                           # or false, if it is a single number that can arbitrarily go up or down
                           # ignored when using "raw"
     good: # the numerator, either "good" or "bad" must be provided if "total" is used
-      # either dataSourceRef or <<dataSourceName>> must be provided
-      dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
-      spec:
-        # arbitrary chosen fields for every DataSource type to make it comfortable to use
-        # anything that is valid YAML can be put here.
+      metricSource:
+        metricSourceRef: string # optional
+        type: string # optional
+        spec:
+          # arbitrary chosen fields for every data source type to make it comfortable to use.
     bad: # the numerator, either "good" or "bad" must be provided if "total" is used
-      # either dataSourceRef or <<dataSourceName>> must be provided
-      dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
-      spec:
-        # arbitrary chosen fields for every DataSource type to make it comfortable to use
-        # anything that is valid YAML can be put here
+      metricSource:
+        metricSourceRef: string # optional
+        type: string # optional
+        spec:
+          # arbitrary chosen fields for every data source type to make it comfortable to use.
     total: # the denominator used with either "good" or "bad", either this or "raw" must be used
-      # either dataSourceRef or <<dataSourceName>> must be provided
-      dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
-      spec:
-        # arbitrary chosen fields for every DataSource type to make it comfortable to use
-        # anything that is valid YAML can be put here
+      metricSource:
+        metricSourceRef: string # optional
+        type: string # optional
+        spec:
+          # arbitrary chosen fields for every data source type to make it comfortable to use.
 
     rawType: success | failure # required with "raw", indicates how the stored ratio was calculated:
                                #  success – good/total
                                #  failure – bad/total
     raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
-      # either dataSourceRef or <<dataSourceName>> must be provided
-      dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
-      spec:
-        # arbitrary chosen fields for every DataSource type to make it comfortable to use
-        # anything that is valid YAML can be put here
+      metricSource:
+        metricSourceRef: string # optional
+        type: string # optional
+        spec:
+          # arbitrary chosen fields for every data source type to make it comfortable to use.
 ```
 
 ##### Notes (SLI)
@@ -425,13 +420,17 @@ spec:
       ratioMetric:
         counter: true
         good:
-          dataSourceRef: datadog-datasource
-          spec:
-            query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
+          metricSource:
+            metricSourceRef: datadog-datasource
+            type: Datadog
+            spec:
+              query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
         total:
-          dataSourceRef: datadog-datasource
-          spec:
-            query: sum:trace.http.request.hits.by_http_status{*}.as_count()
+          metricSource:
+            metricSourceRef: datadog-datasource
+            type: Datadog
+            spec:
+              query: sum:trace.http.request.hits.by_http_status{*}.as_count()
   objectives:
     - displayName: Foo Total Errors
       target: 0.98
@@ -480,40 +479,50 @@ An example of **ratioMetric**:
 ratioMetric:
   counter: true
   good:
-    dataSourceRef: prometheus-datasource
-    spec:
-      query: sum(localhost_server_requests{code=~"2xx|3xx",host="*",instance="127.0.0.1:9090"})
+    metricSource:
+      type: Prometheus
+      metricSourceRef: prometheus-datasource
+      spec:
+        query: sum(localhost_server_requests{code=~"2xx|3xx",host="*",instance="127.0.0.1:9090"})
   total:
-    dataSourceRef: prometheus-datasource
-    spec:
-      query: localhost_server_requests{code="total",host="*",instance="127.0.0.1:9090"}
+    metricSource:
+      type: Prometheus
+      metricSourceRef: prometheus-datasource
+      spec:
+        query: localhost_server_requests{code="total",host="*",instance="127.0.0.1:9090"}
 ```
 
 An example of **thresholdMetric**:
 
 ```yaml
 thresholdMetric:
-  dataSourceRef: redshift-datasource
-  spec:
-    region: eu-central-1
-    clusterId: metrics-cluster
-    databaseName: metrics-db
-    query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
+  metricSource:
+    metricSourceRef: redshift-datasource
+    spec:
+      region: eu-central-1
+      clusterId: metrics-cluster
+      databaseName: metrics-db
+      query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
 ```
 
-An example **thresholdMetric** that does not reference a defined DataSource (it has DataSource inlined):
+Field `type` can be omitted because the type will be inferred from the DataSource when `metricSourceRef` is specified.
+
+An example **thresholdMetric** that does not reference a defined DataSource:
 
 ```yaml
 thresholdMetric:
-  redshift:
-    accessKeyID: accessKey
-    secretAccessKey: secretAccessKey
-  spec:
-    region: eu-central-1
-    clusterId: metrics-cluster
-    databaseName: metrics-db
-    query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
+  metricSource:
+    type: Redshift
+    spec:
+      region: eu-central-1
+      clusterId: metrics-cluster
+      databaseName: metrics-db
+      query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
+      accessKeyID: accessKey
+      secretAccessKey: secretAccessKey
  ```
+
+ Field `type` can't be omitted because the reference to an existing DataSource is not specified.
 
 ---
 
