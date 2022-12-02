@@ -8,7 +8,7 @@ OpenSLO specifies three types of budgeting methods:
 Here is bries description of them and examples of use cases for each method.
  
 ## Occurrences
-Method uses a ratio of good to total counts of events. This is the most common and easy to understand method, all occurrences of events have the same impact on error budget, in a lot of cases it is used with SLIs that measure things that are connected to traffic in your services. If traffic is bigger your error budget will be burned faster.
+Method uses a ratio of good to total counts of events. This is the most common and easy to understand method, all occurrences of events have the same impact on error budget, in a lot of cases it is used with SLIs that measure things that are connected to traffic in your services. Method automatically weights impact by the total number of requests served, so it will give an accurate reflection of avaliablity of service. 
  
 ## Timeslices
 Method uses a ratio of good time slices to total time slices. Whole timewindow is divided into timeslices in size specified by user. Each timeslice have calculated ratio of good to total events. When the ratio is below given timeSliceTarget we count it as bad minute and subtract it from error budget. This method is useful to reflect SLA which often says "Service needs to be available 99% of time". That can be understood as 99% of minutes have 90% of successful requests.
