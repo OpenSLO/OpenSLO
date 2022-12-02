@@ -38,5 +38,3 @@ Two weeks timewindow have 20160 timeslices, to burn your budget attack need to l
 #### RatioTimeslices
 To burn your budget you need to last for about 13 hours and 45 minutes.
  
-
-

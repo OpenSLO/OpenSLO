@@ -36,4 +36,3 @@ spec:
       timeSliceTarget: 0.99
       timeSliceWindow: 1m
   alertPolicies: # SLO that monitor your SLA should always have some alert polcy.
-

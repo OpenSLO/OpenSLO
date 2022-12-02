@@ -32,4 +32,3 @@ spec:
       op: gt
       timeSliceWindow: 1m 
       target: 0.99
-      
