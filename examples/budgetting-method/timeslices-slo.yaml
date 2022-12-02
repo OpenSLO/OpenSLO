@@ -1,7 +1,7 @@
-# SLO that reflects SLA for internet provider to be available 99% of time 
+# SLO that reflects SLA for internet provider to be available 99% of time
 apiVersion: openslo/v1
-kind: SLO 
-metadata: 
+kind: SLO
+metadata:
   name: service-availability
   displayName: Reflaction of out availability SLA
 spec:
@@ -15,14 +15,14 @@ spec:
       ratioMetric:
         good:
           metricSource:
-            type: Any  # Any service with needed metrics
-            spec: 
+            type: Any # Any service with needed metrics
+            spec:
               # Fields needed to query service for needed metrics
   timeWindow:
     - duration: 1m # Contracts often are for 1 month time window
       isRolling: false # Most of contracts starts counting at beginning of month
       calendar:
-        startTime: 2022-01-01 12:00:00 
+        startTime: 2022-01-01 12:00:00
         timeZone: America/New_York
   budgetingMethod: Timeslices
   objective:
@@ -35,4 +35,4 @@ spec:
       target: 0.99
       timeSliceTarget: 0.99
       timeSliceWindow: 1m
-  alertPolicies: # SLO that monitor your SLA should always have some alert polcy.
+  alertPolicies: # SLO that monitor your SLA should always have some alert policy.
