@@ -1,0 +1,38 @@
+# SLO that reflects SLA for internet provider to be available 99% of time
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: service-availability
+  displayName: Reflaction of out availability SLA
+spec:
+  description: SLO to see if we are above our SLA and to react before.
+  service: web-availability
+  indicator:
+    metadata:
+      name: web-availability
+      displayName: Time when our service was running.
+    spec:
+      ratioMetric:
+        good:
+          metricSource:
+            type: Any # Any service with needed metrics
+            spec:
+              # Fields needed to query service for needed metrics
+  timeWindow:
+    - duration: 1m # Contracts often are for 1 month time window
+      isRolling: false # Most of contracts starts counting at beginning of month
+      calendar:
+        startTime: 2022-01-01 12:00:00
+        timeZone: America/New_York
+  budgetingMethod: Timeslices
+  objective:
+    - displayName: Internal objective
+      op: gt
+      target: 0.995 # It is good to make bigger objective to react faster
+      timeSliceTarget: 0.99
+      timeSliceWindow: 1m # Rest of the fields should reflect exactly our contract
+    - displayName: SLA # It is good to have objective exactly as SLA contract says
+      target: 0.99
+      timeSliceTarget: 0.99
+      timeSliceWindow: 1m
+  alertPolicies: # SLO that monitor your SLA should always have some alert policy.
