@@ -34,6 +34,8 @@
       - [Notes (AlertNotificationTarget)](#notes-alertnotificationtarget)
     - [Service](#service)
 - [Examples](examples/README.md)
+- Work in progress for future versions
+  - [v2alpha1](enhancements/v2alpha1.md)
 
 ## Introduction
 
@@ -149,6 +151,8 @@ prescriptive stance on this issue.
 
 A DataSource represents connection details with a particular metric source.
 
+> [Check work in progress for v2.](enhancements/v2alpha1.md#datasource)
+
 ```yaml
 apiVersion: openslo/v1
 kind: DataSource
@@ -161,7 +165,6 @@ spec:
   connectionDetails:
     # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
     # everything that is valid YAML can be put here
-
 ```
 
 ##### Notes (DataSource)
@@ -194,6 +197,8 @@ spec:
 
 A service level objective (SLO) is a target value or a range of values for
 a service level that is described by a service level indicator (SLI).
+
+> [Check work in progress for v2.](enhancements/v2alpha1.md#slo)
 
 ```yaml
 apiVersion: openslo/v1
@@ -310,6 +315,8 @@ Either `target` or `targetPercent` must be used.
 #### SLI
 
 A service level indicator (SLI) represents how to read metrics from data sources.
+
+> [Check work in progress for v2.](enhancements/v2alpha1.md#sli)
 
 ```yaml
 apiVersion: openslo/v1
@@ -456,7 +463,7 @@ indicatorValue = ( total - bad ) / total
 ```
 
 If we have 1 error out of a total of 100 requests, the calculated value for
-the indicator would be: `(100 - 1 )  = 0.99`. This represents 99% on a 0-100 scale
+the indicator would be: `(100 - 1) = 0.99`. This represents 99% on a 0-100 scale
 using the formula `0.99 * 100 = 99`.
 
 > 💡 **Note:** As you can see for both query combinations we end up with the same calculated
