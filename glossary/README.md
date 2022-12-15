@@ -2,10 +2,9 @@
 
 SLO community created over the time specific terminology, not every user coming to projects like OpenSLO knows exactly what
 everything means. This glossary should help newcomers to understand things we discuss here and make contribution easier.
-In addition, I created section with literature that I used to write these definitions. 
+In addition, I created section with literature that I used to write these definitions.
 Another thing is that we need a place where we can write down definitions to have easier discussions about
 subjects that can be understood differently.
-
 
 ## Definitions
 
@@ -21,6 +20,8 @@ Time window – time in which reliability of service is measured and calculated.
 Error budget – a measurement that allows us to see how much SLO can be violated in a given period of time.
 
 ## Literature
+
 Books that are great to learn about SLO concept:
- - [Google's SRE book](https://sre.google/sre-book/table-of-contents/)
- - [Implementing Service Level Objectives](https://www.oreilly.com/library/view/implementing-service-level/9781492076803/)
+
+- [Google's SRE book](https://sre.google/sre-book/table-of-contents/)
+- [Implementing Service Level Objectives](https://www.oreilly.com/library/view/implementing-service-level/9781492076803/)
