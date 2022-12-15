@@ -19,8 +19,6 @@ Time window – time in which reliability of service is measured and calculated.
 
 Error budget – a measurement that allows us to see how much SLO can be violated in a given period of time.
 
-> [Check work in progress for v2.](enhancements/v2alpha1.md#sli)
-
 ## Literature
 Books that are great to learn about SLO concept:
  - [Google's SRE book](https://sre.google/sre-book/table-of-contents/)
