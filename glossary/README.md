@@ -1,8 +1,9 @@
 # Glossary
 
 SLO community created over the time specific terminology, not every user coming to projects like OpenSLO knows exactly what
-everything means. This glossary should help newcomers to understand things we discuss here and maybe share materials to
-learn more. Another thing is that we need a place where we can write down definitions to have easier discussions about
+everything means. This glossary should help newcomers to understand things we discuss here and make contribution easier.
+In addition, I created section with literature that I used to write these definitions. 
+Another thing is that we need a place where we can write down definitions to have easier discussions about
 subjects that can be understood differently.
 
 
