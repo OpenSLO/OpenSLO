@@ -90,7 +90,7 @@ spec:
 
 - **kind** *string* - required, one of: [DataSource](#datasource), [SLO](#slo),
   [SLI](#sli), [AlertPolicy](#alertpolicy), [AlertCondition](#alertcondition),
-  [AlertNotificationTarget](#alertnotificationtarget)
+  [AlertNotificationTarget](#alertnotificationtarget), [Service](#service)
 - **metadata.name:** *string* - required field
   - all implementations must at least support object names that follow [RFC1123][rfc1123-names]:
     - are up to 63 characters in length
