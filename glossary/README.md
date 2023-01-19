@@ -23,23 +23,23 @@ Occurrences - error budget calculation method. It is calculated by counting the 
 of the events. Example: Count if total number of measured latencies, measured in last two weeks, was below 100 ms for 95% of
 measurements. 
 
-TimeSlices - error budget calculation method. This method uses ratio of good slices to total slices in budgeting 
+TimeSlices - error budget calculation method. This method uses ratio of good slices to total slices in budgeting
 period. Example: How many minutes, in last two weeks, your service had latency below 100ms in measurements in these minutes. 
 
 RatioTimeSlices - error budget calculation method. It is calculated by taking average of good events to total
 events in all slices. Example: What is average percent of good events to total events in every minute for last two weeks.
 
--- Next iteration 
+-- Next iteration
 
-Reliability Burn Down - 
+Reliability Burn Down
 
-Ratio Metrics - 
+Ratio Metrics
 
-Threshold Metrics - 
+Threshold Metrics
 
-Composite SLO - 
+Composite SLO
 
-Aggregate SLO - 
+Aggregate SLO
 
 ## Literature
 
