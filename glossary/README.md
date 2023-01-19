@@ -24,7 +24,7 @@ of the events. Example: Count if total number of measured latencies, measured in
 measurements. 
 
 TimeSlices - error budget calculation method. This method uses ratio of good slices to total slices in budgeting
-period. Example: How many minutes, in last two weeks, your service had latency below 100ms in measurements in these minutes. 
+period. Example: How many minutes, in last two weeks, your service had latency below 100ms in measurements in these minutes.
 
 RatioTimeSlices - error budget calculation method. It is calculated by taking average of good events to total
 events in all slices. Example: What is average percent of good events to total events in every minute for last two weeks.
