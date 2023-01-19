@@ -19,6 +19,28 @@ Time window – time in which reliability of service is measured and calculated.
 
 Error budget – a measurement that allows us to see how much SLO can be violated in a given period of time.
 
+Occurrences - error budget calculation method. It is calculated by counting the number of good events in the total count
+of the events. Example: Count if total number of measured latencies, measured in last two weeks, was below 100 ms for 95% of
+measurements. 
+
+TimeSlices - error budget calculation method. This method uses ratio of good slices to total slices in budgeting 
+period. Example: How many minutes, in last two weeks, your service had latency below 100ms in measurements in these minutes. 
+
+RatioTimeSlices - error budget calculation method. It is calculated by taking average of good events to total
+events in all slices. Example: What is average percent of good events to total events in every minute for last two weeks.
+
+-- Next iteration 
+
+Reliability Burn Down - 
+
+Ratio Metrics - 
+
+Threshold Metrics - 
+
+Composite SLO - 
+
+Aggregate SLO - 
+
 ## Literature
 
 Books that are great to learn about SLO concept:
