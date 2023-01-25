@@ -18,5 +18,7 @@ In the description at least try to answer the following questions.
 Links to other resources like literature are highly appreciated.
 
 ## Table of contents
-
 <!-- List of examples with links to a specific directory and one-sentence description. -->
+
+- [Budgeting method](budgeting-method/README.md) - compares Occurrences, Timeslices and RatioTimeslices
+    in terms of burned budget for hypothetical situation
