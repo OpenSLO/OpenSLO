@@ -22,3 +22,6 @@ Links to other resources like literature are highly appreciated.
 
 - [Budgeting method](budgeting-method/README.md) - compares Occurrences, Timeslices and RatioTimeslices
     in terms of burned budget for hypothetical situation
+
+- [Treat low traffic equally important](treat-low-traffic-as-equally-important/README.md) -
+    some systems have to maintain high reliability no matter if a handful or hundreds of people actively use its
