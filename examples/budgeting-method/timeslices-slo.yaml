@@ -18,6 +18,11 @@ spec:
             type: Any # Any service with needed metrics
             spec:
               # Fields needed to query service for needed metrics
+        total:
+          metricSource:
+            type: Any # Any service with needed metrics
+            spec:
+              # Fields needed to query service for needed metrics
   timeWindow:
     - duration: 1m # Contracts often are for 1 month time window
       isRolling: false # Most of contracts starts counting at beginning of month
