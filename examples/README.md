@@ -24,4 +24,4 @@ Links to other resources like literature are highly appreciated.
     in terms of burned budget for hypothetical situation
 
 - [Treat low traffic equally important](treat-low-traffic-as-equally-important/README.md) -
-    some systems have to maintain high reliability no matter if a handful or hundreds of people actively use its
+    some systems have to maintain high reliability no matter if a handful or hundreds of people actively use it.

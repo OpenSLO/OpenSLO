@@ -1,9 +1,10 @@
-# Threat low traffic as equally important
+# Treat low traffic as equally important
 
 Let's imagine application that performance degration even during low traffic periods (a handful of users are not satisfied)
 should count equally with degration during peak hours when hundreds of users are not satisfied with application.
-For instance, a system for reporting incidents or calling for help should operate in such a way. One person than can't get
-is important too.
+For instance, a system for reporting incidents or calling for help should operate in such a way. One person than can't be
+served is important too. But in case of burst in requests probably something bigger is happening and system is not able to
+serve everybody with such quality.
 
 ## Which OpenSLO budgeting method should be used?
 
@@ -24,6 +25,6 @@ Assumptions:
 Number of minutes in the Timewindow: `1 week = 7 days`, `7 days = 168 hours`, `168 hours = 10 080 minutes`
 Error Budget (how many minutes can be considered as bad): `(100% - 99.95%) * 10 080 minutes = 5 minutes 2.4 seconds`
 
-Minute will be marked as bad, when just only `5` request fails and total number of requests is less than `100` in that minute, so it's very strict.
-Having over five incidents like that during one Timewindow will violate SLO and should trigger meaningful conversation in organization about
-reliability of the product.
+Timeslice allowance is `95%` and Timeslice equals `1 minute`. Thus minute (time period of Timeslice) will be marked as bad in SLO, when just
+only `5` request fails and total number of requests is less than `100` in that minute. It's very strict. Having over five incidents like
+that during one Timewindow will violate SLO and should trigger meaningful conversation in organization about reliability of the product.
