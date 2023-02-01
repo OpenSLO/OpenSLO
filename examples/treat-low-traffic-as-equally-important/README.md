@@ -1,10 +1,10 @@
 # Treat low traffic as equally important
 
-Let's imagine application that performance degration even during low traffic periods (a handful of users are not satisfied)
-should count equally with degration during peak hours when hundreds of users are not satisfied with application.
+Let's imagine an application that performance degradation even during low traffic periods (a handful of users are not satisfied)
+should count equally with degradation during peak hours when hundreds of users are not satisfied with the application.
 For instance, a system for reporting incidents or calling for help should operate in such a way. One person than can't be
-served is important too. But in case of burst in requests probably something bigger is happening and system is not able to
-serve everybody with such quality.
+served is important too. But in case of bursts in requests probably something bigger is happening and the system is not able to
+serve everybody with such quality (probably it should be tracked too with a separate SLO).
 
 ## Which OpenSLO budgeting method should be used?
 
