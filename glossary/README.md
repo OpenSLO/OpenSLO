@@ -34,7 +34,7 @@ Ratio Metrics - is an SLI composed of a relation of two metrics. Most commonly c
 events (denominator). When picking objective for your service you specify how big part of total events should be good events.
 
 Threshold Metrics - SLI where metrics returned form a query are compared to an arbitrarily chosen threshold. A comparator
-can be lt, le, gt, ge. Based on the result of a comparison is determined if the error budget is burnt or not.
+can be lt(<), le(<=), gt(>), ge(>=). Based on the result of a comparison is determined if the error budget is burnt or not.
 
 Composite SLO - it is SLO that is composed of few different objectives that can be seen as SLOs as well.
 Each objective that is part of composite SLO can have its own threshold, query and data source. Composite SLO burns its
