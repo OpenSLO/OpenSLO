@@ -41,10 +41,6 @@ Each objective that is part of composite SLO can have its own threshold, query a
 error budget when any of SLOs beneath burns their error budget. User should be able to specify weight that will decide
 if composite SLO is burning faster or slower depending on which inner SLO is burning its error budget.
 
-Aggregate SLO - it is SLO that aggregates different currently existing SLOs. Each SLO stays as an independent SLO but
-their SLIs are calculated as part of aggregate SLO too. Aggregate SLO is sum of SLIs of inner SLOs and treats them
-as equal parts. Each metric is treated as good when it is seen as good event in its main SLO.
-
 ## Literature
 
 Books that are great to learn about SLO concept:
