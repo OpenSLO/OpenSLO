@@ -338,7 +338,7 @@ Either `target` or `targetPercent` must be used.
     rate) that burns composite.
   - Timeslices - this is binary depending on whether it was a good or bad minute. If it was a bad minute for any individual
     objective, it's considered a bad minute for the Composite SLO.
-  - Ratiotimeslices - it is the sum of missing up to 100 percent. If two SLOs have average of Ratiotimeslices on 95%, 
+  - Ratiotimeslices - it is the sum of missing up to 100 percent. If two SLOs have average of Ratiotimeslices on 95%,
     composite will have average of Ratiotimeslices on 90%. Weight multiplies missing part of given slo.
 
 #### SLI
