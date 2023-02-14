@@ -320,11 +320,26 @@ Either `target` or `targetPercent` must be used.
 - **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
   One of `indicator` or `indicatorRef` must be given when creating composite SLO.
 
-- **Composite SLO** goal of composite SLO is to enable user an end-to-end journey, it is done by defining many
-  independent objectives. Each objective can have different queries, data sources and targets. Basic implementation of
-  composite SLO assume that if any of SLOs included in composite SLO burns its error budget whole composite should do it as well.
+##### Notes (Composite SLO)
 
----
+**Composite SLO** goal of composite SLO is to enable user an end-to-end journey, it is done by defining many
+  independent objectives. Each objective can have different queries, data sources and targets. The basic implementation
+  assumes that the Composite Error Budget burns if the Error Budget for any of the SLO objectives within the Composite SLO
+  is burning. The logic of those calculation is the same for Composite SLOs as for regular (standard) objectives and SLOs.
+
+**Weight** allows the user to change the impact of a given SLO on the whole composite SLO. Weight is just multiplier, it
+  means that if weight is `0.5`, SLO will have half impact as default, on the other hand if weight is `100`, this SLO will
+  be 100 times more impactful. By default, weight has value 1 and doesn't need to be specified.
+
+**Calculations** should be as simple as possible to make composite SLO intuitive. Here is brief description how given budgeting
+  method should impact composite SLO and how wight scale its impact:
+  - Occurrences - if SLO burns its budget composite is burning its budget at the same rate. Each violation that consumed
+    SLO's budget will impact Composite at the same rate. Weight multiplies the rate of burning of SLO (referenced as burn
+    rate) that burns composite.
+  - Timeslices - this is binary depending on whether it was a good or bad minute. If it was a bad minute for any individual
+    objective, it's considered a bad minute for the Composite SLO.
+  - Ratiotimeslices - it is the sum of missing up to 100 percent. If two SLOs have average of Ratiotimeslices on 95%, 
+    composite will have average of Ratiotimeslices on 90%. Weight multiplies missing part of given slo.
 
 #### SLI
 
