@@ -333,13 +333,14 @@ Either `target` or `targetPercent` must be used.
 
 **Calculations** should be as simple as possible to make composite SLO intuitive. Here is brief description how given budgeting
   method should impact composite SLO and how wight scale its impact:
-  - Occurrences - if SLO burns its budget composite is burning its budget at the same rate. Each violation that consumed
-    SLO's budget will impact Composite at the same rate. Weight multiplies the rate of burning of SLO (referenced as burn
-    rate) that burns composite.
-  - Timeslices - this is binary depending on whether it was a good or bad minute. If it was a bad minute for any individual
-    objective, it's considered a bad minute for the Composite SLO.
-  - Ratiotimeslices - it is the sum of missing up to 100 percent. If two SLOs have average of Ratiotimeslices on 95%,
-    composite will have average of Ratiotimeslices on 90%. Weight multiplies missing part of given slo.
+
+- Occurrences - if SLO burns its budget composite is burning its budget at the same rate. Each violation that consumed
+  SLO's budget will impact Composite at the same rate. Weight multiplies the rate of burning of SLO (referenced as burn
+  rate) that burns composite.
+- Timeslices - this is binary depending on whether it was a good or bad minute. If it was a bad minute for any individual
+  objective, it's considered a bad minute for the Composite SLO.
+- Ratiotimeslices - it is the sum of missing up to 100 percent. If two SLOs have average of Ratiotimeslices on 95%,
+  composite will have average of Ratiotimeslices on 90%. Weight multiplies missing part of given slo.
 
 #### SLI
 
