@@ -1,10 +1,11 @@
 # Glossary
 
-SLO community created over the time specific terminology, not every user coming to projects like OpenSLO knows exactly what
-everything means. This glossary should help newcomers to understand things we discuss here and make contribution easier.
-In addition, I created section with literature that I used to write these definitions.
-Another thing is that we need a place where we can write down definitions to have easier discussions about
-subjects that can be understood differently.
+Overtime, the SLO community has created specific terminology. Since not every user coming to project like OpenSLO knows
+exactly what everything means we have created a glossary. This glossary should help newcomers understand things that we
+discuss here and make contributions easier.
+
+In addition, I have created a section with literature that I used to write these definitions. There is a need for a place
+where we can write down definitions to facilitate easier discussions about subjects adn share differing point of view.
 
 ## Definitions
 
