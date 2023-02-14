@@ -1,0 +1,36 @@
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: service-availability
+  displayName: SLO for this important service
+spec:
+  service: web-availability
+  indicator:
+    metadata:
+      name: web-availability
+      displayName: Time when our service was running.
+    spec:
+      ratioMetric:
+        good:
+          metricSource:
+            type: Any # Any service with needed metrics
+            spec:
+              # Fields needed to query service for needed metrics
+        total:
+          metricSource:
+            type: Any # Any service with needed metrics
+            spec:
+              # Fields needed to query service for needed metrics
+  timeWindow:
+    - duration: 1w
+      isRolling: false
+      calendar:
+        startTime: 2022-01-01 12:00:00
+        timeZone: America/New_York
+  budgetingMethod: Timeslices
+  objective:
+    - displayName: Objective
+      op: gt
+      target: 0.9995
+      timeSliceTarget: 0.95
+      timeSliceWindow: 1m
