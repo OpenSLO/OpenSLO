@@ -34,6 +34,7 @@
       - [Notes (AlertNotificationTarget)](#notes-alertnotificationtarget)
     - [Service](#service)
 - [Examples](examples/README.md)
+- [Glossary](glossary/README.md)
 - Work in progress for future versions
   - [v2alpha1](enhancements/v2alpha1.md)
 
