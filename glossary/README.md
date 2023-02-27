@@ -68,5 +68,5 @@ if composite SLO is burning faster or slower depending on which inner SLO is bur
 
 Books that are great to learn about SLO concept:
 
-- [Google's SRE book](https://sre.google/sre-book/table-of-contents/)
+- [Site Reliability Engineering: How Google Runs Production Systems](https://sre.google/sre-book/table-of-contents/)
 - [Implementing Service Level Objectives](https://www.oreilly.com/library/view/implementing-service-level/9781492076803/)
