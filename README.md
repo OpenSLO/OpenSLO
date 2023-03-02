@@ -325,7 +325,7 @@ Either `target` or `targetPercent` must be used.
 **Composite SLO** goal of composite SLO is to enable user an end-to-end journey, it is done by defining many
   independent objectives. Each objective can have different queries, data sources and targets. The basic implementation
   assumes that the Composite Error Budget burns if the Error Budget for any of the SLO objectives within the Composite SLO
-  is burning. The logic of those calculation is the same for Composite SLOs as for regular (standard) objectives and SLOs.
+  is burning. The logic of those calculations is the same for Composite SLOs as for regular (standard) objectives and SLOs.
 
 **Weight** allows the user to change the impact of a given SLO on the whole composite SLO. Weight is just multiplier, it
   means that if weight is `0.5`, SLO will have half impact as default, on the other hand if weight is `100`, this SLO will
