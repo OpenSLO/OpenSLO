@@ -274,7 +274,7 @@ objectives:
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
     indicator: # required only when creating composite SLO, see SLI below for more details
-    indicatorRef: string # required only when creating composite SLO, required if indicator is not given.
+    indicatorRef: string # required only when creating composite SLO, required if the indicator is not given
 ```
 
 Example:
