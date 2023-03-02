@@ -331,8 +331,10 @@ Either `target` or `targetPercent` must be used.
   means that if weight is `0.5`, SLO will have half impact as default, on the other hand if weight is `100`, this SLO will
   be 100 times more impactful. By default, weight has value 1 and doesn't need to be specified.
 
-**Calculations** should be as simple as possible to make composite SLO intuitive. Here is brief description how given budgeting
-  method should impact composite SLO and how wight scale its impact:
+**Calculations** should be as simple as possible to make composite SLO intuitive and easy to implement. It is hard to compare
+different error budget calculating methods therefore all composite objectives need to be calculated with one type of error
+budget calculating method. Here is brief description how given budgeting method should impact composite SLO and how wight scale its
+impact:
 
 - Occurrences - if SLO burns its budget composite is burning its budget at the same rate. Each violation that consumed
   SLO's budget will impact Composite at the same rate. Weight multiplies the rate of burning of SLO (referenced as burn
