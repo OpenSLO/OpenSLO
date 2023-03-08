@@ -233,9 +233,9 @@ spec:
 
 - **indicator** optional, represents the Service Level Indicator (SLI),
   described in [SLI](#sli) section.
-  One of `indicator` or `indicatorRef` must be given.
+  One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`.
 - **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
-  One of `indicator` or `indicatorRef` must be given.
+  One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`.
 - **timeWindow[ ]** optional, *TimeWindow* is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
   - Rolling time window. Duration should be provided in shorthand format
@@ -252,7 +252,7 @@ spec:
 
 - **objectives[ ]** *Threshold*, required field, described in [Objectives](#objectives)
   section. If `thresholdMetric` has been defined, only one Threshold can be defined.
-  However if using `ratioMetric` then any number of Thresholds can be defined.
+  However, if using `ratioMetric` then any number of Thresholds can be defined.
 
 - **alertPolicies\[ \]** *AlertPolicy*, optional field.
   section. An alert policy can be defined inline or can refer to an [Alert Policies](#alertpolicy) object,
@@ -273,6 +273,9 @@ objectives:
     targetPercent: numeric [0.0, 100) # budget target for given objective of the SLO, can't be used with target
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
+    indicator: # required only when creating composite SLO, see SLI below for more details
+    indicatorRef: string # required only when creating composite SLO, required if indicator is not given.
+    compositeWeight: numeric (0.0, inf+] # optional, supported only when declaring multiple objectives, default value 1.
 ```
 
 Example:
@@ -311,7 +314,36 @@ Either `target` or `targetPercent` must be used.
   at which to run the queries. Default interpretation of unit if specified as a number
   in minutes.
 
----
+- **indicator** optional, represents the Service Level Indicator (SLI),
+  described in [SLI](#sli) section.
+  One of `indicator` or `indicatorRef` must be given in objective when creating composite SLO.
+
+- **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
+  One of `indicator` or `indicatorRef` must be given when creating composite SLO.
+
+##### Notes (Composite SLO)
+
+**Composite SLO** goal of composite SLO is to enable user an end-to-end journey, it is done by defining many
+  independent objectives. Each objective can have different queries, data sources and targets. The basic implementation
+  assumes that the Composite Error Budget burns if the Error Budget for any of the SLO objectives within the Composite SLO
+  is burning. The logic of those calculations is the same for Composite SLOs as for regular (standard) objectives and SLOs.
+
+**Weight** allows the user to change the impact of a given SLO on the whole composite SLO. Weight is just multiplier, it
+  means that if weight is `0.5`, SLO will have half impact as default, on the other hand if weight is `100`, this SLO will
+  be 100 times more impactful. By default, weight has value 1 and doesn't need to be specified.
+
+**Calculations** should be as simple as possible to make composite SLO intuitive and easy to implement. It is hard to compare
+different error budget calculating methods therefore all composite objectives need to be calculated with one type of error
+budget calculating method. Here is brief description how given budgeting method should impact composite SLO and how wight scale its
+impact:
+
+- Occurrences - if SLO burns its budget composite is burning its budget at the same rate. Each violation that consumed
+  SLO's budget will impact Composite at the same rate. Weight multiplies the rate of burning of SLO (referenced as burn
+  rate) that burns composite.
+- Timeslices - this is binary depending on whether it was a good or bad minute. If it was a bad minute for any individual
+  objective, it's considered a bad minute for the Composite SLO.
+- Ratiotimeslices - it is the sum of missing up to 100 percent. If two SLOs have average of Ratiotimeslices on 95%,
+  composite will have average of Ratiotimeslices on 90%. Weight multiplies missing part of given slo.
 
 #### SLI
 
