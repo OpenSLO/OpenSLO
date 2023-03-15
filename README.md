@@ -72,16 +72,17 @@ kind: DataSource | SLO | SLI | AlertPolicy | AlertCondition | AlertNotificationT
 metadata:
   name: string
   displayName: string # optional
-  labels: # optional, key <>value a pair of labels that can be used as metadata relevant to users
-    # Example labels
-    userImpacting: "true"
-    team: "identity"
+  labels: # optional, it's allowed to assign multiple values to a single key
+    # example labels
+    organization: "acme"
+    team:
+      - "identity"
+      - "rbac"
     costCentre: "project1"
-    serviceTier: "tier-1"
-    tags:
-      - auth
-  annotations: map[string]string # optional, key <> value a pair of annotations that can be used as implementation metadata
-    # Example annotations
+    serviceTier:
+      - "tier-1"
+  annotations: # optional
+    # example annotations
     openslo.com/key1: value1
     fooimplementation.com/key2: value2
 spec:
