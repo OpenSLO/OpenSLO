@@ -1,0 +1,34 @@
+apiVersion: openslo/v1
+kind: SLI
+metadata:
+  name: great-sli
+  displayName: Great SLI
+spec:
+  description: This is an amazing description of the best SLI
+  ratioMetric:
+    counter: true
+    good:
+      metricSource:
+        type: Redshift
+        spec:
+          region: eu-central-1
+          clusterId: metrics-cluster
+          databaseName: metrics-db
+          query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
+          accessKeyID: accessKey
+          secretAccessKey: secretAccessKey
+    bad: # the numerator, either "good" or "bad" must be provided
+      metricSource:
+        type: Redshift
+        spec:
+          region: eu-central-1
+          clusterId: metrics-cluster
+          databaseName: metrics-db
+          query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
+          accessKeyID: accessKey
+          secretAccessKey: secretAccessKey
+    total: # the denominator, required
+      metricSource:
+        metricSourceRef: string # optional
+        type: string # optional
+        spec:

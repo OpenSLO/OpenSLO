@@ -1,0 +1,29 @@
+# SLO that measures the time of searching for an item in an online shop.
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: search-slo
+  displayName: Searching time
+spec:
+  description: Regardless of the number of paraller searches it never should be more than 500ms.
+  service: web-shop
+  indicator:
+    metadata:
+      name: search-latency
+      displayName: Latency of user searches
+    spec:
+      thresholdMetric:
+        metricSource:
+          type: Any # Here put any service that holds information you need.
+          spec:
+            # Fields needed to query service for latency data.
+  timeWindow:
+    - duration: 2w  # Two weeks is a good choice in most cases.
+      isRolling: true # Rolling timewindow give us better view if service starts to working better.
+  budgetingMethod: Occurrences # As said in README.md, occurrences are great for measuring all searches the same way.
+  objective:
+    - displayName: Good experience
+      op: lt
+      value: 500
+      target: 0.99
+  alertPolicies: # Doesn't matter in this example but you should have something in here.
