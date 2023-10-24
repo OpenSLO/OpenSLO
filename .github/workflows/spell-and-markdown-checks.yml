@@ -9,7 +9,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Set up prerequisites - node and yarn
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
       - name: Set up yarn cache
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
