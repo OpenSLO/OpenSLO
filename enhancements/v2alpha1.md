@@ -12,6 +12,7 @@ kind: DataSource
 metadata:
   name: string
   displayName: string # optional
+  labels: object # optional
 spec:
   description: string # optional up to 1050 characters
   <<dataSourceName>>: # e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
@@ -44,6 +45,7 @@ kind: SLO
 metadata:
   name: string
   displayName: string # optional
+  labels: object # optional
 spec:
   description: string # optional up to 1050 characters
   service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
@@ -76,6 +78,7 @@ kind: SLI
 metadata:
   name: string
   displayName: string # optional
+  labels: object # optional
 spec:
   description: string # optional up to 1050 characters
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
