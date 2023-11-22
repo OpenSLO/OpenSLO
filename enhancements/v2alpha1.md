@@ -2,6 +2,16 @@
 
 This is the place for refining ideas for new versions of OpenSLO spec. It's not supposed to be stable, this is a living document
 
+## [General Schema](https://github.com/OpenSLO/OpenSLO?tab=readme-ov-file#general-schema)
+
+Since the goal of the OpenSLO spec is to be compatible with Kubernetes, we should make a couple of fixes
+in the specification to reach that goal.
+
+1. Use `openslo.com/<version>` instead of `openslo/<version>`
+2. Remove `displayName` from the [ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#objectmeta-v1-meta)
+3. Adhere to [metadata.labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) and
+   [metadata.annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) Kubernetes standards.
+
 ## [DataSource](../README.md#datasource)
 
 **Rationale:** Simplify syntax. Avoid being needlessly verbose without sacrificing flexibility and readability.
@@ -210,4 +220,4 @@ thresholdMetric:
     clusterId: metrics-cluster
     databaseName: metrics-db
     query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
- ```
+```
