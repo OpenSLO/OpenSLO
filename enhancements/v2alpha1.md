@@ -25,8 +25,8 @@ metadata:
 spec:
   description: string # optional up to 1050 characters
   <<dataSourceName>>: # e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-      # everything that is valid YAML can be put here
+  # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+  # everything that is valid YAML can be put here
 ```
 
 An example of the DataSource kind can be:
@@ -46,7 +46,7 @@ spec:
 ## [SLO](../README.md#slo)
 
 **Rationale:** Make names more straightforward and aligned with others. Change field indicator to `sli` and `indicatorRef` to `sliRef`
-  it tells which kind of object should be referred there.
+it tells which kind of object should be referred there.
 
 ```yaml
 apiVersion: openslo/v2alpha1
@@ -92,21 +92,22 @@ spec:
     # either dataSourceRef or <<dataSourceName>> must be provided
     dataSourceRef: string # refer to already defined DataSource object
     <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-      # everything that is valid YAML can be put here
+		# fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+		# everything that is valid YAML can be put here
     spec:
-     # arbitrary chosen fields for every DataSource type to make it comfortable to use
+      # arbitrary chosen fields for every DataSource type to make it comfortable to use
       # anything that is valid YAML can be put here.
   ratioMetric: # either thresholdMetric or ratioMetric must be provided
-    counter: true | false # true if the metric is a monotonically increasing counter,
-                          # or false, if it is a single number that can arbitrarily go up or down
-                          # ignored when using "raw"
+    counter:
+      true | false # true if the metric is a monotonically increasing counter,
+      # or false, if it is a single number that can arbitrarily go up or down
+      # ignored when using "raw"
     good: # the numerator, either "good" or "bad" must be provided if "total" is used
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
+			# fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+			# everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here.
@@ -114,8 +115,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
+			# fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+			# everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
@@ -123,19 +124,20 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
+			# fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+			# everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
 
-    rawType: success | failure # required with "raw", indicates how the stored ratio was calculated:
-                               #  success – good/total
-                               #  failure – bad/total
+    rawType:
+      success | failure # required with "raw", indicates how the stored ratio was calculated:
+      #  success – good/total
+      #  failure – bad/total
     raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+      <<dataSourceName>>:# inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
