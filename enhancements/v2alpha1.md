@@ -17,11 +17,10 @@ in the specification to reach that goal.
 **Rationale:** Simplify syntax. Avoid being needlessly verbose without sacrificing flexibility and readability.
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: DataSource
 metadata:
   name: string
-  displayName: string # optional
 spec:
   description: string # optional up to 1050 characters
   <<dataSourceName>>: # e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
@@ -32,11 +31,10 @@ spec:
 An example of the DataSource kind can be:
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: DataSource
 metadata:
   name: string
-  displayName: string # optional
 spec:
   cloudWatch:
     accessKeyID: accessKey
@@ -49,11 +47,10 @@ spec:
 it tells which kind of object should be referred there.
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: SLO
 metadata:
   name: string
-  displayName: string # optional
 spec:
   description: string # optional up to 1050 characters
   service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
@@ -81,11 +78,10 @@ spec:
 **Rationale:** Get rid of `metricSource` (reduce the level of indentation), and use the new syntax of `DataSource` directly.
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: SLI
 metadata:
   name: string
-  displayName: string # optional
 spec:
   description: string # optional up to 1050 characters
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
@@ -148,17 +144,15 @@ spec:
 An example of an SLO where SLI is inlined:
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: SLO
 metadata:
   name: foo-slo
-  displayName: Foo SLO
 spec:
   service: foo
   indicator:
     metadata:
       name: foo-error
-      displayName: Foo Error
     spec:
       ratioMetric:
         counter: true
