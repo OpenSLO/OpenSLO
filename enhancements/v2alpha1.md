@@ -226,7 +226,7 @@ spec:
     - or:
       - conditionRef:
       - conditionRef:
-    - and: 
+    - and:
       - conditionRef:
       - conditionRef:
   notificationTargets:
