@@ -209,7 +209,7 @@ thresholdMetric:
 **Rationale:** Use *and*/*or* keywords to combine alert conditions, allowing users to create complex alert condition composition. Specifying multiple conditions without the *and*/*or* keywords results in an implicit *and* logic. Note that the and/or keywords are not required and a single condition can still be specified, this should not be a breaking change with the current OpenSLO version.
 
 ```yaml
-apiVersion: openslo/v1
+apiVersion: openslo/v2alpha1
 kind: AlertPolicy
 metadata:
   name: string
@@ -254,7 +254,7 @@ Which would be equivalent to:
 
 
 ```yaml
-apiVersion: openslo/v1
+apiVersion: openslo/v2alpha1
 kind: AlertPolicy
 metadata:
   name: High-Burn-Rate
