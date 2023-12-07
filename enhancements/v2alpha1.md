@@ -203,3 +203,89 @@ thresholdMetric:
     databaseName: metrics-db
     query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
  ```
+
+## AlertPolicy
+
+**Rationale:** Use *and*/*or* keywords to combine alert conditions, allowing users to create complex alert condition composition. Specifying multiple conditions without the *and*/*or* keywords results in an implicit *and* logic. Note that the and/or keywords are not required and a single condition can still be specified, this should not be a breaking change with the current OpenSLO version.
+
+```yaml
+apiVersion: openslo/v1
+kind: AlertPolicy
+metadata:
+  name: string
+  displayName: string # optional
+spec:
+  description: string # optional up to 1050 characters
+  alertWhenNoData: boolean
+  alertWhenResolved: boolean
+  alertWhenBreaching: boolean
+  conditions: # list of alert conditions
+    - conditionRef: # required when alert condition is not inlined
+    # Combining and/or keywords to create more complex conditions triggering an alert
+    # If multiple conditions are supplied without an and/or keyword, it is an implicit and
+    - or:
+      - conditionRef:
+      - conditionRef:
+    - and: 
+      - conditionRef:
+      - conditionRef:
+  notificationTargets:
+  - targetRef: # required when alert notification target is not inlined
+```
+
+An example **AlertPolicy** based on the SRE multi-window alert example (https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts), which results in a query pseudo-code of:
+
+```
+expr: (
+        job:slo_errors_per_request:ratio_rate1h{job="myjob"} > (14.4*0.001)
+      and
+        job:slo_errors_per_request:ratio_rate5m{job="myjob"} > (14.4*0.001)
+      )
+    or
+      (
+        job:slo_errors_per_request:ratio_rate6h{job="myjob"} > (6*0.001)
+      and
+        job:slo_errors_per_request:ratio_rate30m{job="myjob"} > (6*0.001)
+      )
+severity: page
+```
+
+Which would be equivalent to:
+
+
+```yaml
+apiVersion: openslo/v1
+kind: AlertPolicy
+metadata:
+  name: High-Burn-Rate
+  displayName: Alert Policy
+spec:
+  conditions:
+    - or:
+      - and:
+        - kind: AlertCondition
+          spec:
+            condition:
+              kind: burnrate
+              threshold: 14.4
+              lookbackWindow: -1h
+        - kind: AlertCondition
+          spec:
+            condition:
+              kind: burnrate
+              threshold: 14.4
+              lookbackWindow: -5m
+      - and:
+        - kind: AlertCondition
+          spec:
+            condition:
+              kind: burnrate
+              threshold: 6
+              lookbackWindow: -6h
+        - kind: AlertCondition
+          spec:
+            condition:
+              kind: burnrate
+              threshold: 6
+              lookbackWindow: -30m
+```
