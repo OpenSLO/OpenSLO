@@ -7,14 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up prerequisites - node and yarn
-        uses: actions/setup-node@v3
-        with:
-          node-version: "15.x"
+        uses: actions/setup-node@v4
       - name: Set up yarn cache
         id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v3
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}

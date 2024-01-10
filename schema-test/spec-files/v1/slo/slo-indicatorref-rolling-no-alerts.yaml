@@ -1,0 +1,16 @@
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: test-slo
+  displayName: Test SLO # optional
+spec:
+  description: This is a great description # optional
+  service: the-service-name # name of the service to associate this SLO with
+  indicatorRef: indicator-ref-string # name of the SLI. Required if indicator is not given.
+  timeWindow:
+    - duration: 1d
+      isRolling: true
+  budgetingMethod: Occurrences
+  objectives:
+    - displayName: Foo Total Errors
+      target: 0.98

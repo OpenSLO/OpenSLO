@@ -1,27 +1,34 @@
 {
-    "version": "0.1",
-    "language": "en_US",
-    "dictionaries": [
-        "bash",
-        "companies",
-        "css",
-        "go",
-        "html",
-        "misc",
-        "softwareTerms"
-    ],
-    "ignorePaths": [
-        ".vscode/",
-        ".idea/",
-        "**/node_modules/**",
-        "**/*.lock",
-        "package.json"
-    ],
-    "allowCompoundWords": true,
-    "words": [
-        "Kubernetes",
-        "openslo",
-        "socio",
-        "tada"
-    ]
+	"version": "0.1",
+	"language": "en_US",
+	"dictionaries": [
+		"bash",
+		"companies",
+		"css",
+		"go",
+		"html",
+		"misc",
+		"softwareTerms"
+	],
+	"ignorePaths": [
+		".vscode/",
+		".idea/",
+		"**/node_modules/**",
+		"**/*.lock",
+		"package.json",
+		"schema-test/spec-files",
+		"schema-test/vendor",
+		"schema-test/*.go",
+		"schema-test/go.mod",
+		"schema-test/go.sum"
+	],
+	"allowCompoundWords": true,
+	"words": [
+		"Kubernetes",
+		"mhdw",
+		"openslo",
+		"socio",
+		"struct",
+		"tada"
+	]
 }

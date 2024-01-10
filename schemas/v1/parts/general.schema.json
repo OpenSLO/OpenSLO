@@ -1,0 +1,40 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "https://openslo.com/schemas/v1/parts/general.schema.json",
+	"title": "OpenSLO: Part -> General Schema",
+	"description": "The OpenSLO General Schema lays out the basic structure of an OpenSLO document.",
+	"type": "object",
+	"required": [
+		"apiVersion",
+		"kind",
+		"metadata",
+		"spec"
+	],
+	"allOf": [
+		{
+			"properties": {
+				"apiVersion": {
+					"const": "openslo/v1",
+					"description": "The version of specification format for this particular entity that this is written against."
+				},
+				"kind": {
+					"enum": [
+						"AlertCondition",
+						"AlertNotificationTarget",
+						"AlertPolicy",
+						"DataSource",
+						"Service",
+						"SLI",
+						"SLO"
+					]
+				},
+				"spec": {
+					"type": "object"
+				}
+			}
+		},
+		{
+			"$ref": "https://openslo.com/schemas/v1/parts/metadata.schema.json"
+		}
+	]
+}

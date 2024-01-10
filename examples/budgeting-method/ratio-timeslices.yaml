@@ -1,0 +1,34 @@
+# SLO that compares success requests with response 2xx to total requests to the main page of our site.
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: main-page
+  displayName: Main page availability
+spec:
+  description: Our main page should be available always
+  service: web-shop
+  indicator:
+    metadata:
+      name: response-code
+      displayName: Response codes of requests to main page
+    spec:
+      ratioMethic:
+        good: # In most cases it is easier to think about timeslices in ratio metrics.
+          metricSource:
+            type: Any # Here put any service that holds information you need.
+            spec:
+              # Fields needed to query service.
+        total:
+          metricSource:
+            type: Any # Here put any service that holds information you need.
+            spec:
+              # Fields needed to query service.
+  timeWindow:
+   - duration: 2w
+     isRolling: true
+  budgetingMethod: RatioTimeslices
+  objective:
+    - displayName: Good
+      op: gt
+      timeSliceWindow: 1m
+      target: 0.99
