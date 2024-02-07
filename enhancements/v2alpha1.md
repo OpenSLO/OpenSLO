@@ -88,8 +88,8 @@ spec:
     # either dataSourceRef or <<dataSourceName>> must be provided
     dataSourceRef: string # refer to already defined DataSource object
     <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-		# fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-		# everything that is valid YAML can be put here
+  # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+  # everything that is valid YAML can be put here
     spec:
       # arbitrary chosen fields for every DataSource type to make it comfortable to use
       # anything that is valid YAML can be put here.
@@ -102,8 +102,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-			# fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-			# everything that is valid YAML can be put here
+   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+   # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here.
@@ -111,8 +111,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-			# fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-			# everything that is valid YAML can be put here
+   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+   # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
@@ -120,8 +120,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-			# fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-			# everything that is valid YAML can be put here
+   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+   # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
