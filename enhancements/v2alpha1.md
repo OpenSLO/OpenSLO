@@ -73,7 +73,7 @@ spec:
   alertPolicies: # see alert policies below for details
 ```
 
-##### Objectives
+### Objectives
 
 Objectives are the thresholds for your SLOs. You can use objectives to define
 the tolerance levels for your metrics.
