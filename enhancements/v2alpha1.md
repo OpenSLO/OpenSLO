@@ -2,31 +2,39 @@
 
 This is the place for refining ideas for new versions of OpenSLO spec. It's not supposed to be stable, this is a living document
 
+## [General Schema](https://github.com/OpenSLO/OpenSLO?tab=readme-ov-file#general-schema)
+
+Since the goal of the OpenSLO spec is to be compatible with Kubernetes, we should make a couple of fixes
+in the specification to reach that goal.
+
+1. Use `openslo.com/<version>` instead of `openslo/<version>`
+2. Remove `displayName` from the [ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#objectmeta-v1-meta)
+3. Adhere to [metadata.labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) and
+   [metadata.annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) Kubernetes standards.
+
 ## [DataSource](../README.md#datasource)
 
 **Rationale:** Simplify syntax. Avoid being needlessly verbose without sacrificing flexibility and readability.
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: DataSource
 metadata:
   name: string
-  displayName: string # optional
 spec:
   description: string # optional up to 1050 characters
   <<dataSourceName>>: # e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-      # everything that is valid YAML can be put here
+  # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+  # everything that is valid YAML can be put here
 ```
 
 An example of the DataSource kind can be:
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: DataSource
 metadata:
   name: string
-  displayName: string # optional
 spec:
   cloudWatch:
     accessKeyID: accessKey
@@ -36,14 +44,13 @@ spec:
 ## [SLO](../README.md#slo)
 
 **Rationale:** Make names more straightforward and aligned with others. Change field indicator to `sli` and `indicatorRef` to `sliRef`
-  it tells which kind of object should be referred there.
+it tells which kind of object should be referred there.
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: SLO
 metadata:
   name: string
-  displayName: string # optional
 spec:
   description: string # optional up to 1050 characters
   service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
@@ -91,32 +98,32 @@ objectives:
 **Rationale:** Get rid of `metricSource` (reduce the level of indentation), and use the new syntax of `DataSource` directly.
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: SLI
 metadata:
   name: string
-  displayName: string # optional
 spec:
   description: string # optional up to 1050 characters
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
     # either dataSourceRef or <<dataSourceName>> must be provided
     dataSourceRef: string # refer to already defined DataSource object
     <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-      # everything that is valid YAML can be put here
+  # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+  # everything that is valid YAML can be put here
     spec:
-     # arbitrary chosen fields for every DataSource type to make it comfortable to use
+      # arbitrary chosen fields for every DataSource type to make it comfortable to use
       # anything that is valid YAML can be put here.
   ratioMetric: # either thresholdMetric or ratioMetric must be provided
-    counter: true | false # true if the metric is a monotonically increasing counter,
-                          # or false, if it is a single number that can arbitrarily go up or down
-                          # ignored when using "raw"
+    counter:
+      true | false # true if the metric is a monotonically increasing counter,
+      # or false, if it is a single number that can arbitrarily go up or down
+      # ignored when using "raw"
     good: # the numerator, either "good" or "bad" must be provided if "total" is used
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
+   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+   # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here.
@@ -124,8 +131,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
+   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+   # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
@@ -133,19 +140,20 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-        # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-        # everything that is valid YAML can be put here
+   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+   # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
 
-    rawType: success | failure # required with "raw", indicates how the stored ratio was calculated:
-                               #  success – good/total
-                               #  failure – bad/total
+    rawType:
+      success | failure # required with "raw", indicates how the stored ratio was calculated:
+      #  success – good/total
+      #  failure – bad/total
     raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+      <<dataSourceName>>:# inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
@@ -156,17 +164,15 @@ spec:
 An example of an SLO where SLI is inlined:
 
 ```yaml
-apiVersion: openslo/v2alpha1
+apiVersion: openslo.com/v2alpha1
 kind: SLO
 metadata:
   name: foo-slo
-  displayName: Foo SLO
 spec:
   service: foo
   indicator:
     metadata:
       name: foo-error
-      displayName: Foo Error
     spec:
       ratioMetric:
         counter: true
@@ -222,4 +228,4 @@ thresholdMetric:
     clusterId: metrics-cluster
     databaseName: metrics-db
     query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
- ```
+```
