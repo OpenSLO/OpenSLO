@@ -21,6 +21,7 @@ apiVersion: openslo.com/v2alpha1
 kind: DataSource
 metadata:
   name: string
+  labels: object # optional
 spec:
   description: string # optional up to 1050 characters
   <<dataSourceName>>: # e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
@@ -51,6 +52,7 @@ apiVersion: openslo.com/v2alpha1
 kind: SLO
 metadata:
   name: string
+  labels: object # optional
 spec:
   description: string # optional up to 1050 characters
   service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
@@ -102,6 +104,7 @@ apiVersion: openslo.com/v2alpha1
 kind: SLI
 metadata:
   name: string
+  labels: object # optional
 spec:
   description: string # optional up to 1050 characters
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
