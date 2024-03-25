@@ -1,7 +1,0 @@
-apiVersion: openslo/v1alpha
-kind: AlertNotificationTarget
-metadata:
-  name: OnCallDevopsMailNotification
-spec:
-  description: Notifies by a mail message to the on-call devops mailing group
-  target: email
