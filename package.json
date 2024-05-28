@@ -7,6 +7,6 @@
   },
   "devDependencies": {
     "cspell": "^8.8.3",
-    "markdownlint-cli": "^0.40.0"
+    "markdownlint-cli": "^0.41.0"
   }
 }
