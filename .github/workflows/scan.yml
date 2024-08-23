@@ -1,0 +1,17 @@
+name: Scan for vulnerabilities
+on:
+  schedule:
+    # Run at 8:00 AM every weekday.
+    - cron:  '0 8 * * 1-5'
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Install devbox
+        uses: jetpack-io/devbox-install-action@v0.11.0
+        with:
+          enable-cache: true
+      - name: Run Golang Vulncheck
+        run: devbox run -- make check/vulns
