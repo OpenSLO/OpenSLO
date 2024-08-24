@@ -1,4 +1,4 @@
-package v1
+package v2alpha1
 
 import (
 	"slices"
@@ -8,7 +8,7 @@ import (
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
-const APIVersion = openslo.VersionV1
+const APIVersion = openslo.VersionV2alpha1
 
 var supportedKinds = []openslo.Kind{
 	openslo.KindSLO,
@@ -26,7 +26,6 @@ func GetSupportedKinds() []openslo.Kind {
 
 type Metadata struct {
 	Name        string      `yaml:"name"`
-	DisplayName string      `yaml:"displayName,omitempty"`
 	Labels      Labels      `json:"labels,omitempty"`
 	Annotations Annotations `json:"annotations,omitempty"`
 }

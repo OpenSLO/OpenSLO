@@ -10,6 +10,7 @@ import (
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo/v1alpha"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha1"
 )
 
 func Decode(r io.Reader, format ObjectFormat) ([]openslo.Object, error) {
@@ -109,7 +110,7 @@ func decodeYAML(r io.Reader) ([]openslo.Object, error) {
 				decodeFunc = decodeV1alphaYAMLObject
 			case openslo.VersionV1:
 				decodeFunc = decodeV1YAMLObject
-			case openslo.VersionV2alpha:
+			case openslo.VersionV2alpha1:
 				decodeFunc = decodeV2alphaObject
 			default:
 				return nil, fmt.Errorf("unsupported %[1]T: %[1]s", obj.apiVersion)
@@ -159,9 +160,19 @@ func decodeV1YAMLObject(generic genericObject) (openslo.Object, error) {
 func decodeV2alphaObject(generic genericObject) (openslo.Object, error) {
 	switch generic.kind {
 	case openslo.KindService:
-		return decodeYAMLObject[v1alpha.Service](generic.node)
+		return decodeYAMLObject[v2alpha1.Service](generic.node)
 	case openslo.KindSLO:
-		return decodeYAMLObject[v1alpha.SLO](generic.node)
+		return decodeYAMLObject[v2alpha1.SLO](generic.node)
+	case openslo.KindSLI:
+		return decodeYAMLObject[v2alpha1.SLI](generic.node)
+	case openslo.KindDataSource:
+		return decodeYAMLObject[v2alpha1.DataSource](generic.node)
+	case openslo.KindAlertPolicy:
+		return decodeYAMLObject[v2alpha1.AlertPolicy](generic.node)
+	case openslo.KindAlertCondition:
+		return decodeYAMLObject[v2alpha1.AlertCondition](generic.node)
+	case openslo.KindAlertNotificationTarget:
+		return decodeYAMLObject[v2alpha1.AlertNotificationTarget](generic.node)
 	default:
 		return nil, fmt.Errorf("unsupported %[1]T: %[1]s for version: %[2]s", generic.kind, generic.apiVersion)
 	}

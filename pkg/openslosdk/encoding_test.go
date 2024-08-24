@@ -9,6 +9,7 @@ import (
 
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha1"
 )
 
 //go:embed test_data
@@ -103,6 +104,36 @@ func TestDecode(t *testing.T) {
 
 		requireNoError(t, err)
 		requireLen(t, 2, objects)
+		requireEqual(t, expected, objects)
+	})
+}
+
+func TestDecode_v2alpha(t *testing.T) {
+	t.Run("data source", func(t *testing.T) {
+		expected := []openslo.Object{
+			v2alpha1.DataSource{
+				APIVersion: openslo.VersionV2alpha1,
+				Kind:       openslo.KindDataSource,
+				Metadata: v2alpha1.Metadata{
+					Name: "cloudWatch-prod",
+				},
+				Spec: v2alpha1.DataSourceSpec{
+					Description: "CloudWatch Production Data Source",
+					DataSourceConnectionDetails: v2alpha1.DataSourceConnectionDetails{
+						"cloudWatch": map[string]interface{}{
+							"accessKeyID":     "accessKey",
+							"secretAccessKey": "secretAccessKey",
+						},
+					},
+				},
+			},
+		}
+
+		data := readTestData(t, testData, "decode/v2alpha1_data_source.yaml")
+		objects, err := Decode(bytes.NewReader(data), FormatYAML)
+
+		requireNoError(t, err)
+		requireLen(t, 1, objects)
 		requireEqual(t, expected, objects)
 	})
 }

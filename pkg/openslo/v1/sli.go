@@ -43,7 +43,9 @@ type RatioMetric struct {
 	Counter bool                `yaml:"counter"`
 	Good    *MetricSourceHolder `yaml:"good,omitempty"`
 	Bad     *MetricSourceHolder `yaml:"bad,omitempty"`
-	Total   MetricSourceHolder  `yaml:"total"`
+	Total   MetricSourceHolder  `yaml:"total,omitempty"`
+	RawType *string             `yaml:"rawType,omitempty"`
+	Raw     *MetricSourceHolder `yaml:"raw,omitempty"`
 }
 
 type MetricSourceHolder struct {
@@ -56,12 +58,13 @@ type MetricSource struct {
 	MetricSourceSpec map[string]string `yaml:"spec"`
 }
 
-// UnmarshalYAML is used to override the default unmarshal behavior
-// Since MetricSources don't have a determined structure, we need to do a few things here:
-//  1. Pull out the MetricSourceRef and Type separately, and add them to the MetricSource
-//  2. Attempt to unmarshal the MetricSourceSpec, which can be either a string or an array.
-//     2a.  If its a string, add it as a single string
-//     2b.  If its an array, flatten it to a single string
+// UnmarshalYAML is used to override the default unmarshal behavior.
+// Since [MetricSource] doesn't have a determined structure, we need to do a few things here:
+//  1. Pull out the [MetricSource.MetricSourceRef] and [MetricSource.Type] separately,
+//     and add them to the [MetricSource].
+//  2. Attempt to unmarshal the [MetricSource.MetricSourceSpec], which can be either a string or an array.
+//     2a.  If it's a string, add it as a single string.
+//     2b.  If it's an array, flatten it to a single string.
 //
 // This also assumes a certain flat structure that we can revisit if the need arises.
 func (m *MetricSource) UnmarshalYAML(value *yaml.Node) error {

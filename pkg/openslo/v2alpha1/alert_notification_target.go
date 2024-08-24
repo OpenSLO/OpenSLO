@@ -1,4 +1,4 @@
-package v1
+package v2alpha1
 
 import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 
@@ -28,6 +28,6 @@ func (a AlertNotificationTarget) Validate() error {
 }
 
 type AlertNotificationTargetSpec struct {
-	Description string `yaml:"description,omitempty"`
 	Target      string `yaml:"target"`
+	Description string `yaml:"description,omitempty"`
 }

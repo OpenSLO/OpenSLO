@@ -1,4 +1,4 @@
-package v1
+package v2alpha1
 
 import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 
@@ -28,5 +28,5 @@ func (s Service) Validate() error {
 }
 
 type ServiceSpec struct {
-	Description string `yaml:"description,omitempty"`
+	Description string `yaml:"description"`
 }
