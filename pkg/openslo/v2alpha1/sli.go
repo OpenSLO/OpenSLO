@@ -30,25 +30,21 @@ func (s SLI) Validate() error {
 }
 
 type SLISpec struct {
-	ThresholdMetric *MetricSourceHolder `yaml:"thresholdMetric,omitempty"`
-	RatioMetric     *RatioMetric        `yaml:"ratioMetric,omitempty"`
+	ThresholdMetric *SLIMetricSpec  `yaml:"thresholdMetric,omitempty"`
+	RatioMetric     *SLIRatioMetric `yaml:"ratioMetric,omitempty"`
 }
 
-type RatioMetric struct {
-	Counter bool                `yaml:"counter"`
-	Good    *MetricSourceHolder `yaml:"good,omitempty"`
-	Bad     *MetricSourceHolder `yaml:"bad,omitempty"`
-	Total   MetricSourceHolder  `yaml:"total,omitempty"`
-	RawType *string             `yaml:"rawType,omitempty"`
-	Raw     *MetricSourceHolder `yaml:"raw,omitempty"`
+type SLIRatioMetric struct {
+	Counter bool           `yaml:"counter"`
+	Good    *SLIMetricSpec `yaml:"good,omitempty"`
+	Bad     *SLIMetricSpec `yaml:"bad,omitempty"`
+	Total   *SLIMetricSpec `yaml:"total,omitempty"`
+	RawType *string        `yaml:"rawType,omitempty"`
+	Raw     *SLIMetricSpec `yaml:"raw,omitempty"`
 }
 
-type MetricSourceHolder struct {
-	MetricSourceInline `yaml:",inline"`
-}
-
-type MetricSourceInline struct {
-	MetricSourceRef             string         `yaml:"metricSourceRef,omitempty"`
+type SLIMetricSpec struct {
+	DataSourceRef               string         `yaml:"dataSourceRef,omitempty"`
 	DataSourceSpec              map[string]any `yaml:"spec,omitempty"`
 	DataSourceConnectionDetails `yaml:",inline"`
 }

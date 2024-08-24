@@ -120,7 +120,7 @@ func TestDecode_v2alpha(t *testing.T) {
 				Spec: v2alpha1.DataSourceSpec{
 					Description: "CloudWatch Production Data Source",
 					DataSourceConnectionDetails: v2alpha1.DataSourceConnectionDetails{
-						"cloudWatch": map[string]interface{}{
+						"cloudWatch": map[string]any{
 							"accessKeyID":     "accessKey",
 							"secretAccessKey": "secretAccessKey",
 						},
@@ -134,6 +134,87 @@ func TestDecode_v2alpha(t *testing.T) {
 
 		requireNoError(t, err)
 		requireLen(t, 1, objects)
+		requireEqual(t, expected, objects)
+	})
+
+	t.Run("slos", func(t *testing.T) {
+		expected := []openslo.Object{
+			v2alpha1.SLO{
+				APIVersion: openslo.VersionV2alpha1,
+				Kind:       openslo.KindSLO,
+				Metadata: v2alpha1.Metadata{
+					Name: "foo-slo",
+				},
+				Spec: v2alpha1.SLOSpec{
+					Service: "foo",
+					SLI: &v2alpha1.SLOIndicator{
+						Metadata: v2alpha1.Metadata{
+							Name: "foo-error",
+						},
+						Spec: v2alpha1.SLISpec{
+							RatioMetric: &v2alpha1.SLIRatioMetric{
+								Counter: true,
+								Good: &v2alpha1.SLIMetricSpec{
+									DataSourceRef: "datadog-datasource",
+									DataSourceSpec: map[string]any{
+										"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
+									},
+								},
+								Total: &v2alpha1.SLIMetricSpec{
+									DataSourceRef: "datadog-datasource",
+									DataSourceSpec: map[string]any{
+										"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
+									},
+								},
+							},
+						},
+					},
+					Objectives: []v2alpha1.Objective{
+						{
+							DisplayName: "Foo Total Errors",
+							Target:      ptr(0.98),
+						},
+					},
+				},
+			},
+			v2alpha1.SLO{
+				APIVersion: openslo.VersionV2alpha1,
+				Kind:       openslo.KindSLO,
+				Metadata: v2alpha1.Metadata{
+					Name: "bar-slo",
+				},
+				Spec: v2alpha1.SLOSpec{
+					Service: "bar",
+					SLI: &v2alpha1.SLOIndicator{
+						Metadata: v2alpha1.Metadata{
+							Name: "bar-error",
+						},
+						Spec: v2alpha1.SLISpec{
+							ThresholdMetric: &v2alpha1.SLIMetricSpec{
+								DataSourceSpec: map[string]any{
+									"region":       "eu-central-1",
+									"clusterId":    "metrics-cluster",
+									"databaseName": "metrics-db",
+									"query":        "SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to",
+								},
+								DataSourceConnectionDetails: v2alpha1.DataSourceConnectionDetails{
+									"redshift": map[string]any{
+										"accessKeyID":     "accessKey",
+										"secretAccessKey": "secretAccessKey",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		data := readTestData(t, testData, "decode/v2alpha1_slos.yaml")
+		objects, err := Decode(bytes.NewReader(data), FormatYAML)
+
+		requireNoError(t, err)
+		requireLen(t, 2, objects)
 		requireEqual(t, expected, objects)
 	})
 }
@@ -161,9 +242,11 @@ func requireLen[T any](t *testing.T, expected int, s []T) {
 	}
 }
 
-func requireEqual(t *testing.T, expected, got interface{}) {
+func requireEqual(t *testing.T, expected, got any) {
 	t.Helper()
 	if !reflect.DeepEqual(expected, got) {
 		t.Fatalf("expected %v, got %v", expected, got)
 	}
 }
+
+func ptr[T any](v T) *T { return &v }

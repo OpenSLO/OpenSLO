@@ -35,39 +35,39 @@ func (s SLI) Validate() error {
 }
 
 type SLISpec struct {
-	ThresholdMetric *MetricSourceHolder `yaml:"thresholdMetric,omitempty"`
-	RatioMetric     *RatioMetric        `yaml:"ratioMetric,omitempty"`
+	ThresholdMetric *SLIMetricSpec `yaml:"thresholdMetric,omitempty"`
+	RatioMetric     *RatioMetric   `yaml:"ratioMetric,omitempty"`
 }
 
 type RatioMetric struct {
-	Counter bool                `yaml:"counter"`
-	Good    *MetricSourceHolder `yaml:"good,omitempty"`
-	Bad     *MetricSourceHolder `yaml:"bad,omitempty"`
-	Total   MetricSourceHolder  `yaml:"total,omitempty"`
-	RawType *string             `yaml:"rawType,omitempty"`
-	Raw     *MetricSourceHolder `yaml:"raw,omitempty"`
+	Counter bool           `yaml:"counter"`
+	Good    *SLIMetricSpec `yaml:"good,omitempty"`
+	Bad     *SLIMetricSpec `yaml:"bad,omitempty"`
+	Total   *SLIMetricSpec `yaml:"total,omitempty"`
+	RawType *string        `yaml:"rawType,omitempty"`
+	Raw     *SLIMetricSpec `yaml:"raw,omitempty"`
 }
 
-type MetricSourceHolder struct {
-	MetricSource MetricSource `yaml:"metricSource"`
+type SLIMetricSpec struct {
+	MetricSource SLIMetricSource `yaml:"metricSource"`
 }
 
-type MetricSource struct {
+type SLIMetricSource struct {
 	MetricSourceRef  string            `yaml:"metricSourceRef,omitempty"`
 	Type             string            `yaml:"type,omitempty"`
 	MetricSourceSpec map[string]string `yaml:"spec"`
 }
 
 // UnmarshalYAML is used to override the default unmarshal behavior.
-// Since [MetricSource] doesn't have a determined structure, we need to do a few things here:
-//  1. Pull out the [MetricSource.MetricSourceRef] and [MetricSource.Type] separately,
-//     and add them to the [MetricSource].
-//  2. Attempt to unmarshal the [MetricSource.MetricSourceSpec], which can be either a string or an array.
+// Since [SLIMetricSource] doesn't have a determined structure, we need to do a few things here:
+//  1. Pull out the [SLIMetricSource.MetricSourceRef] and [SLIMetricSource.Type] separately,
+//     and add them to the [SLIMetricSource].
+//  2. Attempt to unmarshal the [SLIMetricSource.MetricSourceSpec], which can be either a string or an array.
 //     2a.  If it's a string, add it as a single string.
 //     2b.  If it's an array, flatten it to a single string.
 //
 // This also assumes a certain flat structure that we can revisit if the need arises.
-func (m *MetricSource) UnmarshalYAML(value *yaml.Node) error {
+func (m *SLIMetricSource) UnmarshalYAML(value *yaml.Node) error {
 	var tmpMetricSource struct {
 		MetricSourceRef  string               `yaml:"metricSourceRef,omitempty"`
 		Type             string               `yaml:"type,omitempty"`
