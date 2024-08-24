@@ -1,0 +1,7 @@
+apiVersion: openslo/v1
+kind: Service
+metadata:
+  name: "users-auth"
+  displayName: "Users Auth Service"
+spec:
+  description: "Example Service"

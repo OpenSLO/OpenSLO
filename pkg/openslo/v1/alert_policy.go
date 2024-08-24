@@ -2,11 +2,29 @@ package v1
 
 import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 
+var _ = openslo.Object(AlertPolicy{})
+
 type AlertPolicy struct {
 	APIVersion openslo.Version `yaml:"apiVersion"`
 	Kind       openslo.Kind    `yaml:"kind"`
 	Metadata   Metadata        `yaml:"metadata"`
 	Spec       AlertPolicySpec `yaml:"spec"`
+}
+
+func (a AlertPolicy) GetVersion() openslo.Version {
+	return APIVersion
+}
+
+func (a AlertPolicy) GetKind() openslo.Kind {
+	return openslo.KindAlertPolicy
+}
+
+func (a AlertPolicy) GetName() string {
+	return a.Metadata.Name
+}
+
+func (a AlertPolicy) Validate() error {
+	return nil
 }
 
 type AlertPolicyCondition struct {

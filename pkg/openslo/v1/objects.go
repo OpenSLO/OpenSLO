@@ -1,12 +1,28 @@
 package v1
 
 import (
+	"slices"
+
 	"gopkg.in/yaml.v3"
 
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 const APIVersion = openslo.VersionV1
+
+var supportedKinds = []openslo.Kind{
+	openslo.KindSLO,
+	openslo.KindSLI,
+	openslo.KindDataSource,
+	openslo.KindService,
+	openslo.KindAlertPolicy,
+	openslo.KindAlertCondition,
+	openslo.KindAlertNotificationTarget,
+}
+
+func GetSupportedKinds() []openslo.Kind {
+	return slices.Clone(supportedKinds)
+}
 
 type Metadata struct {
 	Name        string      `yaml:"name"`

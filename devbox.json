@@ -10,6 +10,10 @@
     "go@1.22",
     "gotools@0.22"
   ],
+  "env": {
+    "GOPATH": "$PWD",
+    "PATH": "$PATH:$PWD/bin"
+  },
   "shell": {
     "init_hook": [
       "export \"GOROOT=$(go env GOROOT)\"",

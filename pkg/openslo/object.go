@@ -7,6 +7,8 @@ type Object interface {
 	GetVersion() Version
 	// GetKind returns the Kind of the Object.
 	GetKind() Kind
-	// GetName returns the name of the Object (RFC 1123 compliant DNS).
+	// GetName returns the name of the Object.
 	GetName() string
+	// Validate performs static validation of the Object.
+	Validate() error
 }

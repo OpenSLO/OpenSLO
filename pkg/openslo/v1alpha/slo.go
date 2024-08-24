@@ -2,23 +2,29 @@ package v1alpha
 
 import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 
+var _ = openslo.Object(SLO{})
+
 type SLO struct {
-	APIVersion string   `yaml:"apiVersion"`
-	Kind       string   `yaml:"kind"`
-	Metadata   Metadata `yaml:"metadata"`
-	Spec       SLOSpec  `yaml:"spec"`
+	APIVersion openslo.Version `yaml:"apiVersion"`
+	Kind       openslo.Kind    `yaml:"kind"`
+	Metadata   Metadata        `yaml:"metadata"`
+	Spec       SLOSpec         `yaml:"spec"`
+}
+
+func (s SLO) GetVersion() openslo.Version {
+	return APIVersion
 }
 
 func (s SLO) GetKind() openslo.Kind {
-	return openslo.KindSLO
-}
-
-func (s SLO) Version() openslo.Version {
-	return APIVersion
+	return openslo.KindService
 }
 
 func (s SLO) GetName() string {
 	return s.Metadata.Name
+}
+
+func (s SLO) Validate() error {
+	return nil
 }
 
 type SLOSpec struct {
