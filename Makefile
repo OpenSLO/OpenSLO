@@ -18,7 +18,7 @@ test: test/go/unit
 ## Run Go unit tests.
 test/go/unit:
 	$(call _print_step,Running Go unit tests)
-	go test -race -cover ./... ./docs/mock_example
+	go test -race -cover ./...
 
 .PHONY: check check/vet check/lint check/gosec check/spell check/trailing check/markdown check/format
 ## Run all checks.
