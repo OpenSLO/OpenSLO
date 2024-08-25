@@ -11,6 +11,14 @@ define _print_step
 	printf -- '------\n%s...\n' "${1}"
 endef
 
+## Activate developer environment using devbox. Run `make install/devbox` first If you don't have devbox installed.
+activate:
+	devbox shell
+
+## Install devbox binary.
+install/devbox:
+	curl -fsSL https://get.jetpack.io/devbox | bash
+
 .PHONY: test test/go/unit
 ## Run all tests.
 test: test/go/unit
