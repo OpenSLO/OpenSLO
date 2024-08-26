@@ -28,36 +28,36 @@ func (s SLO) Validate() error {
 }
 
 type SLOSpec struct {
-	Description     string        `yaml:"description,omitempty"`
-	Service         string        `yaml:"service"`
-	SLI             *SLOIndicator `yaml:"sli,omitempty"`
-	SLIRef          *string       `yaml:"sliRef,omitempty"`
-	BudgetingMethod string        `yaml:"budgetingMethod"`
-	TimeWindow      []TimeWindow  `yaml:"timeWindow"`
-	Objectives      []Objective   `yaml:"objectives"`
+	Description     string          `yaml:"description,omitempty"`
+	Service         string          `yaml:"service"`
+	SLI             *SLOEmbeddedSLI `yaml:"sli,omitempty"`
+	SLIRef          *string         `yaml:"sliRef,omitempty"`
+	BudgetingMethod string          `yaml:"budgetingMethod"`
+	TimeWindow      []TimeWindow    `yaml:"timeWindow"`
+	Objectives      []Objective     `yaml:"objectives"`
 	// We don't make clear in the spec if this is a ref or inline.
 	// We will make it a ref for now.
 	// https://github.com/OpenSLO/OpenSLO/issues/133
 	AlertPolicies []string `yaml:"alertPolicies"`
 }
 
-type SLOIndicator struct {
+type SLOEmbeddedSLI struct {
 	Metadata Metadata `yaml:"metadata"`
 	Spec     SLISpec  `yaml:"spec"`
 }
 
 type Objective struct {
-	DisplayName     string        `yaml:"displayName,omitempty"`
-	Labels          Labels        `yaml:"labels,omitempty"`
-	Op              string        `yaml:"op,omitempty"`
-	Value           *float64      `yaml:"value,omitempty"`
-	Target          *float64      `yaml:"target,omitempty"`
-	TargetPercent   *float64      `yaml:"targetPercent,omitempty"`
-	TimeSliceTarget *float64      `yaml:"timeSliceTarget,omitempty"`
-	TimeSliceWindow *string       `yaml:"timeSliceWindow,omitempty"`
-	Indicator       *SLOIndicator `yaml:"indicator,omitempty"`
-	IndicatorRef    string        `yaml:"indicatorRef,omitempty"`
-	CompositeWeight *float64      `yaml:"compositeWeight,omitempty"`
+	DisplayName     string          `yaml:"displayName,omitempty"`
+	Labels          Labels          `yaml:"labels,omitempty"`
+	Op              string          `yaml:"op,omitempty"`
+	Value           *float64        `yaml:"value,omitempty"`
+	Target          *float64        `yaml:"target,omitempty"`
+	TargetPercent   *float64        `yaml:"targetPercent,omitempty"`
+	TimeSliceTarget *float64        `yaml:"timeSliceTarget,omitempty"`
+	TimeSliceWindow *string         `yaml:"timeSliceWindow,omitempty"`
+	SLI             *SLOEmbeddedSLI `yaml:"sli,omitempty"`
+	SLIRef          string          `yaml:"sliRef,omitempty"`
+	CompositeWeight *float64        `yaml:"compositeWeight,omitempty"`
 }
 
 type TimeWindow struct {
