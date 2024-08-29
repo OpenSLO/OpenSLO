@@ -30,7 +30,7 @@ func (s SLO) Validate() error {
 type SLOSpec struct {
 	TimeWindows     []TimeWindow `yaml:"timeWindows"`
 	BudgetingMethod string       `yaml:"budgetingMethod"`
-	Description     string       `yaml:"description"`
+	Description     string       `yaml:"description,omitempty"`
 	Indicator       *Indicator   `yaml:"indicator"`
 	Service         string       `yaml:"service"`
 	Objectives      []Objective  `json:"objectives"`

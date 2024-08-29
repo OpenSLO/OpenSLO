@@ -28,5 +28,5 @@ func (s Service) Validate() error {
 }
 
 type ServiceSpec struct {
-	Description string `yaml:"description"`
+	Description string `yaml:"description,omitempty"`
 }
