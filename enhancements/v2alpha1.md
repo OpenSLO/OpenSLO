@@ -21,6 +21,7 @@ apiVersion: openslo.com/v2alpha1
 kind: DataSource
 metadata:
   name: string
+  labels: object # optional
 spec:
   description: string # optional up to 1050 characters
   <<dataSourceName>>: # e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
@@ -44,13 +45,14 @@ spec:
 ## [SLO](../README.md#slo)
 
 **Rationale:** Make names more straightforward and aligned with others. Change field indicator to `sli` and `indicatorRef` to `sliRef`
-it tells which kind of object should be referred there.
+it tells which kind of object should be referred there. This change should also apply to each objective.
 
 ```yaml
 apiVersion: openslo.com/v2alpha1
 kind: SLO
 metadata:
   name: string
+  labels: object # optional
 spec:
   description: string # optional up to 1050 characters
   service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
@@ -88,8 +90,8 @@ objectives:
     targetPercent: numeric [0.0, 100) # budget target for given objective of the SLO, can't be used with target
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
     timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
-    indicator: # required only when creating composite SLO, see SLI below for more details
-    indicatorRef: string # required only when creating composite SLO, required if indicator is not given.
+    sli: # required only when creating composite SLO, see SLI below for more details
+    sliRef: string # required only when creating composite SLO, required if sli is not given.
     compositeWeight: numeric (0.0, inf+] # optional, supported only when declaring multiple objectives, default value 1.
 ```
 
@@ -102,6 +104,7 @@ apiVersion: openslo.com/v2alpha1
 kind: SLI
 metadata:
   name: string
+  labels: object # optional
 spec:
   description: string # optional up to 1050 characters
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
@@ -170,7 +173,7 @@ metadata:
   name: foo-slo
 spec:
   service: foo
-  indicator:
+  sli:
     metadata:
       name: foo-error
     spec:
