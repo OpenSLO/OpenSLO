@@ -43,12 +43,22 @@ If you have devbox installed, you can initialize the environment with:
 make activate
 ```
 
-Furthermore, you can utilize devbox's direnv integration to automatically
-activate the environment when you enter the project directory, to do so run:
+Devbox can be easily installed with:
 
 ```sh
-
+make install/devbox
 ```
+
+Furthermore, you can utilize devbox's direnv integration to automatically
+activate the environment when you enter the project's directory, to do so run:
+
+```sh
+make direnv
+```
+
+It will generate an `.envrc` file which is scanned by direnv when you
+enter or leave the directory. You might need to run `direnv allow` in order
+to whitelist the project's `.envrc` file.
 
 ### Merge Request title
 

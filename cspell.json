@@ -30,6 +30,7 @@
     "Kubernetes",
     "devbox",
     "direnv",
+    "envrc",
     "gofumpt",
     "goimports",
     "golangci",
