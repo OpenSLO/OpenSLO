@@ -1,12 +1,13 @@
 {
   "license": "UNLICENSED",
   "private": true,
-  "scripts": {
-    "check-word-lists": "node .github/ci/check-word-lists.js",
-    "check-trailing-whitespaces": "node .github/ci/check-trailing-whitespaces.js"
-  },
+  "type": "module",
   "devDependencies": {
-    "cspell": "^8.14.2",
-    "markdownlint-cli": "^0.41.0"
-  }
+    "cspell": "8.8.4",
+    "markdownlint-cli": "0.41.0"
+  },
+  "scripts": {
+    "format-cspell-config": "node ./internal/scripts/format-cspell-config.js"
+  },
+  "packageManager": "yarn@1.22.22"
 }

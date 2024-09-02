@@ -1,0 +1,97 @@
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+  skip-dirs-use-default: true
+
+issues:
+  # Enable all checks (which was as default disabled e.g. comments).
+  exclude-use-default: false
+  exclude-rules:
+    - linters:
+        - revive
+      text: exported (function|method|type) .*? should have comment or be unexported
+    - linters:
+        - revive
+      text: exported (const|var) .*? should have comment (\(or a comment on this block\) )?or be unexported
+    - linters:
+        - revive
+      text: "if-return: redundant if ...; err != nil check, just return error instead."
+    - linters:
+        - revive
+      text: "^var-naming: .*"
+    - linters:
+        - revive
+      text: "error-strings: error strings should not be capitalized or end with punctuation or a newline"
+  # Value 0 means show all.
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+linters-settings:
+  goimports:
+    local-prefixes: github.com/OpenSLO/OpenSLO
+  govet:
+    # False positives and reporting on error shadowing (which is intended).
+    # Quoting Robi Pike:
+    #   The shadow code is marked experimental.
+    #   It has too many false positives to be enabled by default, so this is not entirely unexpected,
+    #   but don't expect a fix soon. The right way to detect shadowing without flow analysis is elusive.
+    # Few years later (comment from 2015) and the Shadow analyer is still experimental...
+    check-shadowing: false
+  lll:
+    line-length: 120
+  gocritic:
+    enabled-tags:
+      - opinionated
+    disabled-checks:
+      - singleCaseSwitch
+  exhaustive:
+    # In switch statement treat label default: as being exhaustive.
+    default-signifies-exhaustive: true
+  misspell:
+    locale: US
+  gocognit:
+    min-complexity: 30
+  revive:
+    rules:
+      - name: unused-parameter
+        disabled: true
+
+linters:
+  disable-all: true
+  enable:
+    # All linters from list https://golangci-lint.run/usage/linters/ are speciefed here and explicit enable/disable.
+    - asciicheck
+    - bodyclose
+    - dogsled
+    - errcheck
+    - exhaustive
+    - gochecknoinits
+    - gocognit
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goheader
+    - goimports
+    - goprintffuncname
+    - gosimple
+    - govet
+    - importas
+    - ineffassign
+    - lll
+    - makezero
+    - misspell
+    - nakedret
+    - nilerr
+    - prealloc
+    - predeclared
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    - tparallel
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - wastedassign
+    - whitespace

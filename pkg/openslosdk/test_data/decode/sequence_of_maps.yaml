@@ -1,0 +1,14 @@
+- apiVersion: openslo/v1
+  kind: Service
+  metadata:
+    name: "users-auth"
+    displayName: "Users Auth Service"
+  spec:
+    description: "Example Service"
+- apiVersion: openslo/v1
+  kind: Service
+  metadata:
+    name: "users-login"
+    displayName: "Users Login Service"
+  spec:
+    description: "Example Service"

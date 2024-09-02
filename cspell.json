@@ -1,34 +1,54 @@
 {
-	"version": "0.1",
-	"language": "en_US",
-	"dictionaries": [
-		"bash",
-		"companies",
-		"css",
-		"go",
-		"html",
-		"misc",
-		"softwareTerms"
-	],
-	"ignorePaths": [
-		".vscode/",
-		".idea/",
-		"**/node_modules/**",
-		"**/*.lock",
-		"package.json",
-		"schema-test/spec-files",
-		"schema-test/vendor",
-		"schema-test/*.go",
-		"schema-test/go.mod",
-		"schema-test/go.sum"
-	],
-	"allowCompoundWords": true,
-	"words": [
-		"Kubernetes",
-		"mhdw",
-		"openslo",
-		"socio",
-		"struct",
-		"tada"
-	]
+  "allowCompoundWords": true,
+  "language": "en_US",
+  "dictionaries": [
+    "bash",
+    "companies",
+    "css",
+    "go",
+    "html",
+    "misc",
+    "softwareTerms",
+    "npm",
+    "typescript"
+  ],
+  "ignorePaths": [
+    ".vscode/",
+    ".idea/",
+    "**/node_modules/**",
+    "**/*.lock",
+    "package.json"
+  ],
+  "ignoreRegExpList": [
+    "/\\|\\s+[T|G]{2,}\\s+\\|/g",
+    "/https?:\\/\\/.*/g",
+    "/github.*/g",
+    "/nolint.*/g",
+    "/nosec.*/g"
+  ],
+  "words": [
+    "Kubernetes",
+    "devbox",
+    "direnv",
+    "envrc",
+    "gofumpt",
+    "goimports",
+    "golangci",
+    "golines",
+    "gopath",
+    "gopkg",
+    "goroot",
+    "gosec",
+    "govulncheck",
+    "mhdw",
+    "nocomments",
+    "openslo",
+    "openslosdk",
+    "slos",
+    "socio",
+    "struct",
+    "tada",
+    "unmarshaller",
+    "vulns"
+  ]
 }

@@ -37,6 +37,7 @@
 - [Glossary](glossary/README.md)
 - Work in progress for future versions
   - [v2alpha1](enhancements/v2alpha1.md)
+- [SDK](#sdk)
 
 ## Introduction
 
@@ -796,3 +797,10 @@ spec:
 ```
 
 [rfc1123-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names
+
+## SDK
+
+*DISCLAIMER: The SDK is a work in progress and is subject to change.*
+
+The OpenSLO SDK is a set of utilities designed for programmatic access to
+OpenSLO specification.

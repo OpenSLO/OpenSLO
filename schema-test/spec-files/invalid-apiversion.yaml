@@ -1,7 +1,0 @@
-apiVersion: foo
-kind: Service
-metadata:
-  name: my-rad-service
-  displayName: My Rad Service
-spec:
-  description: This is a great description of an even better service.
