@@ -27,20 +27,27 @@ You can run `make help` to see the list of available commands.
 
 Checks which are run as part of the CI pipeline can be run locally wth:
 
-```bash
+```sh
 make check
 ```
 
 If you see formatting or code generation errors you can fix them with:
 
-```bash
+```sh
 make format && make generate
 ```
 
 If you have devbox installed, you can initialize the environment with:
 
-```bash
-devbox shell
+```sh
+make activate
+```
+
+Furthermore, you can utilize devbox's direnv integration to automatically
+activate the environment when you enter the project directory, to do so run:
+
+```sh
+
 ```
 
 ### Merge Request title

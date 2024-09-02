@@ -29,6 +29,7 @@
   "words": [
     "Kubernetes",
     "devbox",
+    "direnv",
     "gofumpt",
     "goimports",
     "golangci",

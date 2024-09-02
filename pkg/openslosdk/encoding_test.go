@@ -90,6 +90,64 @@ func TestDecode(t *testing.T) {
 				},
 			},
 		},
+		"v1 slos": {
+			expected: []openslo.Object{
+				v1.SLO{
+					APIVersion: openslo.VersionV1,
+					Kind:       openslo.KindSLO,
+					Metadata: v1.Metadata{
+						Name:        "foo-slo",
+						DisplayName: "Foo SLO",
+					},
+					Spec: v1.SLOSpec{
+						Service: "foo",
+						Indicator: &v1.SLOIndicator{
+							Metadata: v1.Metadata{
+								Name: "good",
+							},
+							Spec: v1.SLISpec{
+								RatioMetric: &v1.RatioMetric{
+									Counter: true,
+									Good: &v1.SLIMetricSpec{
+										MetricSource: v1.SLIMetricSource{
+											MetricSourceRef: "thanos",
+											Type:            "Prometheus",
+											MetricSourceSpec: map[string]any{
+												"query": `http_requests_total{status_code="200"}`,
+												"dimensions": []any{
+													"following",
+													"another",
+												},
+											},
+										},
+									},
+									Total: &v1.SLIMetricSpec{
+										MetricSource: v1.SLIMetricSource{
+											MetricSourceRef: "thanos",
+											Type:            "Prometheus",
+											MetricSourceSpec: map[string]any{
+												"query": `http_requests_total{}`,
+												"dimensions": []any{
+													"following",
+													"another",
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						Objectives: []v1.Objective{
+							{
+								DisplayName: "Foo Availability",
+								Target:      0.98,
+							},
+						},
+					},
+				},
+			},
+			testDataFile: "decode/v1_slos.yaml",
+		},
 		"v2alpha data source": {
 			testDataFile: "decode/v2alpha1_data_source.yaml",
 			expected: []openslo.Object{
