@@ -90,7 +90,7 @@ func TestDecode(t *testing.T) {
 				},
 			},
 		},
-		"v2alpha data soruce": {
+		"v2alpha data source": {
 			testDataFile: "decode/v2alpha1_data_source.yaml",
 			expected: []openslo.Object{
 				v2alpha1.DataSource{
