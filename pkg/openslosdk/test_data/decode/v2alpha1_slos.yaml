@@ -3,7 +3,7 @@
   metadata:
     name: foo-slo
   spec:
-    service: foo
+    serviceRef: foo
     sli:
       metadata:
         name: foo-error
@@ -26,7 +26,7 @@
   metadata:
     name: bar-slo
   spec:
-    service: bar
+    serviceRef: bar
     sli:
       metadata:
         name: bar-error

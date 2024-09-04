@@ -178,7 +178,7 @@ func TestDecode(t *testing.T) {
 						Name: "foo-slo",
 					},
 					Spec: v2alpha1.SLOSpec{
-						Service: "foo",
+						ServiceRef: "foo",
 						SLI: &v2alpha1.SLOEmbeddedSLI{
 							Metadata: v2alpha1.Metadata{
 								Name: "foo-error",
@@ -216,7 +216,7 @@ func TestDecode(t *testing.T) {
 						Name: "bar-slo",
 					},
 					Spec: v2alpha1.SLOSpec{
-						Service: "bar",
+						ServiceRef: "bar",
 						SLI: &v2alpha1.SLOEmbeddedSLI{
 							Metadata: v2alpha1.Metadata{
 								Name: "bar-error",

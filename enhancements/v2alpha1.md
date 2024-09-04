@@ -55,7 +55,7 @@ metadata:
   labels: object # optional
 spec:
   description: string # optional up to 1050 characters
-  service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
+  serviceRef: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
   sli: # see SLI below for details
   sliRef: string # name of the SLI, required if indicator is not given and you want to reference to existing SLI
   timeWindow:
