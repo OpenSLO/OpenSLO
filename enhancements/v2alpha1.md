@@ -80,6 +80,8 @@ spec:
 Objectives are the thresholds for your SLOs. You can use objectives to define
 the tolerance levels for your metrics.
 
+**Note:** While in the previous version only one objective was allowed for Threshold metrics, with `v2alpha1` we'll allow any number of objectives.
+
 ```yaml
 objectives:
   - displayName: string # optional
