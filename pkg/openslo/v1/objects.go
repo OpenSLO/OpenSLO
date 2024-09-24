@@ -18,6 +18,7 @@ var supportedKinds = []openslo.Kind{
 	openslo.KindAlertPolicy,
 	openslo.KindAlertCondition,
 	openslo.KindAlertNotificationTarget,
+	openslo.KindBudgetAdjustment,
 }
 
 func GetSupportedKinds() []openslo.Kind {
