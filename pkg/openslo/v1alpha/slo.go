@@ -33,7 +33,7 @@ type SLOSpec struct {
 	Description     string       `yaml:"description,omitempty"`
 	Indicator       *Indicator   `yaml:"indicator"`
 	Service         string       `yaml:"service"`
-	Objectives      []Objective  `json:"objectives"`
+	Objectives      []Objective  `yaml:"objectives"`
 }
 
 type Indicator struct {

@@ -26,8 +26,8 @@ func GetSupportedKinds() []openslo.Kind {
 
 type Metadata struct {
 	Name        string      `yaml:"name"`
-	Labels      Labels      `json:"labels,omitempty"`
-	Annotations Annotations `json:"annotations,omitempty"`
+	Labels      Labels      `yaml:"labels,omitempty"`
+	Annotations Annotations `yaml:"annotations,omitempty"`
 }
 
 type Labels map[string]Label
