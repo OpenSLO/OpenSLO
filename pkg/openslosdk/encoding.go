@@ -7,10 +7,10 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
-	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo/v1alpha"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha1"
+	"github.com/thisisibrahimd/openslo/pkg/openslo"
+	v1 "github.com/thisisibrahimd/openslo/pkg/openslo/v1"
+	"github.com/thisisibrahimd/openslo/pkg/openslo/v1alpha"
+	"github.com/thisisibrahimd/openslo/pkg/openslo/v2alpha1"
 )
 
 func Decode(r io.Reader, format ObjectFormat) ([]openslo.Object, error) {

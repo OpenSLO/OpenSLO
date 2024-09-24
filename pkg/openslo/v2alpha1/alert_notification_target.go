@@ -1,6 +1,6 @@
 package v2alpha1
 
-import "github.com/OpenSLO/OpenSLO/pkg/openslo"
+import "github.com/thisisibrahimd/openslo/pkg/openslo"
 
 var _ = openslo.Object(AlertNotificationTarget{})
 

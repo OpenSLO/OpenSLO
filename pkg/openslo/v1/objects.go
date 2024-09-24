@@ -5,7 +5,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+	"github.com/thisisibrahimd/openslo/pkg/openslo"
 )
 
 const APIVersion = openslo.VersionV1

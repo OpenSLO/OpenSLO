@@ -3,7 +3,7 @@ package v1alpha
 import (
 	"slices"
 
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+	"github.com/thisisibrahimd/openslo/pkg/openslo"
 )
 
 const APIVersion = openslo.VersionV1alpha

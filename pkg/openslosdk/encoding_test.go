@@ -7,9 +7,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
-	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha1"
+	"github.com/thisisibrahimd/openslo/pkg/openslo"
+	v1 "github.com/thisisibrahimd/openslo/pkg/openslo/v1"
+	"github.com/thisisibrahimd/openslo/pkg/openslo/v2alpha1"
 )
 
 //go:embed test_data
