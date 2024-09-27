@@ -5,7 +5,7 @@ import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 var _ = openslo.Object(SLO{})
 
 type SLO struct {
-	APIVersion openslo.Version `yaml:"apiVersion" json:"apiVersion" yaml:"apiVersion" json:"apiVersion"`
+	APIVersion openslo.Version `yaml:"apiVersion" json:"apiVersion"`
 	Kind       openslo.Kind    `yaml:"kind" json:"kind"`
 	Metadata   Metadata        `yaml:"metadata" json:"metadata"`
 	Spec       SLOSpec         `yaml:"spec" json:"spec"`
