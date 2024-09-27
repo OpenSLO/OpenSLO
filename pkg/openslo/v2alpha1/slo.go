@@ -29,7 +29,7 @@ func (s SLO) Validate() error {
 
 type SLOSpec struct {
 	Description     string          `yaml:"description,omitempty"`
-	Service         string          `yaml:"service"`
+	ServiceRef      string          `yaml:"serviceRef"`
 	SLI             *SLOEmbeddedSLI `yaml:"sli,omitempty"`
 	SLIRef          *string         `yaml:"sliRef,omitempty"`
 	BudgetingMethod string          `yaml:"budgetingMethod"`
