@@ -6,9 +6,9 @@ var _ = openslo.Object(Service{})
 
 type Service struct {
 	APIVersion openslo.Version `yaml:"apiVersion" json:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind" json:"kind"`
-	Metadata   Metadata        `yaml:"metadata" json:"metadata"`
-	Spec       ServiceSpec     `yaml:"spec" json:"spec"`
+	Kind       openslo.Kind    `yaml:"kind"       json:"kind"`
+	Metadata   Metadata        `yaml:"metadata"   json:"metadata"`
+	Spec       ServiceSpec     `yaml:"spec"       json:"spec"`
 }
 
 func (s Service) GetVersion() openslo.Version {

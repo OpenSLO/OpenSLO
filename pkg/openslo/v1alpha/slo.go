@@ -6,9 +6,9 @@ var _ = openslo.Object(SLO{})
 
 type SLO struct {
 	APIVersion openslo.Version `yaml:"apiVersion" json:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind" json:"kind"`
-	Metadata   Metadata        `yaml:"metadata" json:"metadata"`
-	Spec       SLOSpec         `yaml:"spec" json:"spec"`
+	Kind       openslo.Kind    `yaml:"kind"       json:"kind"`
+	Metadata   Metadata        `yaml:"metadata"   json:"metadata"`
+	Spec       SLOSpec         `yaml:"spec"       json:"spec"`
 }
 
 func (s SLO) GetVersion() openslo.Version {
@@ -28,12 +28,12 @@ func (s SLO) Validate() error {
 }
 
 type SLOSpec struct {
-	TimeWindows     []TimeWindow `yaml:"timeWindows" json:"timeWindows"`
-	BudgetingMethod string       `yaml:"budgetingMethod" json:"budgetingMethod"`
+	TimeWindows     []TimeWindow `yaml:"timeWindows"           json:"timeWindows"`
+	BudgetingMethod string       `yaml:"budgetingMethod"       json:"budgetingMethod"`
 	Description     string       `yaml:"description,omitempty" json:"description,omitempty"`
-	Indicator       *Indicator   `yaml:"indicator" json:"indicator"`
-	Service         string       `yaml:"service" json:"service"`
-	Objectives      []Objective  `json:"objectives"`
+	Indicator       *Indicator   `yaml:"indicator"             json:"indicator"`
+	Service         string       `yaml:"service"               json:"service"`
+	Objectives      []Objective  `                             json:"objectives"`
 }
 
 type Indicator struct {
@@ -41,38 +41,38 @@ type Indicator struct {
 }
 
 type MetricSourceSpec struct {
-	Source    string `yaml:"source" json:"source"`
+	Source    string `yaml:"source"    json:"source"`
 	QueryType string `yaml:"queryType" json:"queryType"`
-	Query     string `yaml:"query" json:"query"`
+	Query     string `yaml:"query"     json:"query"`
 }
 
 type Objective struct {
-	ObjectiveBase   `yaml:",inline" json:",inline"`
-	RatioMetrics    *RatioMetrics `yaml:"ratioMetrics" json:"ratioMetrics"`
-	BudgetTarget    *float64      `yaml:"target" json:"target"`
+	ObjectiveBase   `              yaml:",inline"                   json:",inline"`
+	RatioMetrics    *RatioMetrics `yaml:"ratioMetrics"              json:"ratioMetrics"`
+	BudgetTarget    *float64      `yaml:"target"                    json:"target"`
 	TimeSliceTarget *float64      `yaml:"timeSliceTarget,omitempty" json:"timeSliceTarget,omitempty"`
-	Operator        *string       `yaml:"op,omitempty" json:"op,omitempty"`
+	Operator        *string       `yaml:"op,omitempty"              json:"op,omitempty"`
 }
 
 type RatioMetrics struct {
-	Good    MetricSourceSpec `yaml:"good" json:"good"`
-	Total   MetricSourceSpec `yaml:"total" json:"total"`
+	Good    MetricSourceSpec `yaml:"good"    json:"good"`
+	Total   MetricSourceSpec `yaml:"total"   json:"total"`
 	Counter bool             `yaml:"counter" json:"counter"`
 }
 
 type ObjectiveBase struct {
 	DisplayName string  `yaml:"displayName" json:"displayName"`
-	Value       float64 `yaml:"value" json:"value"`
+	Value       float64 `yaml:"value"       json:"value"`
 }
 
 type TimeWindow struct {
-	Unit      string    `yaml:"unit" json:"unit"`
-	Count     int       `yaml:"count" json:"count"`
-	IsRolling bool      `yaml:"isRolling" json:"isRolling"`
+	Unit      string    `yaml:"unit"               json:"unit"`
+	Count     int       `yaml:"count"              json:"count"`
+	IsRolling bool      `yaml:"isRolling"          json:"isRolling"`
 	Calendar  *Calendar `yaml:"calendar,omitempty" json:"calendar,omitempty"`
 }
 
 type Calendar struct {
 	StartTime string `yaml:"startTime" json:"startTime"`
-	TimeZone  string `yaml:"timeZone" json:"timeZone"`
+	TimeZone  string `yaml:"timeZone"  json:"timeZone"`
 }

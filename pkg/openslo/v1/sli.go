@@ -8,9 +8,9 @@ var _ = openslo.Object(SLI{})
 
 type SLI struct {
 	APIVersion openslo.Version `yaml:"apiVersion" json:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind" json:"kind"`
-	Metadata   Metadata        `yaml:"metadata" json:"metadata"`
-	Spec       SLISpec         `yaml:"spec" json:"spec"`
+	Kind       openslo.Kind    `yaml:"kind"       json:"kind"`
+	Metadata   Metadata        `yaml:"metadata"   json:"metadata"`
+	Spec       SLISpec         `yaml:"spec"       json:"spec"`
 }
 
 func (s SLI) GetVersion() openslo.Version {
@@ -30,18 +30,18 @@ func (s SLI) Validate() error {
 }
 
 type SLISpec struct {
-	Description     string         `yaml:"description,omitempty" json:"description,omitempty"`
+	Description     string         `yaml:"description,omitempty"     json:"description,omitempty"`
 	ThresholdMetric *SLIMetricSpec `yaml:"thresholdMetric,omitempty" json:"thresholdMetric,omitempty"`
-	RatioMetric     *RatioMetric   `yaml:"ratioMetric,omitempty" json:"ratioMetric,omitempty"`
+	RatioMetric     *RatioMetric   `yaml:"ratioMetric,omitempty"     json:"ratioMetric,omitempty"`
 }
 
 type RatioMetric struct {
-	Counter bool           `yaml:"counter" json:"counter"`
-	Good    *SLIMetricSpec `yaml:"good,omitempty" json:"good,omitempty"`
-	Bad     *SLIMetricSpec `yaml:"bad,omitempty" json:"bad,omitempty"`
-	Total   *SLIMetricSpec `yaml:"total,omitempty" json:"total,omitempty"`
+	Counter bool           `yaml:"counter"           json:"counter"`
+	Good    *SLIMetricSpec `yaml:"good,omitempty"    json:"good,omitempty"`
+	Bad     *SLIMetricSpec `yaml:"bad,omitempty"     json:"bad,omitempty"`
+	Total   *SLIMetricSpec `yaml:"total,omitempty"   json:"total,omitempty"`
 	RawType *string        `yaml:"rawType,omitempty" json:"rawType,omitempty"`
-	Raw     *SLIMetricSpec `yaml:"raw,omitempty" json:"raw,omitempty"`
+	Raw     *SLIMetricSpec `yaml:"raw,omitempty"     json:"raw,omitempty"`
 }
 
 type SLIMetricSpec struct {
@@ -50,6 +50,6 @@ type SLIMetricSpec struct {
 
 type SLIMetricSource struct {
 	MetricSourceRef  string         `yaml:"metricSourceRef,omitempty" json:"metricSourceRef,omitempty"`
-	Type             string         `yaml:"type,omitempty" json:"type,omitempty"`
-	MetricSourceSpec map[string]any `yaml:"spec" json:"spec"`
+	Type             string         `yaml:"type,omitempty"            json:"type,omitempty"`
+	MetricSourceSpec map[string]any `yaml:"spec"                      json:"spec"`
 }
