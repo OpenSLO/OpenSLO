@@ -7,10 +7,10 @@ import (
 var _ = openslo.Object(SLI{})
 
 type SLI struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       SLISpec         `yaml:"spec"`
+	APIVersion openslo.Version `yaml:"apiVersion" json:"apiVersion"`
+	Kind       openslo.Kind    `yaml:"kind" json:"kind"`
+	Metadata   Metadata        `yaml:"metadata" json:"metadata"`
+	Spec       SLISpec         `yaml:"spec" json:"spec"`
 }
 
 func (s SLI) GetVersion() openslo.Version {
@@ -30,21 +30,22 @@ func (s SLI) Validate() error {
 }
 
 type SLISpec struct {
-	ThresholdMetric *SLIMetricSpec  `yaml:"thresholdMetric,omitempty"`
-	RatioMetric     *SLIRatioMetric `yaml:"ratioMetric,omitempty"`
+	Description     string          `yaml:"description,omitempty" json:"description,omitempty"`
+	ThresholdMetric *SLIMetricSpec  `yaml:"thresholdMetric,omitempty" json:"thresholdMetric,omitempty"`
+	RatioMetric     *SLIRatioMetric `yaml:"ratioMetric,omitempty" json:"ratioMetric,omitempty"`
 }
 
 type SLIRatioMetric struct {
-	Counter bool           `yaml:"counter"`
-	Good    *SLIMetricSpec `yaml:"good,omitempty"`
-	Bad     *SLIMetricSpec `yaml:"bad,omitempty"`
-	Total   *SLIMetricSpec `yaml:"total,omitempty"`
-	RawType *string        `yaml:"rawType,omitempty"`
-	Raw     *SLIMetricSpec `yaml:"raw,omitempty"`
+	Counter bool           `yaml:"counter" json:"counter"`
+	Good    *SLIMetricSpec `yaml:"good,omitempty" json:"good,omitempty"`
+	Bad     *SLIMetricSpec `yaml:"bad,omitempty" json:"bad,omitempty"`
+	Total   *SLIMetricSpec `yaml:"total,omitempty" json:"total,omitempty"`
+	RawType *string        `yaml:"rawType,omitempty" json:"rawType,omitempty"`
+	Raw     *SLIMetricSpec `yaml:"raw,omitempty" json:"raw,omitempty"`
 }
 
 type SLIMetricSpec struct {
-	DataSourceRef               string         `yaml:"dataSourceRef,omitempty"`
-	DataSourceSpec              map[string]any `yaml:"spec,omitempty"`
-	DataSourceConnectionDetails `yaml:",inline"`
+	DataSourceRef               string         `yaml:"dataSourceRef,omitempty" json:"dataSourceRef,omitempty"`
+	DataSourceSpec              map[string]any `yaml:"spec,omitempty" json:"spec,omitempty"`
+	DataSourceConnectionDetails `yaml:",inline" json:",inline"`
 }

@@ -5,10 +5,10 @@ import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 var _ = openslo.Object(DataSource{})
 
 type DataSource struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       DataSourceSpec  `yaml:"spec"`
+	APIVersion openslo.Version `yaml:"apiVersion" json:"apiVersion"`
+	Kind       openslo.Kind    `yaml:"kind" json:"kind"`
+	Metadata   Metadata        `yaml:"metadata" json:"metadata"`
+	Spec       DataSourceSpec  `yaml:"spec" json:"spec"`
 }
 
 func (d DataSource) GetVersion() openslo.Version {
@@ -28,6 +28,6 @@ func (d DataSource) Validate() error {
 }
 
 type DataSourceSpec struct {
-	Type              string            `yaml:"type"`
-	ConnectionDetails map[string]string `yaml:"connectionDetails"`
+	Type              string         `yaml:"type" json:"type"`
+	ConnectionDetails map[string]any `yaml:"connectionDetails" json:"connectionDetails"`
 }

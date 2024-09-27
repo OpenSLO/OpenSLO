@@ -5,10 +5,10 @@ import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 var _ = openslo.Object(Service{})
 
 type Service struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       ServiceSpec     `yaml:"spec"`
+	APIVersion openslo.Version `yaml:"apiVersion" json:"apiVersion"`
+	Kind       openslo.Kind    `yaml:"kind" json:"kind"`
+	Metadata   Metadata        `yaml:"metadata" json:"metadata"`
+	Spec       ServiceSpec     `yaml:"spec" json:"spec"`
 }
 
 func (s Service) GetVersion() openslo.Version {
@@ -28,5 +28,5 @@ func (s Service) Validate() error {
 }
 
 type ServiceSpec struct {
-	Description string `yaml:"description,omitempty"`
+	Description string `yaml:"description,omitempty" json:"description,omitempty"`
 }

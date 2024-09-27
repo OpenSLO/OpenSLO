@@ -5,10 +5,10 @@ import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 var _ = openslo.Object(AlertPolicy{})
 
 type AlertPolicy struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       AlertPolicySpec `yaml:"spec"`
+	APIVersion openslo.Version `yaml:"apiVersion" json:"apiVersion"`
+	Kind       openslo.Kind    `yaml:"kind" json:"kind"`
+	Metadata   Metadata        `yaml:"metadata" json:"metadata"`
+	Spec       AlertPolicySpec `yaml:"spec" json:"spec"`
 }
 
 func (a AlertPolicy) GetVersion() openslo.Version {
@@ -28,29 +28,29 @@ func (a AlertPolicy) Validate() error {
 }
 
 type AlertPolicyCondition struct {
-	*AlertPolicyConditionRef    `yaml:",inline,omitempty"`
-	*AlertPolicyInlineCondition `yaml:",inline,omitempty"`
+	*AlertPolicyConditionRef    `yaml:",inline,omitempty" json:",inline,omitempty"`
+	*AlertPolicyInlineCondition `yaml:",inline,omitempty" json:",inline,omitempty"`
 }
 
 type AlertPolicyInlineCondition struct {
-	Kind     string             `yaml:"kind"`
-	Metadata Metadata           `yaml:"metadata"`
-	Spec     AlertConditionSpec `yaml:"spec"`
+	Kind     string             `yaml:"kind" json:"kind"`
+	Metadata Metadata           `yaml:"metadata" json:"metadata"`
+	Spec     AlertConditionSpec `yaml:"spec" json:"spec"`
 }
 
 type AlertPolicyConditionRef struct {
-	ConditionRef string `yaml:"conditionRef"`
+	ConditionRef string `yaml:"conditionRef" json:"conditionRef"`
 }
 
 type AlertPolicyNotificationTarget struct {
-	TargetRef string `yaml:"targetRef"`
+	TargetRef string `yaml:"targetRef" json:"targetRef"`
 }
 
 type AlertPolicySpec struct {
-	Description         string                          `yaml:"description,omitempty"`
-	AlertWhenNoData     bool                            `yaml:"alertWhenNoData"`
-	AlertWhenBreaching  bool                            `yaml:"alertWhenBreaching"`
-	AlertWhenResolved   bool                            `yaml:"alertWhenResolved"`
-	Conditions          []AlertPolicyCondition          `yaml:"conditions"`
-	NotificationTargets []AlertPolicyNotificationTarget `yaml:"notificationTargets"`
+	Description         string                          `yaml:"description,omitempty" json:"description,omitempty"`
+	AlertWhenNoData     bool                            `yaml:"alertWhenNoData" json:"alertWhenNoData"`
+	AlertWhenBreaching  bool                            `yaml:"alertWhenBreaching" json:"alertWhenBreaching"`
+	AlertWhenResolved   bool                            `yaml:"alertWhenResolved" json:"alertWhenResolved"`
+	Conditions          []AlertPolicyCondition          `yaml:"conditions" json:"conditions"`
+	NotificationTargets []AlertPolicyNotificationTarget `yaml:"notificationTargets" json:"notificationTargets"`
 }
