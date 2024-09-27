@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"encoding/json"
-
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
