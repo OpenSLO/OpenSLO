@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"encoding/json"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
@@ -49,7 +50,7 @@ type SLIMetricSpec struct {
 }
 
 type SLIMetricSource struct {
-	MetricSourceRef  string         `yaml:"metricSourceRef,omitempty" json:"metricSourceRef,omitempty"`
-	Type             string         `yaml:"type,omitempty"            json:"type,omitempty"`
-	MetricSourceSpec map[string]any `yaml:"spec"                      json:"spec"`
+	MetricSourceRef  string          `yaml:"metricSourceRef,omitempty" json:"metricSourceRef,omitempty"`
+	Type             string          `yaml:"type,omitempty"            json:"type,omitempty"`
+	MetricSourceSpec json.RawMessage `yaml:"spec"                      json:"spec"`
 }
