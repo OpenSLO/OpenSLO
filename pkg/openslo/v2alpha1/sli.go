@@ -1,6 +1,8 @@
 package v2alpha1
 
 import (
+	"encoding/json"
+
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
@@ -45,7 +47,7 @@ type SLIRatioMetric struct {
 }
 
 type SLIMetricSpec struct {
-	DataSourceRef               string         `yaml:"dataSourceRef,omitempty" json:"dataSourceRef,omitempty"`
-	DataSourceSpec              map[string]any `yaml:"spec,omitempty"          json:"spec,omitempty"`
-	DataSourceConnectionDetails `               yaml:",inline"                 json:",inline"`
+	DataSourceRef               string          `yaml:"dataSourceRef,omitempty" json:"dataSourceRef,omitempty"`
+	DataSourceSpec              json.RawMessage `yaml:"spec,omitempty"          json:"spec,omitempty"`
+	DataSourceConnectionDetails `                yaml:",inline"                 json:",inline"`
 }

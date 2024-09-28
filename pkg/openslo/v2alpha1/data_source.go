@@ -1,6 +1,10 @@
 package v2alpha1
 
-import "github.com/OpenSLO/OpenSLO/pkg/openslo"
+import (
+	"encoding/json"
+
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+)
 
 var _ = openslo.Object(DataSource{})
 
@@ -32,4 +36,4 @@ type DataSourceSpec struct {
 	DataSourceConnectionDetails `       yaml:",inline"               json:",inline"`
 }
 
-type DataSourceConnectionDetails map[string]any
+type DataSourceConnectionDetails json.RawMessage
