@@ -158,13 +158,8 @@ func TestDecode(t *testing.T) {
 						Name: "cloudWatch-prod",
 					},
 					Spec: v2alpha1.DataSourceSpec{
-						Description: "CloudWatch Production Data Source",
-						DataSourceConnectionDetails: v2alpha1.DataSourceConnectionDetails{
-							"cloudWatch": map[string]any{
-								"accessKeyID":     "accessKey",
-								"secretAccessKey": "secretAccessKey",
-							},
-						},
+						Description:                 "CloudWatch Production Data Source",
+						DataSourceConnectionDetails: openslo.RawMessage{},
 					},
 				},
 			},
@@ -229,12 +224,7 @@ func TestDecode(t *testing.T) {
 										"databaseName": "metrics-db",
 										"query":        "SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to",
 									},
-									DataSourceConnectionDetails: v2alpha1.DataSourceConnectionDetails{
-										"redshift": map[string]any{
-											"accessKeyID":     "accessKey",
-											"secretAccessKey": "secretAccessKey",
-										},
-									},
+									DataSourceConnectionDetails: openslo.RawMessage{},
 								},
 							},
 						},

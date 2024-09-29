@@ -1,6 +1,8 @@
 package v1
 
-import "github.com/OpenSLO/OpenSLO/pkg/openslo"
+import (
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+)
 
 var _ = openslo.Object(DataSource{})
 
@@ -28,6 +30,6 @@ func (d DataSource) Validate() error {
 }
 
 type DataSourceSpec struct {
-	Type              string            `yaml:"type"`
-	ConnectionDetails map[string]string `yaml:"connectionDetails"`
+	Type              string             `yaml:"type"`
+	ConnectionDetails openslo.RawMessage `yaml:"connectionDetails"`
 }

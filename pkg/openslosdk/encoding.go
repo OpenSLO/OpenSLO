@@ -25,7 +25,7 @@ func Decode(r io.Reader, format ObjectFormat) ([]openslo.Object, error) {
 	}
 }
 
-func Encode(out io.Writer, format ObjectFormat, objects []openslo.Object) error {
+func Encode(out io.Writer, format ObjectFormat, objects ...openslo.Object) error {
 	if err := format.Validate(); err != nil {
 		return err
 	}
@@ -33,7 +33,13 @@ func Encode(out io.Writer, format ObjectFormat, objects []openslo.Object) error 
 	case FormatYAML:
 		enc := yaml.NewEncoder(out)
 		enc.SetIndent(2)
-		if err := enc.Encode(objects); err != nil {
+		var err error
+		if len(objects) == 1 {
+			err = enc.Encode(objects[0])
+		} else {
+			err = enc.Encode(objects)
+		}
+		if err != nil {
 			return fmt.Errorf("failed to encode objects: %w", err)
 		}
 		return nil

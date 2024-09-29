@@ -32,4 +32,4 @@ type DataSourceSpec struct {
 	DataSourceConnectionDetails `yaml:",inline"`
 }
 
-type DataSourceConnectionDetails map[string]any
+type DataSourceConnectionDetails = openslo.RawMessage
