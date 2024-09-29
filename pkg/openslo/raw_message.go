@@ -10,8 +10,14 @@ import (
 
 // NewRawMessage creates a new [RawMessage] and sets a value the message will hold.
 // When any of the marshalling methods are called, the value provided value will be encoded.
-func NewRawMessage(v any) RawMessage {
-	return RawMessage{value: v}
+func NewRawMessage(v any) *RawMessage {
+	switch v := v.(type) {
+	case *yaml.Node:
+		return &RawMessage{yaml: v}
+	case []byte:
+		return &RawMessage{json: v}
+	}
+	return &RawMessage{value: v}
 }
 
 // RawMessage holds either JSON or YAML raw value.

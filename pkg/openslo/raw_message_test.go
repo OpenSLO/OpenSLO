@@ -8,8 +8,8 @@ import (
 )
 
 type dataSourceSpec struct {
-	Type              string     `yaml:"type" json:"type"`
-	ConnectionDetails RawMessage `yaml:"connectionDetails" json:"connectionDetails"`
+	Type              string      `yaml:"type" json:"type"`
+	ConnectionDetails *RawMessage `yaml:"connectionDetails" json:"connectionDetails"`
 }
 
 type connectionDetails struct {
@@ -41,21 +41,21 @@ connectionDetails:
 			var spec dataSourceSpec
 			err := tc.unmarshalFunc([]byte(tc.in), &spec)
 			if err != nil {
-				failf(t, "error: %v", err)
+				t.Fatalf("error: %v", err)
 			}
 			data, err := tc.marshalFunc(spec)
 			if err != nil {
-				failf(t, "error: %v", err)
+				t.Fatalf("error: %v", err)
 			}
 			if string(data) != tc.in {
-				failf(t, "unexpected data:\nEXPECTD:\n%s\nACTUAL:\n%s", tc.in, data)
+				t.Fatalf("unexpected data:\nEXPECTD:\n%s\nACTUAL:\n%s", tc.in, data)
 			}
 			var details connectionDetails
 			if err = spec.ConnectionDetails.Unmarshal(&details); err != nil {
-				failf(t, "error: %v", err)
+				t.Fatalf("error: %v", err)
 			}
 			if details.Password != "password" {
-				failf(t, "unexpected password")
+				t.Fatalf("unexpected password")
 			}
 		})
 	}
@@ -87,16 +87,11 @@ connectionDetails:
 		t.Run(name, func(t *testing.T) {
 			data, err := tc.marshalFunc(spec)
 			if err != nil {
-				failf(t, "error: %v", err)
+				t.Fatalf("error: %v", err)
 			}
 			if string(data) != tc.expected {
-				failf(t, "unexpected data:\nEXPECTED:\n%s\nACTUAL:\n%s", tc.expected, data)
+				t.Fatalf("unexpected data:\nEXPECTED:\n%s\nACTUAL:\n%s", tc.expected, data)
 			}
 		})
 	}
-}
-
-func failf(t *testing.T, format string, args ...interface{}) {
-	t.Errorf(format, args...)
-	t.FailNow()
 }

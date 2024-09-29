@@ -46,5 +46,5 @@ type SLIRatioMetric struct {
 type SLIMetricSpec struct {
 	DataSourceRef               string         `yaml:"dataSourceRef,omitempty"`
 	DataSourceSpec              map[string]any `yaml:"spec,omitempty"`
-	DataSourceConnectionDetails `yaml:",inline"`
+	DataSourceConnectionDetails any
 }
