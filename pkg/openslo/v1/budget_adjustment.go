@@ -16,7 +16,7 @@ func (b BudgetAdjustment) GetVersion() openslo.Version {
 }
 
 func (b BudgetAdjustment) GetKind() openslo.Kind {
-	return openslo.KindDataSource
+	return openslo.KindBudgetAdjustment
 }
 
 func (b BudgetAdjustment) GetName() string {
