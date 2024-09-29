@@ -12,7 +12,7 @@ spec:
       name: response-code
       displayName: Response codes of requests to main page
     spec:
-      ratioMethic:
+      ratioMetric:
         good: # In most cases it is easier to think about timeslices in ratio metrics.
           metricSource:
             type: Any # Here put any service that holds information you need.
