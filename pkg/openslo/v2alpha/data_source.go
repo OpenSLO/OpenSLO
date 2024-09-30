@@ -36,3 +36,5 @@ type DataSourceSpec struct {
 	Type              string          `json:"type"`
 	ConnectionDetails json.RawMessage `json:"connectionDetails"`
 }
+
+type DataSourceConnectionDetails json.RawMessage
