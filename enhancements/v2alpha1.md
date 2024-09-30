@@ -12,36 +12,6 @@ in the specification to reach that goal.
 3. Adhere to [metadata.labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) and
    [metadata.annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) Kubernetes standards.
 
-## [DataSource](../README.md#datasource)
-
-**Rationale:** Simplify syntax. Avoid being needlessly verbose without sacrificing flexibility and readability.
-
-```yaml
-apiVersion: openslo.com/v2alpha1
-kind: DataSource
-metadata:
-  name: string
-  labels: object # optional
-spec:
-  description: string # optional up to 1050 characters
-  <<dataSourceName>>: # e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
-  # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-  # everything that is valid YAML can be put here
-```
-
-An example of the DataSource kind can be:
-
-```yaml
-apiVersion: openslo.com/v2alpha1
-kind: DataSource
-metadata:
-  name: string
-spec:
-  cloudWatch:
-    accessKeyID: accessKey
-    secretAccessKey: secretAccessKey
-```
-
 ## [SLO](../README.md#slo)
 
 **Rationale:** Make names more straightforward and aligned with others. Change field indicator to `sli` and `indicatorRef` to `sliRef`
@@ -110,7 +80,7 @@ spec:
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
     # either dataSourceRef or <<dataSourceName>> must be provided
     dataSourceRef: string # refer to already defined DataSource object
-    <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+    dataSource: # contains whole DataSource "spec"
   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
   # everything that is valid YAML can be put here
     spec:
@@ -124,7 +94,7 @@ spec:
     good: # the numerator, either "good" or "bad" must be provided if "total" is used
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+      dataSource: # contains whole DataSource "spec"
    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
    # everything that is valid YAML can be put here
       spec:
@@ -133,7 +103,7 @@ spec:
     bad: # the numerator, either "good" or "bad" must be provided if "total" is used
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+      dataSource: # contains whole DataSource "spec"
    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
    # everything that is valid YAML can be put here
       spec:
@@ -142,7 +112,7 @@ spec:
     total: # the denominator used with either "good" or "bad", either this or "raw" must be used
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>: # inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+      dataSource: # contains whole DataSource "spec"
    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
    # everything that is valid YAML can be put here
       spec:
@@ -156,7 +126,7 @@ spec:
     raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      <<dataSourceName>>:# inline whole DataSource e.g. cloudWatch, datadog, prometheus (arbitrary chosen, implementor decision)
+      dataSource: # contains whole DataSource "spec"
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
@@ -223,9 +193,11 @@ An example **thresholdMetric** that does not reference a defined DataSource (it 
 
 ```yaml
 thresholdMetric:
-  redshift:
-    accessKeyID: accessKey
-    secretAccessKey: secretAccessKey
+  dataSource:
+    type: redshift
+    connetionDetails:
+      accessKeyID: accessKey
+      secretAccessKey: secretAccessKey
   spec:
     region: eu-central-1
     clusterId: metrics-cluster
