@@ -3,6 +3,7 @@ package openslosdk
 import (
 	"bytes"
 	"embed"
+	"encoding/json"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -19,7 +20,6 @@ func TestDecode(t *testing.T) {
 	tests := map[string]struct {
 		testDataFile string
 		expected     []openslo.Object
-		skip         bool
 	}{
 		"single YAML object": {
 			testDataFile: "decode/single_object.yaml",
@@ -193,9 +193,6 @@ func TestDecode(t *testing.T) {
 			testDataFile: "decode/v1_slos.yaml",
 		},
 		"v2alpha data source": {
-			// FIXME: Once we agree upon https://github.com/OpenSLO/OpenSLO/pull/290
-			// or otherwise go with the current state, this test should be enabled.
-			skip:         true,
 			testDataFile: "decode/v2alpha1_data_source.yaml",
 			expected: []openslo.Object{
 				v2alpha1.DataSource{
@@ -205,21 +202,14 @@ func TestDecode(t *testing.T) {
 						Name: "cloudWatch-prod",
 					},
 					Spec: v2alpha1.DataSourceSpec{
-						Description: "CloudWatch Production Data Source",
-						DataSourceConnectionDetails: map[string]any{
-							"cloudWatch": map[string]any{
-								"accessKeyID":     "accessKey",
-								"secretAccessKey": "secretAccessKey",
-							},
-						},
+						Description:       "CloudWatch Production Data Source",
+						Type:              "cloudWatch",
+						ConnectionDetails: json.RawMessage(`{"accessKeyID":"accessKey","secretAccessKey":"secretAccessKey"}`),
 					},
 				},
 			},
 		},
 		"v2alpha slos": {
-			// FIXME: Once we agree upon https://github.com/OpenSLO/OpenSLO/pull/290
-			// or otherwise go with the current state, this test should be enabled.
-			skip: true,
 			expected: []openslo.Object{
 				v2alpha1.SLO{
 					APIVersion: openslo.VersionV2alpha1,
@@ -238,13 +228,13 @@ func TestDecode(t *testing.T) {
 									Counter: true,
 									Good: &v2alpha1.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
-										DataSourceSpec: map[string]any{
+										MetricSourceSpec: map[string]any{
 											"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
 										},
 									},
 									Total: &v2alpha1.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
-										DataSourceSpec: map[string]any{
+										MetricSourceSpec: map[string]any{
 											"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
 										},
 									},
@@ -273,17 +263,16 @@ func TestDecode(t *testing.T) {
 							},
 							Spec: v2alpha1.SLISpec{
 								ThresholdMetric: &v2alpha1.SLIMetricSpec{
-									DataSourceSpec: map[string]any{
+									MetricSourceSpec: map[string]any{
 										"region":       "eu-central-1",
 										"clusterId":    "metrics-cluster",
 										"databaseName": "metrics-db",
 										"query":        "SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to",
 									},
-									DataSourceConnectionDetails: v2alpha1.DataSourceConnectionDetails{
-										"redshift": map[string]any{
-											"accessKeyID":     "accessKey",
-											"secretAccessKey": "secretAccessKey",
-										},
+									DataSourceSpec: &v2alpha1.DataSourceSpec{
+										Description:       "Metrics Database",
+										Type:              "redshift",
+										ConnectionDetails: json.RawMessage(`{"accessKeyID":"accessKey","secretAccessKey":"secretAccessKey"}`),
 									},
 								},
 							},
@@ -296,9 +285,6 @@ func TestDecode(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			if tc.skip {
-				t.Skip("skipping test")
-			}
 			data := readTestData(t, testData, tc.testDataFile)
 			format := FormatJSON
 			if filepath.Ext(tc.testDataFile) == ".yaml" {

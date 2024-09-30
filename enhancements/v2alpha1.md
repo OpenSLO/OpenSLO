@@ -94,7 +94,7 @@ spec:
     good: # the numerator, either "good" or "bad" must be provided if "total" is used
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      dataSource: # contains whole DataSource "spec"
+      dataSourceSpec: # contains whole DataSource "spec"
    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
    # everything that is valid YAML can be put here
       spec:
@@ -103,7 +103,7 @@ spec:
     bad: # the numerator, either "good" or "bad" must be provided if "total" is used
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      dataSource: # contains whole DataSource "spec"
+      dataSourceSpec: # contains whole DataSource "spec"
    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
    # everything that is valid YAML can be put here
       spec:
@@ -112,7 +112,7 @@ spec:
     total: # the denominator used with either "good" or "bad", either this or "raw" must be used
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      dataSource: # contains whole DataSource "spec"
+      dataSourceSpec: # contains whole DataSource "spec"
    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
    # everything that is valid YAML can be put here
       spec:
@@ -126,7 +126,7 @@ spec:
     raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      dataSource: # contains whole DataSource "spec"
+      dataSourceSpec: # contains whole DataSource "spec"
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
@@ -193,9 +193,9 @@ An example **thresholdMetric** that does not reference a defined DataSource (it 
 
 ```yaml
 thresholdMetric:
-  dataSource:
+  dataSourceSpec:
     type: redshift
-    connetionDetails:
+    connectionDetails:
       accessKeyID: accessKey
       secretAccessKey: secretAccessKey
   spec:

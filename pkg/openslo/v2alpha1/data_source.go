@@ -1,6 +1,10 @@
 package v2alpha1
 
-import "github.com/OpenSLO/OpenSLO/pkg/openslo"
+import (
+	"encoding/json"
+
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+)
 
 var _ = openslo.Object(DataSource{})
 
@@ -28,8 +32,7 @@ func (d DataSource) Validate() error {
 }
 
 type DataSourceSpec struct {
-	Description                 string `json:"description,omitempty"`
-	DataSourceConnectionDetails `json:",inline"`
+	Description       string          `json:"description,omitempty"`
+	Type              string          `json:"type"`
+	ConnectionDetails json.RawMessage `json:"connectionDetails"`
 }
-
-type DataSourceConnectionDetails map[string]any
