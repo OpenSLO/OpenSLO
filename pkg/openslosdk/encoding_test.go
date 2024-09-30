@@ -20,8 +20,8 @@ func TestDecode(t *testing.T) {
 		testDataFile string
 		expected     []openslo.Object
 	}{
-		"single map": {
-			testDataFile: "decode/single_map.yaml",
+		"single YAML object": {
+			testDataFile: "decode/single_object.yaml",
 			expected: []openslo.Object{
 				v1.Service{
 					APIVersion: openslo.VersionV1,
@@ -36,8 +36,24 @@ func TestDecode(t *testing.T) {
 				},
 			},
 		},
-		"sequence of maps": {
-			testDataFile: "decode/sequence_of_maps.yaml",
+		"single JSON object": {
+			testDataFile: "decode/single_object.json",
+			expected: []openslo.Object{
+				v1.Service{
+					APIVersion: openslo.VersionV1,
+					Kind:       openslo.KindService,
+					Metadata: v1.Metadata{
+						Name:        "users-auth",
+						DisplayName: "Users Auth Service",
+					},
+					Spec: v1.ServiceSpec{
+						Description: "Example Service",
+					},
+				},
+			},
+		},
+		"sequence of YAML objects": {
+			testDataFile: "decode/sequence_of_objects.yaml",
 			expected: []openslo.Object{
 				v1.Service{
 					APIVersion: openslo.VersionV1,
@@ -63,7 +79,34 @@ func TestDecode(t *testing.T) {
 				},
 			},
 		},
-		"two documents": {
+		"sequence of JSON objects": {
+			testDataFile: "decode/sequence_of_objects.json",
+			expected: []openslo.Object{
+				v1.Service{
+					APIVersion: openslo.VersionV1,
+					Kind:       openslo.KindService,
+					Metadata: v1.Metadata{
+						Name:        "users-auth",
+						DisplayName: "Users Auth Service",
+					},
+					Spec: v1.ServiceSpec{
+						Description: "Example Service",
+					},
+				},
+				v1.Service{
+					APIVersion: openslo.VersionV1,
+					Kind:       openslo.KindService,
+					Metadata: v1.Metadata{
+						Name:        "users-login",
+						DisplayName: "Users Login Service",
+					},
+					Spec: v1.ServiceSpec{
+						Description: "Example Service",
+					},
+				},
+			},
+		},
+		"two YAML documents": {
 			testDataFile: "decode/two_documents.yaml",
 			expected: []openslo.Object{
 				v1.Service{
@@ -248,7 +291,11 @@ func TestDecode(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			data := readTestData(t, testData, tt.testDataFile)
 			objects, err := Decode(bytes.NewReader(data), FormatYAML)
-
+			format := FormatJSON
+			if filepath.Ext(tc.testDataFile) == ".yaml" {
+				format = FormatYAML
+			}
+			objects, err := Decode(bytes.NewReader(data), format)
 			requireNoError(t, err)
 			requireLen(t, len(tt.expected), objects)
 			requireEqual(t, tt.expected, objects)
