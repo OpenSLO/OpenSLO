@@ -1,0 +1,56 @@
+[
+  {
+    "apiVersion": "openslo/v1",
+    "kind": "SLO",
+    "metadata": {
+      "name": "foo-slo",
+      "displayName": "Foo SLO"
+    },
+    "spec": {
+      "service": "foo",
+      "indicator": {
+        "metadata": {
+          "name": "good"
+        },
+        "spec": {
+          "ratioMetric": {
+            "counter": true,
+            "good": {
+              "metricSource": {
+                "metricSourceRef": "thanos",
+                "type": "Prometheus",
+                "spec": {
+                  "dimensions": [
+                    "following",
+                    "another"
+                  ],
+                  "query": "http_requests_total{status_code=\"200\"}"
+                }
+              }
+            },
+            "total": {
+              "metricSource": {
+                "metricSourceRef": "thanos",
+                "type": "Prometheus",
+                "spec": {
+                  "dimensions": [
+                    "following",
+                    "another"
+                  ],
+                  "query": "http_requests_total{}"
+                }
+              }
+            }
+          }
+        }
+      },
+      "budgetingMethod": "Occurrences",
+      "objectives": [
+        {
+          "displayName": "Foo Availability",
+          "target": 0.98
+        }
+      ]
+    }
+  }
+]

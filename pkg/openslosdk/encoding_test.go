@@ -144,7 +144,8 @@ func TestDecode(t *testing.T) {
 						DisplayName: "Foo SLO",
 					},
 					Spec: v1.SLOSpec{
-						Service: "foo",
+						BudgetingMethod: "Occurrences",
+						Service:         "foo",
 						Indicator: &v1.SLOIndicator{
 							Metadata: v1.Metadata{
 								Name: "good",
@@ -286,16 +287,99 @@ func TestDecode(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			data := readTestData(t, testData, tc.testDataFile)
-			format := FormatJSON
-			if filepath.Ext(tc.testDataFile) == ".yaml" {
-				format = FormatYAML
-			}
-			objects, err := Decode(bytes.NewReader(data), format)
+			objects, err := Decode(bytes.NewReader(data), getFileFormat(tc.testDataFile))
 			requireNoError(t, err)
 			requireLen(t, len(tc.expected), objects)
 			requireEqual(t, tc.expected, objects)
 		})
 	}
+}
+
+func TestEncode(t *testing.T) {
+	v1SLO := v1.SLO{
+		APIVersion: openslo.VersionV1,
+		Kind:       openslo.KindSLO,
+		Metadata: v1.Metadata{
+			Name:        "foo-slo",
+			DisplayName: "Foo SLO",
+		},
+		Spec: v1.SLOSpec{
+			BudgetingMethod: "Occurrences",
+			Service:         "foo",
+			Indicator: &v1.SLOIndicator{
+				Metadata: v1.Metadata{
+					Name: "good",
+				},
+				Spec: v1.SLISpec{
+					RatioMetric: &v1.RatioMetric{
+						Counter: true,
+						Good: &v1.SLIMetricSpec{
+							MetricSource: v1.SLIMetricSource{
+								MetricSourceRef: "thanos",
+								Type:            "Prometheus",
+								MetricSourceSpec: map[string]any{
+									"query": `http_requests_total{status_code="200"}`,
+									"dimensions": []any{
+										"following",
+										"another",
+									},
+								},
+							},
+						},
+						Total: &v1.SLIMetricSpec{
+							MetricSource: v1.SLIMetricSource{
+								MetricSourceRef: "thanos",
+								Type:            "Prometheus",
+								MetricSourceSpec: map[string]any{
+									"query": `http_requests_total{}`,
+									"dimensions": []any{
+										"following",
+										"another",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			Objectives: []v1.Objective{
+				{
+					DisplayName: "Foo Availability",
+					Target:      0.98,
+				},
+			},
+		},
+	}
+	tests := map[string]struct {
+		testDataFile string
+		objects      []openslo.Object
+	}{
+		"single YAML object": {
+			testDataFile: "encode/v1_slo.yaml",
+			objects:      []openslo.Object{v1SLO},
+		},
+		"single JSON object": {
+			testDataFile: "encode/v1_slo.json",
+			objects:      []openslo.Object{v1SLO},
+		},
+	}
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			data := readTestData(t, testData, tc.testDataFile)
+			var buf bytes.Buffer
+			err := Encode(&buf, getFileFormat(tc.testDataFile), tc.objects)
+			requireNoError(t, err)
+			requireEqual(t, string(data), string(buf.Bytes()))
+		})
+	}
+}
+
+func getFileFormat(path string) ObjectFormat {
+	format := FormatJSON
+	if filepath.Ext(path) == ".yaml" {
+		format = FormatYAML
+	}
+	return format
 }
 
 func readTestData(t *testing.T, fs embed.FS, path string) []byte {
