@@ -107,7 +107,7 @@ install: install/yarn
 install/yarn:
 	echo "Installing yarn dependencies..."
 	yarn --silent install
-	
+
 .PHONY: help
 ## Print this help message.
 help:
