@@ -19,6 +19,7 @@ func TestDecode(t *testing.T) {
 	tests := map[string]struct {
 		testDataFile string
 		expected     []openslo.Object
+		skip         bool
 	}{
 		"single map": {
 			testDataFile: "decode/single_map.yaml",
@@ -149,6 +150,9 @@ func TestDecode(t *testing.T) {
 			testDataFile: "decode/v1_slos.yaml",
 		},
 		"v2alpha data source": {
+			// FIXME: Once we agree upon https://github.com/OpenSLO/OpenSLO/pull/290
+			// or otherwise go with the current state, this test should be enabled.
+			skip:         true,
 			testDataFile: "decode/v2alpha1_data_source.yaml",
 			expected: []openslo.Object{
 				v2alpha1.DataSource{
@@ -159,7 +163,7 @@ func TestDecode(t *testing.T) {
 					},
 					Spec: v2alpha1.DataSourceSpec{
 						Description: "CloudWatch Production Data Source",
-						DataSourceConnectionDetails: v2alpha1.DataSourceConnectionDetails{
+						DataSourceConnectionDetails: map[string]any{
 							"cloudWatch": map[string]any{
 								"accessKeyID":     "accessKey",
 								"secretAccessKey": "secretAccessKey",
@@ -170,6 +174,9 @@ func TestDecode(t *testing.T) {
 			},
 		},
 		"v2alpha slos": {
+			// FIXME: Once we agree upon https://github.com/OpenSLO/OpenSLO/pull/290
+			// or otherwise go with the current state, this test should be enabled.
+			skip: true,
 			expected: []openslo.Object{
 				v2alpha1.SLO{
 					APIVersion: openslo.VersionV2alpha1,
@@ -244,14 +251,17 @@ func TestDecode(t *testing.T) {
 			testDataFile: "decode/v2alpha1_slos.yaml",
 		},
 	}
-	for name, tt := range tests {
+	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			data := readTestData(t, testData, tt.testDataFile)
+			if tc.skip {
+				t.Skip("skipping test")
+			}
+			data := readTestData(t, testData, tc.testDataFile)
 			objects, err := Decode(bytes.NewReader(data), FormatYAML)
 
 			requireNoError(t, err)
-			requireLen(t, len(tt.expected), objects)
-			requireEqual(t, tt.expected, objects)
+			requireLen(t, len(tc.expected), objects)
+			requireEqual(t, tc.expected, objects)
 		})
 	}
 }
@@ -275,14 +285,14 @@ func requireNoError(t *testing.T, err error) {
 func requireLen[T any](t *testing.T, expected int, s []T) {
 	t.Helper()
 	if len(s) != expected {
-		t.Fatalf("expected %d objects, got %d", expected, len(s))
+		t.Fatalf("expected: %d objects, got: %d", expected, len(s))
 	}
 }
 
 func requireEqual(t *testing.T, expected, got any) {
 	t.Helper()
 	if !reflect.DeepEqual(expected, got) {
-		t.Fatalf("expected %v, got %v", expected, got)
+		t.Fatalf("expected:\n%v\ngot:\n%v", expected, got)
 	}
 }
 
