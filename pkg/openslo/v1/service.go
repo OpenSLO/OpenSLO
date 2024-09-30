@@ -8,10 +8,10 @@ import (
 var _ = openslo.Object(Service{})
 
 type Service struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       ServiceSpec     `yaml:"spec"`
+	APIVersion openslo.Version `json:"apiVersion"`
+	Kind       openslo.Kind    `json:"kind"`
+	Metadata   Metadata        `json:"metadata"`
+	Spec       ServiceSpec     `json:"spec"`
 }
 
 func (s Service) GetVersion() openslo.Version {
@@ -31,7 +31,7 @@ func (s Service) Validate() error {
 }
 
 type ServiceSpec struct {
-	Description string `yaml:"description,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 var serviceValidation = govy.New(

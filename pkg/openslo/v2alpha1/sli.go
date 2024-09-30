@@ -7,10 +7,10 @@ import (
 var _ = openslo.Object(SLI{})
 
 type SLI struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       SLISpec         `yaml:"spec"`
+	APIVersion openslo.Version `json:"apiVersion"`
+	Kind       openslo.Kind    `json:"kind"`
+	Metadata   Metadata        `json:"metadata"`
+	Spec       SLISpec         `json:"spec"`
 }
 
 func (s SLI) GetVersion() openslo.Version {
@@ -30,21 +30,21 @@ func (s SLI) Validate() error {
 }
 
 type SLISpec struct {
-	ThresholdMetric *SLIMetricSpec  `yaml:"thresholdMetric,omitempty"`
-	RatioMetric     *SLIRatioMetric `yaml:"ratioMetric,omitempty"`
+	ThresholdMetric *SLIMetricSpec  `json:"thresholdMetric,omitempty"`
+	RatioMetric     *SLIRatioMetric `json:"ratioMetric,omitempty"`
 }
 
 type SLIRatioMetric struct {
-	Counter bool           `yaml:"counter"`
-	Good    *SLIMetricSpec `yaml:"good,omitempty"`
-	Bad     *SLIMetricSpec `yaml:"bad,omitempty"`
-	Total   *SLIMetricSpec `yaml:"total,omitempty"`
-	RawType *string        `yaml:"rawType,omitempty"`
-	Raw     *SLIMetricSpec `yaml:"raw,omitempty"`
+	Counter bool           `json:"counter"`
+	Good    *SLIMetricSpec `json:"good,omitempty"`
+	Bad     *SLIMetricSpec `json:"bad,omitempty"`
+	Total   *SLIMetricSpec `json:"total,omitempty"`
+	RawType *string        `json:"rawType,omitempty"`
+	Raw     *SLIMetricSpec `json:"raw,omitempty"`
 }
 
 type SLIMetricSpec struct {
-	DataSourceRef               string         `yaml:"dataSourceRef,omitempty"`
-	DataSourceSpec              map[string]any `yaml:"spec,omitempty"`
-	DataSourceConnectionDetails `yaml:",inline"`
+	DataSourceRef               string         `json:"dataSourceRef,omitempty"`
+	DataSourceSpec              map[string]any `json:"spec,omitempty"`
+	DataSourceConnectionDetails `json:",inline"`
 }

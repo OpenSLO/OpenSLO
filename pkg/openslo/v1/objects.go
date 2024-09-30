@@ -1,9 +1,8 @@
 package v1
 
 import (
+	"encoding/json"
 	"slices"
-
-	"gopkg.in/yaml.v3"
 
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	"github.com/nobl9/govy/pkg/govy"
@@ -27,10 +26,10 @@ func GetSupportedKinds() []openslo.Kind {
 }
 
 type Metadata struct {
-	Name        string      `yaml:"name"`
-	DisplayName string      `yaml:"displayName,omitempty"`
-	Labels      Labels      `yaml:"labels,omitempty"`
-	Annotations Annotations `yaml:"annotations,omitempty"`
+	Name        string      `json:"name"`
+	DisplayName string      `json:"displayName,omitempty"`
+	Labels      Labels      `json:"labels,omitempty"`
+	Annotations Annotations `json:"annotations,omitempty"`
 }
 
 type Labels map[string]Label
@@ -39,11 +38,11 @@ type Annotations map[string]string
 
 type Label []string
 
-func (a *Label) UnmarshalYAML(value *yaml.Node) error {
+func (a *Label) UnmarshalJSON(data []byte) error {
 	var multi []string
-	if err := value.Decode(&multi); err != nil {
+	if err := json.Unmarshal(data, &multi); err != nil {
 		var single string
-		if err = value.Decode(&single); err != nil {
+		if err = json.Unmarshal(data, &single); err != nil {
 			return err
 		}
 		*a = []string{single}
