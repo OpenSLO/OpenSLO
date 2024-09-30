@@ -1,11 +1,21 @@
 package v1
 
 import (
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	"github.com/nobl9/govy/pkg/govy"
+
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 var _ = openslo.Object(Service{})
+
+func NewService(metadata Metadata, spec ServiceSpec) Service {
+	return Service{
+		APIVersion: APIVersion,
+		Kind:       openslo.KindService,
+		Metadata:   metadata,
+		Spec:       spec,
+	}
+}
 
 type Service struct {
 	APIVersion openslo.Version `json:"apiVersion"`

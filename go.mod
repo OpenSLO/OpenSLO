@@ -3,7 +3,7 @@ module github.com/OpenSLO/OpenSLO
 go 1.22
 
 require (
-	github.com/nobl9/govy v0.2.0
+	github.com/nobl9/govy v0.3.0
 	sigs.k8s.io/yaml v1.4.0
 )
 

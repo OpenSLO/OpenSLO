@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"slices"
 
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
+
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 const APIVersion = openslo.VersionV1
@@ -58,7 +59,7 @@ func validationRulesAPIVersion[T openslo.Object](
 	return govy.For(getter).
 		WithName("apiVersion").
 		Required().
-		Rules(rules.EQ(openslo.VersionV1alpha))
+		Rules(rules.EQ(APIVersion))
 }
 
 func validationRulesKind[T openslo.Object](
@@ -85,10 +86,22 @@ func validationRulesMetadata[T openslo.Object](getter func(T) Metadata) govy.Pro
 					Rules(),
 				govy.For(func(m Metadata) Labels { return m.Labels }).
 					WithName("labels").
-					Include(),
+					Include(labelsValidator()),
 				govy.For(func(m Metadata) Annotations { return m.Annotations }).
 					WithName("annotations").
-					Include(),
+					Include(annotationsValidator()),
 			),
 		)
+}
+
+func labelsValidator() govy.Validator[Labels] {
+	return govy.New(
+		govy.For(govy.GetSelf[Labels]()),
+	)
+}
+
+func annotationsValidator() govy.Validator[Annotations] {
+	return govy.New(
+		govy.For(govy.GetSelf[Annotations]()),
+	)
 }
