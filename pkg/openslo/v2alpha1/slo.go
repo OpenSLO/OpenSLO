@@ -5,10 +5,10 @@ import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 var _ = openslo.Object(SLO{})
 
 type SLO struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       SLOSpec         `yaml:"spec"`
+	APIVersion openslo.Version `json:"apiVersion"`
+	Kind       openslo.Kind    `json:"kind"`
+	Metadata   Metadata        `json:"metadata"`
+	Spec       SLOSpec         `json:"spec"`
 }
 
 func (s SLO) GetVersion() openslo.Version {
@@ -28,45 +28,45 @@ func (s SLO) Validate() error {
 }
 
 type SLOSpec struct {
-	Description     string          `yaml:"description,omitempty"`
-	Service         string          `yaml:"service"`
-	SLI             *SLOEmbeddedSLI `yaml:"sli,omitempty"`
-	SLIRef          *string         `yaml:"sliRef,omitempty"`
-	BudgetingMethod string          `yaml:"budgetingMethod"`
-	TimeWindow      []TimeWindow    `yaml:"timeWindow"`
-	Objectives      []Objective     `yaml:"objectives"`
+	Description     string          `json:"description,omitempty"`
+	Service         string          `json:"service"`
+	SLI             *SLOEmbeddedSLI `json:"sli,omitempty"`
+	SLIRef          *string         `json:"sliRef,omitempty"`
+	BudgetingMethod string          `json:"budgetingMethod"`
+	TimeWindow      []TimeWindow    `json:"timeWindow"`
+	Objectives      []Objective     `json:"objectives"`
 	// We don't make clear in the spec if this is a ref or inline.
 	// We will make it a ref for now.
 	// https://github.com/OpenSLO/OpenSLO/issues/133
-	AlertPolicies []string `yaml:"alertPolicies"`
+	AlertPolicies []string `json:"alertPolicies"`
 }
 
 type SLOEmbeddedSLI struct {
-	Metadata Metadata `yaml:"metadata"`
-	Spec     SLISpec  `yaml:"spec"`
+	Metadata Metadata `json:"metadata"`
+	Spec     SLISpec  `json:"spec"`
 }
 
 type Objective struct {
-	DisplayName     string          `yaml:"displayName,omitempty"`
-	Labels          Labels          `yaml:"labels,omitempty"`
-	Op              string          `yaml:"op,omitempty"`
-	Value           *float64        `yaml:"value,omitempty"`
-	Target          *float64        `yaml:"target,omitempty"`
-	TargetPercent   *float64        `yaml:"targetPercent,omitempty"`
-	TimeSliceTarget *float64        `yaml:"timeSliceTarget,omitempty"`
-	TimeSliceWindow *string         `yaml:"timeSliceWindow,omitempty"`
-	SLI             *SLOEmbeddedSLI `yaml:"sli,omitempty"`
-	SLIRef          string          `yaml:"sliRef,omitempty"`
-	CompositeWeight *float64        `yaml:"compositeWeight,omitempty"`
+	DisplayName     string          `json:"displayName,omitempty"`
+	Labels          Labels          `json:"labels,omitempty"`
+	Op              string          `json:"op,omitempty"`
+	Value           *float64        `json:"value,omitempty"`
+	Target          *float64        `json:"target,omitempty"`
+	TargetPercent   *float64        `json:"targetPercent,omitempty"`
+	TimeSliceTarget *float64        `json:"timeSliceTarget,omitempty"`
+	TimeSliceWindow *string         `json:"timeSliceWindow,omitempty"`
+	SLI             *SLOEmbeddedSLI `json:"sli,omitempty"`
+	SLIRef          string          `json:"sliRef,omitempty"`
+	CompositeWeight *float64        `json:"compositeWeight,omitempty"`
 }
 
 type TimeWindow struct {
-	Duration  string    `yaml:"duration"`
-	IsRolling bool      `yaml:"isRolling"`
-	Calendar  *Calendar `yaml:"calendar,omitempty"`
+	Duration  string    `json:"duration"`
+	IsRolling bool      `json:"isRolling"`
+	Calendar  *Calendar `json:"calendar,omitempty"`
 }
 
 type Calendar struct {
-	StartTime string `yaml:"startTime"`
-	TimeZone  string `yaml:"timeZone"`
+	StartTime string `json:"startTime"`
+	TimeZone  string `json:"timeZone"`
 }

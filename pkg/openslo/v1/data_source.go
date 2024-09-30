@@ -1,14 +1,18 @@
 package v1
 
-import "github.com/OpenSLO/OpenSLO/pkg/openslo"
+import (
+	"encoding/json"
+
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+)
 
 var _ = openslo.Object(DataSource{})
 
 type DataSource struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       DataSourceSpec  `yaml:"spec"`
+	APIVersion openslo.Version `json:"apiVersion"`
+	Kind       openslo.Kind    `json:"kind"`
+	Metadata   Metadata        `json:"metadata"`
+	Spec       DataSourceSpec  `json:"spec"`
 }
 
 func (d DataSource) GetVersion() openslo.Version {
@@ -28,6 +32,6 @@ func (d DataSource) Validate() error {
 }
 
 type DataSourceSpec struct {
-	Type              string            `yaml:"type"`
-	ConnectionDetails map[string]string `yaml:"connectionDetails"`
+	Type              string          `json:"type"`
+	ConnectionDetails json.RawMessage `json:"connectionDetails"`
 }
