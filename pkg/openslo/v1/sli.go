@@ -30,6 +30,7 @@ func (s SLI) Validate() error {
 }
 
 type SLISpec struct {
+	Description     string         `json:"description,omitempty"`
 	ThresholdMetric *SLIMetricSpec `json:"thresholdMetric,omitempty"`
 	RatioMetric     *RatioMetric   `json:"ratioMetric,omitempty"`
 }

@@ -31,7 +31,7 @@ func Decode(r io.Reader, format ObjectFormat) ([]openslo.Object, error) {
 	}
 }
 
-func Encode(out io.Writer, format ObjectFormat, objects []openslo.Object) error {
+func Encode(out io.Writer, format ObjectFormat, objects ...openslo.Object) error {
 	if err := format.Validate(); err != nil {
 		return err
 	}

@@ -8,13 +8,13 @@ import (
 	"github.com/nobl9/govy/pkg/govytest"
 	"github.com/nobl9/govy/pkg/rules"
 
+	"github.com/OpenSLO/OpenSLO/internal/assert"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 var validationMessageRegexp = regexp.MustCompile(strings.TrimSpace(`
-(?s)Validation for Service '.*' in project '.*' has failed for the following fields:
+(?s)Validation for v1/Service '.*' has failed for the following properties:
 .*
-Manifest source: /home/me/service.yaml
 `))
 
 func TestValidate_VersionAndKind(t *testing.T) {
@@ -22,7 +22,8 @@ func TestValidate_VersionAndKind(t *testing.T) {
 	svc.APIVersion = "v0.1"
 	svc.Kind = openslo.KindSLO
 	err := svc.Validate()
-	//assert.Regexp(t, validationMessageRegexp, err.Error())
+	assert.Require(t, assert.Error(t, err))
+	assert.True(t, validationMessageRegexp.MatchString(err.Error()))
 	govytest.AssertError(t, err,
 		govytest.ExpectedRuleError{
 			PropertyName: "apiVersion",
@@ -36,57 +37,27 @@ func TestValidate_VersionAndKind(t *testing.T) {
 }
 
 func TestValidate_Metadata(t *testing.T) {
-	svc := validService()
-	svc.Metadata = Metadata{
-		Name:        strings.Repeat("MY SERVICE", 20),
-		DisplayName: strings.Repeat("my-service", 20),
-	}
-	err := svc.Validate()
-	//assert.Regexp(t, validationMessageRegexp, err.Error())
-	govytest.AssertError(t, err,
-		govytest.ExpectedRuleError{
-			PropertyName: "metadata.name",
-			Code:         rules.ErrorCodeStringDNSLabel,
-		},
-		govytest.ExpectedRuleError{
-			PropertyName: "metadata.displayName",
-			Code:         rules.ErrorCodeStringLength,
-		},
-		govytest.ExpectedRuleError{
-			PropertyName: "metadata.project",
-			Code:         rules.ErrorCodeStringDNSLabel,
-		},
-	)
-}
-
-func TestValidate_Metadata_Labels(t *testing.T) {
-	for name, test := range getLabelsTestCases(t, "metadata.labels") {
-		t.Run(name, func(t *testing.T) {
-			svc := validService()
-			svc.Metadata.Labels = test.Labels
-			test.Test(t, svc)
-		})
-	}
-}
-
-func TestValidate_Metadata_Annotations(t *testing.T) {
-	for name, test := range getAnnotationsTestCases(t, "metadata.annotations") {
-		t.Run(name, func(t *testing.T) {
-			svc := validService()
-			svc.Metadata.Annotations = test.Annotations
-			test.Test(t, svc)
-		})
-	}
+	runMetadataTests(t, func(m Metadata) Service {
+		svc := validService()
+		svc.Metadata = m
+		return svc
+	})
 }
 
 func TestValidate_Spec(t *testing.T) {
+	t.Run("description ok", func(t *testing.T) {
+		svc := validService()
+		svc.Spec.Description = strings.Repeat("A", 1050)
+		err := svc.Validate()
+		govytest.AssertNoError(t, err)
+	})
 	t.Run("description too long", func(t *testing.T) {
 		svc := validService()
-		svc.Spec.Description = strings.Repeat("A", 2000)
+		svc.Spec.Description = strings.Repeat("A", 1051)
 		err := svc.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
 			PropertyName: "spec.description",
-			Code:         rules.ErrorCodeStringLength,
+			Code:         rules.ErrorCodeStringMaxLength,
 		})
 	})
 }
@@ -94,7 +65,15 @@ func TestValidate_Spec(t *testing.T) {
 func validService() Service {
 	return NewService(
 		Metadata{
-			Name: "service",
+			Name:        "service",
+			DisplayName: "My Service",
+			Labels: Labels{
+				"team": {"team-a", "team-b"},
+				"env":  {"prod"},
+			},
+			Annotations: Annotations{
+				"key": "value",
+			},
 		},
 		ServiceSpec{
 			Description: "Some service",

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"encoding/json"
+	"regexp"
 	"slices"
 
 	"github.com/nobl9/govy/pkg/govy"
@@ -79,11 +80,11 @@ func validationRulesMetadata[T openslo.Object](getter func(T) Metadata) govy.Pro
 				govy.For(func(m Metadata) string { return m.Name }).
 					WithName("name").
 					Required().
-					Rules(),
+					Rules(rules.StringDNSLabel()),
 				govy.For(func(m Metadata) string { return m.DisplayName }).
 					WithName("displayName").
 					OmitEmpty().
-					Rules(),
+					Rules(rules.StringMaxLength(63)),
 				govy.For(func(m Metadata) Labels { return m.Labels }).
 					WithName("labels").
 					Include(labelsValidator()),
@@ -94,14 +95,27 @@ func validationRulesMetadata[T openslo.Object](getter func(T) Metadata) govy.Pro
 		)
 }
 
+var (
+	labelKeyRegexp            = regexp.MustCompile(`^[a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?$`)
+	annotationKeyLengthRegexp = regexp.MustCompile(`^(.{0,253}/)?.{0,63}$`)
+	annotationKeyRegexp       = regexp.MustCompile(`^([a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?(\.[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?)*/)?[a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?$`)
+)
+
 func labelsValidator() govy.Validator[Labels] {
 	return govy.New(
-		govy.For(govy.GetSelf[Labels]()),
+		govy.ForMap(govy.GetSelf[Labels]()).
+			RulesForKeys(rules.StringMatchRegexp(labelKeyRegexp)),
 	)
 }
 
 func annotationsValidator() govy.Validator[Annotations] {
 	return govy.New(
-		govy.For(govy.GetSelf[Annotations]()),
+		govy.ForMap(govy.GetSelf[Annotations]()).
+			Cascade(govy.CascadeModeStop).
+			RulesForKeys(
+				rules.StringMatchRegexp(annotationKeyLengthRegexp),
+				rules.StringMatchRegexp(annotationKeyRegexp,
+					"my-domain.org/my-key",
+					"openslo.com/annotation")),
 	)
 }

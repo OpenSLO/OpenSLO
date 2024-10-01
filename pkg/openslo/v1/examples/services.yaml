@@ -1,0 +1,12 @@
+- apiVersion: openslo/v1
+  kind: Service
+  metadata:
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+    name: example-service
+  spec:
+    description: Example service description
