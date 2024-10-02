@@ -4,10 +4,14 @@ import (
 	"bytes"
 	"embed"
 	"encoding/json"
+	"io/fs"
+	"os"
 	"path/filepath"
-	"reflect"
+	"strings"
 	"testing"
 
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/internal/assert"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha1"
@@ -288,9 +292,9 @@ func TestDecode(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			data := readTestData(t, testData, tc.testDataFile)
 			objects, err := Decode(bytes.NewReader(data), getFileFormat(tc.testDataFile))
-			requireNoError(t, err)
-			requireLen(t, len(tc.expected), objects)
-			requireEqual(t, tc.expected, objects)
+			assert.Require(t, assert.NoError(t, err))
+			assert.Require(t, assert.Len(t, objects, len(tc.expected)))
+			assert.Equal(t, tc.expected, objects)
 		})
 	}
 }
@@ -368,10 +372,51 @@ func TestEncode(t *testing.T) {
 			data := readTestData(t, testData, tc.testDataFile)
 			var buf bytes.Buffer
 			err := Encode(&buf, getFileFormat(tc.testDataFile), tc.objects...)
-			requireNoError(t, err)
-			requireEqual(t, string(data), buf.String())
+			assert.Require(t, assert.NoError(t, err))
+			assert.Equal(t, data, buf.Bytes())
 		})
 	}
+}
+
+func TestExamples(t *testing.T) {
+	root := internal.FindModuleRoot()
+	objects := findObjectsExamples(t, filepath.Join(root, "examples"))
+	objects = append(objects, findObjectsExamples(t, filepath.Join(root, "pkg"))...)
+	for _, object := range objects {
+		if err := object.Validate(); err != nil {
+			t.Errorf("object validation failed: %v", err)
+		}
+	}
+}
+
+func findObjectsExamples(t *testing.T, root string) []openslo.Object {
+	objects := make([]openslo.Object, 0)
+	err := filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		if !strings.Contains(path, "/examples/") ||
+			(filepath.Ext(path) != ".yaml" && filepath.Ext(path) != ".json") {
+			return nil
+		}
+		f, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		objectsInFile, err := Decode(f, getFileFormat(path))
+		if err != nil {
+			return err
+		}
+		objects = append(objects, objectsInFile...)
+		return nil
+	})
+	assert.Require(t, assert.NoError(t, err))
+	assert.Require(t, assert.NotEmpty(t, objects))
+	return objects
 }
 
 func getFileFormat(path string) ObjectFormat {
@@ -389,27 +434,6 @@ func readTestData(t *testing.T, fs embed.FS, path string) []byte {
 		t.Fatalf("failed to read test data: %v", err)
 	}
 	return data
-}
-
-func requireNoError(t *testing.T, err error) {
-	t.Helper()
-	if err != nil {
-		t.Fatalf("expected no error, got: %v", err)
-	}
-}
-
-func requireLen[T any](t *testing.T, expected int, s []T) {
-	t.Helper()
-	if len(s) != expected {
-		t.Fatalf("expected: %d objects, got: %d", expected, len(s))
-	}
-}
-
-func requireEqual(t *testing.T, expected, got any) {
-	t.Helper()
-	if !reflect.DeepEqual(expected, got) {
-		t.Fatalf("expected:\n%v\ngot:\n%v", expected, got)
-	}
 }
 
 func ptr[T any](v T) *T { return &v }

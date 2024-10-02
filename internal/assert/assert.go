@@ -2,7 +2,6 @@ package assert
 
 import (
 	"reflect"
-	"strings"
 	"testing"
 )
 
@@ -45,25 +44,13 @@ func False(t *testing.T, actual bool) bool {
 	return true
 }
 
-// Len fails the test if the object is not of the expected length.
-func Len(t *testing.T, object interface{}, length int) bool {
+// Len fails the test if the value is not of the expected length.
+func Len(t *testing.T, v interface{}, length int) bool {
 	t.Helper()
-	if actual := getLen(object); actual != length {
+	if actual := getLen(v); actual != length {
 		return fail(t, "Expected length: %d, actual: %d", length, actual)
 	}
 	return true
-}
-
-// IsType fails the test if the object is not of the expected type.
-// The expected type is specified using a type parameter.
-func IsType[T any](t *testing.T, object interface{}) bool {
-	t.Helper()
-	switch object.(type) {
-	case T:
-		return true
-	default:
-		return fail(t, "Expected type: %T, actual: %T", *new(T), object)
-	}
 }
 
 // Error fails the test if the error is nil.
@@ -84,58 +71,11 @@ func NoError(t *testing.T, err error) bool {
 	return true
 }
 
-// EqualError fails the test if the expected error is not equal to the actual error message.
-func EqualError(t *testing.T, expected error, actual string) bool {
+// NotEmpty fails the test if the value is empty.
+func NotEmpty(t *testing.T, v any) bool {
 	t.Helper()
-	if !Error(t, expected) {
-		return false
-	}
-	if expected.Error() != actual {
-		return fail(t, "Expected error message: %q, actual: %q", expected.Error(), actual)
-	}
-	return true
-}
-
-// ErrorContains fails the test if the expected error does not contain the provided string.
-func ErrorContains(t *testing.T, expected error, contains string) bool {
-	t.Helper()
-	if !Error(t, expected) {
-		return false
-	}
-	if !strings.Contains(expected.Error(), contains) {
-		return fail(t, "Expected error message to contain %q, actual %q", contains, expected.Error())
-	}
-	return true
-}
-
-// ElementsMatch fails the test if the expected and actual slices do not have the same elements.
-func ElementsMatch[T comparable](t *testing.T, expected, actual []T) bool {
-	t.Helper()
-	if len(expected) != len(actual) {
-		return fail(t, "Slices are not equal in length, expected: %d, actual: %d", len(expected), len(actual))
-	}
-
-	actualVisited := make([]bool, len(actual))
-	for _, e := range expected {
-		found := false
-		for j, a := range actual {
-			if actualVisited[j] {
-				continue
-			}
-			if areEqual(e, a) {
-				actualVisited[j] = true
-				found = true
-				break
-			}
-		}
-		if !found {
-			return fail(t, "Expected element %v not found in actual slice", e)
-		}
-	}
-	for i := range actual {
-		if !actualVisited[i] {
-			return fail(t, "Unexpected element %v found in actual slice", actual[i])
-		}
+	if isEmpty(v) {
+		return fail(t, "Value should not be empty.")
 	}
 	return true
 }
@@ -157,6 +97,26 @@ func getLen(v interface{}) int {
 		return rv.Len()
 	default:
 		return -1
+	}
+}
+
+func isEmpty(v interface{}) bool {
+	if v == nil {
+		return true
+	}
+	rv := reflect.ValueOf(v)
+	switch rv.Kind() {
+	case reflect.Map, reflect.Slice:
+		return rv.Len() == 0
+	case reflect.Ptr:
+		if rv.IsNil() {
+			return true
+		}
+		deref := rv.Elem().Interface()
+		return isEmpty(deref)
+	default:
+		zero := reflect.Zero(rv.Type())
+		return reflect.DeepEqual(v, zero.Interface())
 	}
 }
 
