@@ -367,9 +367,9 @@ func TestEncode(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			data := readTestData(t, testData, tc.testDataFile)
 			var buf bytes.Buffer
-			err := Encode(&buf, getFileFormat(tc.testDataFile), tc.objects)
+			err := Encode(&buf, getFileFormat(tc.testDataFile), tc.objects...)
 			requireNoError(t, err)
-			requireEqual(t, string(data), string(buf.Bytes()))
+			requireEqual(t, string(data), buf.String())
 		})
 	}
 }
