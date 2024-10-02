@@ -23,10 +23,11 @@ func NewSLO(metadata Metadata, spec SLOSpec) SLO {
 }
 
 type SLO struct {
-	APIVersion openslo.Version `json:"apiVersion"`
-	Kind       openslo.Kind    `json:"kind"`
-	Metadata   Metadata        `json:"metadata"`
-	Spec       SLOSpec         `json:"spec"`
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   SLOSpec   `json:"spec,omitempty"`
+	Status SLOStatus `json:"status,omitempty"`
 }
 
 func (s SLO) GetVersion() openslo.Version {
@@ -38,7 +39,7 @@ func (s SLO) GetKind() openslo.Kind {
 }
 
 func (s SLO) GetName() string {
-	return s.Metadata.Name
+	return s.ObjectMeta.Name
 }
 
 func (s SLO) Validate() error {
