@@ -64,6 +64,31 @@ to whitelist the project's `.envrc` file.
 
 Try to be as descriptive as you can in your Merge Request title.
 
+## Adding or modifying new object kind
+
+1. Update main [README.md](./README.md) file with the description of the object.
+2. Update SDK code.
+    1. Add or modify examples.
+    2. Add or modify validation rules.
+    3. Add or modify unit tests.
+
+## Adding new version
+
+*TO BE DISCUSSED AND CHANGED*
+
+OpenSLO follows a similar version lifecycle to the k8s API.
+
+- Official versions can be described by the following regular expression: `v[0-9]`, e.g. `v1`.
+- Versions still in active development or in experimentation phase can be described by the following regular expression: `v[0-9](alpha|beta)[0-9]`, e.g. `v2alpha1`, `v3beta2`.
+
+Alpha versions are promoted to stable versions following a community consensus.
+Once a version is promoted:
+
+- Tag should be created in the [main OpenSLO repository](https://github.com/OpenSLO/OpenSLO).
+- The tag should list ALL the changes between the new version and its predecessor.
+- The tag should follow [semantic versioning](https://semver.org/), this is of
+  particular importance to the OpenSLO SDK.
+
 ## License
 
 Apache 2.0, see [LICENSE](LICENSE).
