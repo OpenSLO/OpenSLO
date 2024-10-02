@@ -1,8 +1,8 @@
 github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/nobl9/govy v0.3.1-0.20241001215335-364a5a5c5d5a h1:wKVeBv5qM4hmVyRgQ1J3Dt1eAZ530XUZbjmbJbhsA/k=
-github.com/nobl9/govy v0.3.1-0.20241001215335-364a5a5c5d5a/go.mod h1:O+xSiKwZ6gs/orRvH5qLkfkgyT7CkuXprRIq3C5uNXQ=
+github.com/nobl9/govy v0.4.0 h1:Cc8pbpZb5kdlU89bd4+iAItHx6Yh4QWloauq/SrYzz4=
+github.com/nobl9/govy v0.4.0/go.mod h1:O+xSiKwZ6gs/orRvH5qLkfkgyT7CkuXprRIq3C5uNXQ=
 golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa h1:ELnwvuAXPNtPk1TJRuGkI9fDTwym6AYBu0qzT8AcHdI=
 golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa/go.mod h1:akd2r19cwCdwSwWeIdzYQGa/EZZyqcOdwWiwj5L5eKQ=
 golang.org/x/mod v0.20.0 h1:utOm6MM3R3dnawAiJgn0y+xvuYRsm1RKM/4giyfDgV0=

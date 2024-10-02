@@ -1,6 +1,7 @@
 package assert
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -9,7 +10,7 @@ import (
 // It should be used in conjunction with assert functions.
 // Example:
 //
-//	testutils.Require(t, testutils.AssertError(t, err))
+//	assert.Require(t, assert.AssertError(t, err))
 func Require(t *testing.T, isPassing bool) {
 	t.Helper()
 	if !isPassing {
@@ -47,7 +48,11 @@ func False(t *testing.T, actual bool) bool {
 // Len fails the test if the value is not of the expected length.
 func Len(t *testing.T, v interface{}, length int) bool {
 	t.Helper()
-	if actual := getLen(v); actual != length {
+	actual, err := getLen(v)
+	if err != nil {
+		return fail(t, "Error getting length: %v", err)
+	}
+	if actual != length {
 		return fail(t, "Expected length: %d, actual: %d", length, actual)
 	}
 	return true
@@ -90,13 +95,13 @@ func areEqual(expected, actual interface{}) bool {
 	return true
 }
 
-func getLen(v interface{}) int {
+func getLen(v interface{}) (int, error) {
 	rv := reflect.ValueOf(v)
 	switch rv.Kind() {
 	case reflect.Slice, reflect.Map, reflect.String:
-		return rv.Len()
+		return rv.Len(), nil
 	default:
-		return -1
+		return -1, fmt.Errorf("invalid type: %v", rv.Kind())
 	}
 }
 
