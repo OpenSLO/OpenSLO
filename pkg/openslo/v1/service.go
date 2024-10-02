@@ -4,7 +4,7 @@ import (
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
 
-	"github.com/OpenSLO/OpenSLO/internal/objects"
+	"github.com/OpenSLO/OpenSLO/internal"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
@@ -57,4 +57,4 @@ var serviceValidation = govy.New(
 				WithName("description").
 				Rules(rules.StringMaxLength(1050)),
 		)),
-).WithNameFunc(objects.ObjectNameFunc[Service])
+).WithNameFunc(internal.ObjectNameFunc[Service])
