@@ -28,7 +28,7 @@ spec:
         startTime: 2022-01-01 12:00:00
         timeZone: America/New_York
   budgetingMethod: Timeslices
-  objective:
+  objectives:
     - displayName: Objective
       op: gt
       target: 0.9995

@@ -4,12 +4,12 @@
     name: foo-slo
     displayName: Foo SLO
   spec:
+    budgetingMethod: Occurrences
     service: foo
     indicator:
       metadata:
         name: good
       spec:
-        budgetingMethod: Occurrences
         ratioMetric:
           counter: true
           good:

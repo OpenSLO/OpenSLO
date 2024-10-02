@@ -7,7 +7,6 @@ import (
 
 	"github.com/nobl9/govy/pkg/govytest"
 	"github.com/nobl9/govy/pkg/rules"
-	"golang.org/x/exp/maps"
 
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
@@ -102,7 +101,7 @@ func getLabelsTestCases(t *testing.T, propertyPath string) map[string]labelsTest
 		testCases[fmt.Sprintf("invalid: %v", labels)] = labelsTestCase{
 			Labels: labels,
 			error: govytest.ExpectedRuleError{
-				PropertyName: propertyPath + "." + maps.Keys(labels)[0],
+				PropertyName: propertyPath + "." + getMapFirstKey(labels),
 				IsKeyError:   true,
 				Code:         rules.ErrorCodeStringMatchRegexp,
 			},
@@ -182,11 +181,18 @@ func getAnnotationsTestCases(t *testing.T, propertyPath string) map[string]annot
 		testCases[fmt.Sprintf("invalid: %v", annotations)] = annotationsTestCase{
 			Annotations: annotations,
 			error: govytest.ExpectedRuleError{
-				PropertyName: propertyPath + "." + maps.Keys(annotations)[0],
+				PropertyName: propertyPath + "." + getMapFirstKey(annotations),
 				IsKeyError:   true,
 				Code:         rules.ErrorCodeStringMatchRegexp,
 			},
 		}
 	}
 	return testCases
+}
+
+func getMapFirstKey[V any](l map[string]V) string {
+	for k := range l {
+		return k
+	}
+	return ""
 }

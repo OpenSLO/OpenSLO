@@ -30,7 +30,7 @@ spec:
         startTime: 2022-01-01 12:00:00
         timeZone: America/New_York
   budgetingMethod: Timeslices
-  objective:
+  objectives:
     - displayName: Internal objective
       op: gt
       target: 0.995 # It is good to make bigger objective to react faster

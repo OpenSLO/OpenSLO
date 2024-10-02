@@ -27,7 +27,7 @@ spec:
    - duration: 2w
      isRolling: true
   budgetingMethod: RatioTimeslices
-  objective:
+  objectives:
     - displayName: Good
       op: gt
       timeSliceWindow: 1m
