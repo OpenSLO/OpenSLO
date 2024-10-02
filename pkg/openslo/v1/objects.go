@@ -98,7 +98,10 @@ func validationRulesMetadata[T openslo.Object](getter func(T) Metadata) govy.Pro
 var (
 	labelKeyRegexp            = regexp.MustCompile(`^[a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?$`)
 	annotationKeyLengthRegexp = regexp.MustCompile(`^(.{0,253}/)?.{0,63}$`)
-	annotationKeyRegexp       = regexp.MustCompile(`^([a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?(\.[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?)*/)?[a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?$`)
+	// nolint: lll
+	annotationKeyRegexp = regexp.MustCompile(
+		`^([a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?(\.[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?)*/)?[a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?$`,
+	)
 )
 
 func labelsValidator() govy.Validator[Labels] {

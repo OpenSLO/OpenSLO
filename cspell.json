@@ -40,6 +40,8 @@
     "goroot",
     "gosec",
     "govulncheck",
+    "govy",
+    "govytest",
     "mhdw",
     "nocomments",
     "openslo",

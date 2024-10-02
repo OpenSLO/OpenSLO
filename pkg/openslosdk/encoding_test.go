@@ -207,9 +207,11 @@ func TestDecode(t *testing.T) {
 						Name: "cloudWatch-prod",
 					},
 					Spec: v2alpha1.DataSourceSpec{
-						Description:       "CloudWatch Production Data Source",
-						Type:              "cloudWatch",
-						ConnectionDetails: json.RawMessage(`{"accessKeyID":"accessKey","secretAccessKey":"secretAccessKey"}`),
+						Description: "CloudWatch Production Data Source",
+						Type:        "cloudWatch",
+						ConnectionDetails: json.RawMessage(
+							`{"accessKeyID":"accessKey","secretAccessKey":"secretAccessKey"}`,
+						),
 					},
 				},
 			},
@@ -275,9 +277,11 @@ func TestDecode(t *testing.T) {
 										"query":        "SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to",
 									},
 									DataSourceSpec: &v2alpha1.DataSourceSpec{
-										Description:       "Metrics Database",
-										Type:              "redshift",
-										ConnectionDetails: json.RawMessage(`{"accessKeyID":"accessKey","secretAccessKey":"secretAccessKey"}`),
+										Description: "Metrics Database",
+										Type:        "redshift",
+										ConnectionDetails: json.RawMessage(
+											`{"accessKeyID":"accessKey","secretAccessKey":"secretAccessKey"}`,
+										),
 									},
 								},
 							},
@@ -406,7 +410,7 @@ func findObjectsExamples(t *testing.T, root string) []openslo.Object {
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		defer func() { _ = f.Close() }()
 		objectsInFile, err := Decode(f, getFileFormat(path))
 		if err != nil {
 			return err
@@ -427,9 +431,9 @@ func getFileFormat(path string) ObjectFormat {
 	return format
 }
 
-func readTestData(t *testing.T, fs embed.FS, path string) []byte {
+func readTestData(t *testing.T, fileSystem embed.FS, path string) []byte {
 	t.Helper()
-	data, err := fs.ReadFile(filepath.Join("test_data", path))
+	data, err := fileSystem.ReadFile(filepath.Join("test_data", path))
 	if err != nil {
 		t.Fatalf("failed to read test data: %v", err)
 	}
