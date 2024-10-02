@@ -1,11 +1,10 @@
 - apiVersion: openslo/v1
   kind: SLO
   metadata:
-    name: foo-slo
     displayName: Foo SLO
+    name: foo-slo
   spec:
     budgetingMethod: Occurrences
-    service: foo
     indicator:
       metadata:
         name: good
@@ -15,21 +14,22 @@
           good:
             metricSource:
               metricSourceRef: thanos
-              type: Prometheus
               spec:
-                query: http_requests_total{status_code="200"}
                 dimensions:
-                  - following
-                  - another
+                - following
+                - another
+                query: http_requests_total{status_code="200"}
+              type: Prometheus
           total:
             metricSource:
               metricSourceRef: thanos
-              type: Prometheus
               spec:
-                query: http_requests_total{}
                 dimensions:
-                  - following
-                  - another
+                - following
+                - another
+                query: http_requests_total{}
+              type: Prometheus
     objectives:
-      - displayName: Foo Availability
-        target: 0.98
+    - displayName: Foo Availability
+      target: 0.98
+    service: foo

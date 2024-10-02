@@ -33,12 +33,12 @@ type SLOSpec struct {
 	Indicator       *SLOIndicator `json:"indicator,omitempty"`
 	IndicatorRef    *string       `json:"indicatorRef,omitempty"`
 	BudgetingMethod string        `json:"budgetingMethod"`
-	TimeWindow      []TimeWindow  `json:"timeWindow"`
+	TimeWindow      []TimeWindow  `json:"timeWindow,omitempty"`
 	Objectives      []Objective   `json:"objectives"`
 	// We don't make clear in the spec if this is a ref or inline.
 	// We will make it a ref for now.
 	// https://github.com/OpenSLO/OpenSLO/issues/133
-	AlertPolicies []string `json:"alertPolicies"`
+	AlertPolicies []string `json:"alertPolicies,omitempty"`
 }
 
 type SLOIndicator struct {

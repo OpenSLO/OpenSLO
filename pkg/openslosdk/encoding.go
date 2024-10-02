@@ -31,7 +31,7 @@ func Decode(r io.Reader, format ObjectFormat) ([]openslo.Object, error) {
 	}
 }
 
-func Encode(out io.Writer, format ObjectFormat, objects []openslo.Object) error {
+func Encode(out io.Writer, format ObjectFormat, objects ...openslo.Object) error {
 	if err := format.Validate(); err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func (o *genericObject) UnmarshalJSON(data []byte) error {
 		Kind       openslo.Kind    `json:"kind"`
 	}
 	if err := json.Unmarshal(data, &tmp); err != nil {
-		return fmt.Errorf("failed to unmarshal object: %w", err)
+		return fmt.Errorf("failed to decode object: %w", err)
 	}
 	o.apiVersion = tmp.APIVersion
 	o.kind = tmp.Kind
@@ -214,7 +214,9 @@ func decodeV2alphaObject(generic genericObject) (openslo.Object, error) {
 
 func decodeJSONObject[T openslo.Object](data json.RawMessage) (T, error) {
 	var object T
-	if err := json.Unmarshal(data, &object); err != nil {
+	dec := json.NewDecoder(bytes.NewReader(data))
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(&object); err != nil {
 		return object, err
 	}
 	return object, nil

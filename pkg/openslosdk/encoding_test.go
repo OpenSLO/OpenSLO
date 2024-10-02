@@ -3,10 +3,15 @@ package openslosdk
 import (
 	"bytes"
 	"embed"
+	"encoding/json"
+	"io/fs"
+	"os"
 	"path/filepath"
-	"reflect"
+	"strings"
 	"testing"
 
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/internal/assert"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha1"
@@ -19,10 +24,9 @@ func TestDecode(t *testing.T) {
 	tests := map[string]struct {
 		testDataFile string
 		expected     []openslo.Object
-		skip         bool
 	}{
-		"single map": {
-			testDataFile: "decode/single_map.yaml",
+		"single YAML object": {
+			testDataFile: "decode/single_object.yaml",
 			expected: []openslo.Object{
 				v1.Service{
 					APIVersion: openslo.VersionV1,
@@ -37,8 +41,24 @@ func TestDecode(t *testing.T) {
 				},
 			},
 		},
-		"sequence of maps": {
-			testDataFile: "decode/sequence_of_maps.yaml",
+		"single JSON object": {
+			testDataFile: "decode/single_object.json",
+			expected: []openslo.Object{
+				v1.Service{
+					APIVersion: openslo.VersionV1,
+					Kind:       openslo.KindService,
+					Metadata: v1.Metadata{
+						Name:        "users-auth",
+						DisplayName: "Users Auth Service",
+					},
+					Spec: v1.ServiceSpec{
+						Description: "Example Service",
+					},
+				},
+			},
+		},
+		"sequence of YAML objects": {
+			testDataFile: "decode/sequence_of_objects.yaml",
 			expected: []openslo.Object{
 				v1.Service{
 					APIVersion: openslo.VersionV1,
@@ -64,7 +84,34 @@ func TestDecode(t *testing.T) {
 				},
 			},
 		},
-		"two documents": {
+		"sequence of JSON objects": {
+			testDataFile: "decode/sequence_of_objects.json",
+			expected: []openslo.Object{
+				v1.Service{
+					APIVersion: openslo.VersionV1,
+					Kind:       openslo.KindService,
+					Metadata: v1.Metadata{
+						Name:        "users-auth",
+						DisplayName: "Users Auth Service",
+					},
+					Spec: v1.ServiceSpec{
+						Description: "Example Service",
+					},
+				},
+				v1.Service{
+					APIVersion: openslo.VersionV1,
+					Kind:       openslo.KindService,
+					Metadata: v1.Metadata{
+						Name:        "users-login",
+						DisplayName: "Users Login Service",
+					},
+					Spec: v1.ServiceSpec{
+						Description: "Example Service",
+					},
+				},
+			},
+		},
+		"two YAML documents": {
 			testDataFile: "decode/two_documents.yaml",
 			expected: []openslo.Object{
 				v1.Service{
@@ -101,7 +148,8 @@ func TestDecode(t *testing.T) {
 						DisplayName: "Foo SLO",
 					},
 					Spec: v1.SLOSpec{
-						Service: "foo",
+						BudgetingMethod: "Occurrences",
+						Service:         "foo",
 						Indicator: &v1.SLOIndicator{
 							Metadata: v1.Metadata{
 								Name: "good",
@@ -150,9 +198,6 @@ func TestDecode(t *testing.T) {
 			testDataFile: "decode/v1_slos.yaml",
 		},
 		"v2alpha data source": {
-			// FIXME: Once we agree upon https://github.com/OpenSLO/OpenSLO/pull/290
-			// or otherwise go with the current state, this test should be enabled.
-			skip:         true,
 			testDataFile: "decode/v2alpha1_data_source.yaml",
 			expected: []openslo.Object{
 				v2alpha1.DataSource{
@@ -163,20 +208,15 @@ func TestDecode(t *testing.T) {
 					},
 					Spec: v2alpha1.DataSourceSpec{
 						Description: "CloudWatch Production Data Source",
-						DataSourceConnectionDetails: map[string]any{
-							"cloudWatch": map[string]any{
-								"accessKeyID":     "accessKey",
-								"secretAccessKey": "secretAccessKey",
-							},
-						},
+						Type:        "cloudWatch",
+						ConnectionDetails: json.RawMessage(
+							`{"accessKeyID":"accessKey","secretAccessKey":"secretAccessKey"}`,
+						),
 					},
 				},
 			},
 		},
 		"v2alpha slos": {
-			// FIXME: Once we agree upon https://github.com/OpenSLO/OpenSLO/pull/290
-			// or otherwise go with the current state, this test should be enabled.
-			skip: true,
 			expected: []openslo.Object{
 				v2alpha1.SLO{
 					APIVersion: openslo.VersionV2alpha1,
@@ -195,13 +235,13 @@ func TestDecode(t *testing.T) {
 									Counter: true,
 									Good: &v2alpha1.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
-										DataSourceSpec: map[string]any{
+										MetricSourceSpec: map[string]any{
 											"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
 										},
 									},
 									Total: &v2alpha1.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
-										DataSourceSpec: map[string]any{
+										MetricSourceSpec: map[string]any{
 											"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
 										},
 									},
@@ -230,17 +270,18 @@ func TestDecode(t *testing.T) {
 							},
 							Spec: v2alpha1.SLISpec{
 								ThresholdMetric: &v2alpha1.SLIMetricSpec{
-									DataSourceSpec: map[string]any{
+									MetricSourceSpec: map[string]any{
 										"region":       "eu-central-1",
 										"clusterId":    "metrics-cluster",
 										"databaseName": "metrics-db",
 										"query":        "SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to",
 									},
-									DataSourceConnectionDetails: v2alpha1.DataSourceConnectionDetails{
-										"redshift": map[string]any{
-											"accessKeyID":     "accessKey",
-											"secretAccessKey": "secretAccessKey",
-										},
+									DataSourceSpec: &v2alpha1.DataSourceSpec{
+										Description: "Metrics Database",
+										Type:        "redshift",
+										ConnectionDetails: json.RawMessage(
+											`{"accessKeyID":"accessKey","secretAccessKey":"secretAccessKey"}`,
+										),
 									},
 								},
 							},
@@ -253,47 +294,150 @@ func TestDecode(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			if tc.skip {
-				t.Skip("skipping test")
-			}
 			data := readTestData(t, testData, tc.testDataFile)
-			objects, err := Decode(bytes.NewReader(data), FormatYAML)
-
-			requireNoError(t, err)
-			requireLen(t, len(tc.expected), objects)
-			requireEqual(t, tc.expected, objects)
+			objects, err := Decode(bytes.NewReader(data), getFileFormat(tc.testDataFile))
+			assert.Require(t, assert.NoError(t, err))
+			assert.Require(t, assert.Len(t, objects, len(tc.expected)))
+			assert.Equal(t, tc.expected, objects)
 		})
 	}
 }
 
-func readTestData(t *testing.T, fs embed.FS, path string) []byte {
+func TestEncode(t *testing.T) {
+	v1SLO := v1.SLO{
+		APIVersion: openslo.VersionV1,
+		Kind:       openslo.KindSLO,
+		Metadata: v1.Metadata{
+			Name:        "foo-slo",
+			DisplayName: "Foo SLO",
+		},
+		Spec: v1.SLOSpec{
+			BudgetingMethod: "Occurrences",
+			Service:         "foo",
+			Indicator: &v1.SLOIndicator{
+				Metadata: v1.Metadata{
+					Name: "good",
+				},
+				Spec: v1.SLISpec{
+					RatioMetric: &v1.RatioMetric{
+						Counter: true,
+						Good: &v1.SLIMetricSpec{
+							MetricSource: v1.SLIMetricSource{
+								MetricSourceRef: "thanos",
+								Type:            "Prometheus",
+								MetricSourceSpec: map[string]any{
+									"query": `http_requests_total{status_code="200"}`,
+									"dimensions": []any{
+										"following",
+										"another",
+									},
+								},
+							},
+						},
+						Total: &v1.SLIMetricSpec{
+							MetricSource: v1.SLIMetricSource{
+								MetricSourceRef: "thanos",
+								Type:            "Prometheus",
+								MetricSourceSpec: map[string]any{
+									"query": `http_requests_total{}`,
+									"dimensions": []any{
+										"following",
+										"another",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			Objectives: []v1.Objective{
+				{
+					DisplayName: "Foo Availability",
+					Target:      0.98,
+				},
+			},
+		},
+	}
+	tests := map[string]struct {
+		testDataFile string
+		objects      []openslo.Object
+	}{
+		"single YAML object": {
+			testDataFile: "encode/v1_slo.yaml",
+			objects:      []openslo.Object{v1SLO},
+		},
+		"single JSON object": {
+			testDataFile: "encode/v1_slo.json",
+			objects:      []openslo.Object{v1SLO},
+		},
+	}
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			data := readTestData(t, testData, tc.testDataFile)
+			var buf bytes.Buffer
+			err := Encode(&buf, getFileFormat(tc.testDataFile), tc.objects...)
+			assert.Require(t, assert.NoError(t, err))
+			assert.Equal(t, data, buf.Bytes())
+		})
+	}
+}
+
+func TestExamples(t *testing.T) {
+	root := internal.FindModuleRoot()
+	objects := findObjectsExamples(t, filepath.Join(root, "examples"))
+	objects = append(objects, findObjectsExamples(t, filepath.Join(root, "pkg"))...)
+	for _, object := range objects {
+		if err := object.Validate(); err != nil {
+			t.Errorf("object validation failed: %v", err)
+		}
+	}
+}
+
+func findObjectsExamples(t *testing.T, root string) []openslo.Object {
+	objects := make([]openslo.Object, 0)
+	err := filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		if !strings.Contains(path, "/examples/") ||
+			(filepath.Ext(path) != ".yaml" && filepath.Ext(path) != ".json") {
+			return nil
+		}
+		f, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer func() { _ = f.Close() }()
+		objectsInFile, err := Decode(f, getFileFormat(path))
+		if err != nil {
+			return err
+		}
+		objects = append(objects, objectsInFile...)
+		return nil
+	})
+	assert.Require(t, assert.NoError(t, err))
+	assert.Require(t, assert.NotEmpty(t, objects))
+	return objects
+}
+
+func getFileFormat(path string) ObjectFormat {
+	format := FormatJSON
+	if filepath.Ext(path) == ".yaml" {
+		format = FormatYAML
+	}
+	return format
+}
+
+func readTestData(t *testing.T, fileSystem embed.FS, path string) []byte {
 	t.Helper()
-	data, err := fs.ReadFile(filepath.Join("test_data", path))
+	data, err := fileSystem.ReadFile(filepath.Join("test_data", path))
 	if err != nil {
 		t.Fatalf("failed to read test data: %v", err)
 	}
 	return data
-}
-
-func requireNoError(t *testing.T, err error) {
-	t.Helper()
-	if err != nil {
-		t.Fatalf("expected no error, got: %v", err)
-	}
-}
-
-func requireLen[T any](t *testing.T, expected int, s []T) {
-	t.Helper()
-	if len(s) != expected {
-		t.Fatalf("expected: %d objects, got: %d", expected, len(s))
-	}
-}
-
-func requireEqual(t *testing.T, expected, got any) {
-	t.Helper()
-	if !reflect.DeepEqual(expected, got) {
-		t.Fatalf("expected:\n%v\ngot:\n%v", expected, got)
-	}
 }
 
 func ptr[T any](v T) *T { return &v }
