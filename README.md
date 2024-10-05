@@ -100,9 +100,6 @@ spec:
     - contain lowercase alphanumeric characters or `-`
     - start with an alphanumeric character
     - end with an alphanumeric character
-  - implementations are additionally encouraged to support names that:
-    - are up to 255 characters in length
-    - contain lowercase alphanumeric characters or `-`, `.`, `|`, `/`, `\`
 - **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
   - the `key` segment is required and must contain at most 63 characters beginning and ending
      with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
