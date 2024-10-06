@@ -45,9 +45,9 @@ func (d DataSource) Validate() error {
 }
 
 type DataSourceSpec struct {
-	Description       string          `json:"description,omitempty"`
-	Type              string          `json:"type"`
-	ConnectionDetails json.RawMessage `json:"connectionDetails"`
+	Description       string                      `json:"description,omitempty"`
+	Type              string                      `json:"type"`
+	ConnectionDetails DataSourceConnectionDetails `json:"connectionDetails"`
 }
 
 var dataSourceValidation = govy.New(
