@@ -2,6 +2,7 @@ package v1
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -10,6 +11,13 @@ import (
 
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
+
+func getValidationMessageRegexp(kind openslo.Kind) *regexp.Regexp {
+	return regexp.MustCompile(fmt.Sprintf(strings.TrimSpace(`
+(?s)Validation for v1/%s '.*' has failed for the following properties:
+.*
+`), kind))
+}
 
 func runMetadataTests[T openslo.Object](t *testing.T, objectGetter func(m Metadata) T) {
 	t.Run("name and display name", func(t *testing.T) {
