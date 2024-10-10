@@ -1,0 +1,31 @@
+- apiVersion: openslo/v1
+  kind: DataSource
+  metadata:
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+    name: prometheus
+  spec:
+    type: Prometheus
+    connectionDetails:
+    - url: http://prometheus.example.com
+- apiVersion: openslo/v1
+  kind: DataSource
+  metadata:
+    annotations:
+      openslo.com/service-folder: ./my/directory
+    labels:
+      env:
+        - dev
+      team:
+        - team-a
+        - team-b
+    name: datadog
+  spec:
+    type: Datadog
+    connectionDetails:
+    - apiKey: my-api-key
+    - appKey: my-app-key

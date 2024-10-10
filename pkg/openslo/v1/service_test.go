@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"regexp"
 	"strings"
 	"testing"
 
@@ -12,18 +11,20 @@ import (
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
-var validationMessageRegexp = regexp.MustCompile(strings.TrimSpace(`
-(?s)Validation for v1/Service '.*' has failed for the following properties:
-.*
-`))
+var serviceValidationMessageRegexp = getValidationMessageRegexp(openslo.KindService)
 
-func TestValidate_VersionAndKind(t *testing.T) {
+func TestService_Validate_Ok(t *testing.T) {
+	err := validService().Validate()
+	govytest.AssertNoError(t, err)
+}
+
+func TestService_Validate_VersionAndKind(t *testing.T) {
 	svc := validService()
 	svc.APIVersion = "v0.1"
 	svc.Kind = openslo.KindSLO
 	err := svc.Validate()
 	assert.Require(t, assert.Error(t, err))
-	assert.True(t, validationMessageRegexp.MatchString(err.Error()))
+	assert.True(t, serviceValidationMessageRegexp.MatchString(err.Error()))
 	govytest.AssertError(t, err,
 		govytest.ExpectedRuleError{
 			PropertyName: "apiVersion",
@@ -36,7 +37,7 @@ func TestValidate_VersionAndKind(t *testing.T) {
 	)
 }
 
-func TestValidate_Metadata(t *testing.T) {
+func TestService_Validate_Metadata(t *testing.T) {
 	runMetadataTests(t, func(m Metadata) Service {
 		svc := validService()
 		svc.Metadata = m
@@ -44,7 +45,7 @@ func TestValidate_Metadata(t *testing.T) {
 	})
 }
 
-func TestValidate_Spec(t *testing.T) {
+func TestService_Validate_Spec(t *testing.T) {
 	t.Run("description ok", func(t *testing.T) {
 		svc := validService()
 		svc.Spec.Description = strings.Repeat("A", 1050)
