@@ -58,7 +58,7 @@ func ExampleDataSource() {
 	if err = openslosdk.Encode(os.Stdout, openslosdk.FormatYAML, dataSource); err != nil {
 		panic(err)
 	}
-  
+
 	// Output:
 	// - apiVersion: openslo/v1
 	//   kind: DataSource
