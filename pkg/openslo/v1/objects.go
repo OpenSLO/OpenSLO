@@ -54,6 +54,22 @@ func (a *Label) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type Operator string
+
+const (
+	OperatorGT  Operator = "gt"
+	OperatorLT  Operator = "lt"
+	OperatorGTE Operator = "gte"
+	OperatorLTE Operator = "lte"
+)
+
+var validOperators = []Operator{
+	OperatorGT,
+	OperatorLT,
+	OperatorGTE,
+	OperatorLTE,
+}
+
 func validationRulesAPIVersion[T openslo.Object](
 	getter func(T) openslo.Version,
 ) govy.PropertyRules[openslo.Version, T] {
