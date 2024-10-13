@@ -83,8 +83,8 @@ spec:
     # either dataSourceRef or <<dataSourceName>> must be provided
     dataSourceRef: string # refer to already defined DataSource object
     dataSource: # contains whole DataSource "spec"
-  # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-  # everything that is valid YAML can be put here
+    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+    # everything that is valid YAML can be put here
     spec:
       # arbitrary chosen fields for every DataSource type to make it comfortable to use
       # anything that is valid YAML can be put here.
@@ -97,8 +97,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       dataSourceSpec: # contains whole DataSource "spec"
-   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-   # everything that is valid YAML can be put here
+      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+      # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here.
@@ -106,8 +106,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       dataSourceSpec: # contains whole DataSource "spec"
-   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-   # everything that is valid YAML can be put here
+      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+      # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
@@ -115,8 +115,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       dataSourceSpec: # contains whole DataSource "spec"
-   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-   # everything that is valid YAML can be put here
+      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+      # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
@@ -128,7 +128,7 @@ spec:
     raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      dataSourceSpec: # contains whole DataSource "spec"
+      dataSourceSpec:# contains whole DataSource "spec"
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
