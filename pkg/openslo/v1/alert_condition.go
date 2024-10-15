@@ -35,6 +35,7 @@ type AlertConditionSpec struct {
 
 type AlertConditionType struct {
 	Kind           string  `json:"kind"`
+	Op             string  `json:"op"`
 	Threshold      float64 `json:"threshold"`
 	LookbackWindow string  `json:"lookbackWindow"`
 	AlertAfter     string  `json:"alertAfter"`
