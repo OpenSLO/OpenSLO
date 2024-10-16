@@ -11,6 +11,11 @@ in the specification to reach that goal.
 2. Remove `displayName` from the [ObjectMeta](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#objectmeta-v1-meta)
 3. Adhere to [metadata.labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) and
    [metadata.annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) Kubernetes standards.
+4. `duration-shorthand` allowed postfixed changed:
+   - _m_ – minutes
+   - _h_ – hours
+   - _d_ – days
+   - _w_ – weeks
 
 ## [SLO](../README.md#slo)
 
@@ -35,7 +40,7 @@ spec:
       isRolling: true
     # or
     ## calendar–aligned time window
-    - duration: duration-shorthand # duration of the window eg 1M, 1Q, 1Y
+    - duration: duration-shorthand # duration of the window eg 1m, 3w
       calendar:
         startTime: 2020-01-21 12:30:00 # date with time in 24h format, format without time zone
         timeZone: America/New_York # name as in IANA Time Zone Database
@@ -83,8 +88,8 @@ spec:
     # either dataSourceRef or <<dataSourceName>> must be provided
     dataSourceRef: string # refer to already defined DataSource object
     dataSource: # contains whole DataSource "spec"
-  # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-  # everything that is valid YAML can be put here
+    # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+    # everything that is valid YAML can be put here
     spec:
       # arbitrary chosen fields for every DataSource type to make it comfortable to use
       # anything that is valid YAML can be put here.
@@ -97,8 +102,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       dataSourceSpec: # contains whole DataSource "spec"
-   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-   # everything that is valid YAML can be put here
+      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+      # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here.
@@ -106,8 +111,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       dataSourceSpec: # contains whole DataSource "spec"
-   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-   # everything that is valid YAML can be put here
+      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+      # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
@@ -115,8 +120,8 @@ spec:
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
       dataSourceSpec: # contains whole DataSource "spec"
-   # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
-   # everything that is valid YAML can be put here
+      # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
+      # everything that is valid YAML can be put here
       spec:
         # arbitrary chosen fields for every DataSource type to make it comfortable to use
         # anything that is valid YAML can be put here
@@ -128,7 +133,7 @@ spec:
     raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
       # either dataSourceRef or <<dataSourceName>> must be provided
       dataSourceRef: string # refer to already defined DataSource object
-      dataSourceSpec: # contains whole DataSource "spec"
+      dataSourceSpec:# contains whole DataSource "spec"
         # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
         # everything that is valid YAML can be put here
       spec:
