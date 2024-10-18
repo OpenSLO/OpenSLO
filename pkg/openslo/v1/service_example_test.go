@@ -55,6 +55,7 @@ func ExampleService() {
 	if err = openslosdk.Encode(os.Stdout, openslosdk.FormatYAML, service); err != nil {
 		panic(err)
 	}
+
 	// Output:
 	// - apiVersion: openslo/v1
 	//   kind: Service
