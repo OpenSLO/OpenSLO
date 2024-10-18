@@ -1,0 +1,42 @@
+- apiVersion: openslo/v1
+  kind: AlertCondition
+  metadata:
+    name: cpu-usage-breach
+    displayName: CPU usage breach
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+  spec:
+    description: If the CPU usage is too high for given period then it should alert
+    severity: page
+    condition:
+      kind: burnrate
+      op: lte
+      threshold: 2
+      lookbackWindow: 1h
+      alertAfter: 5m
+- apiVersion: openslo/v1
+  kind: AlertCondition
+  metadata:
+    name: latency-too-high
+    displayName: Latency too high
+    annotations:
+      openslo.com/service-folder: ./my/directory
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+  spec:
+    description: If the average latency is greater than 200ms for a given day, send a warning alert
+    severity: warning
+    condition:
+      kind: burnrate
+      op: gt
+      threshold: 200
+      lookbackWindow: 1d
+      alertAfter: 30m
