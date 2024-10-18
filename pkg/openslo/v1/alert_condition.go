@@ -1,10 +1,11 @@
 package v1
 
 import (
-	"github.com/OpenSLO/OpenSLO/internal"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
+
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 var _ = openslo.Object(AlertCondition{})
@@ -95,7 +96,7 @@ var alertConditionBurnRateValidation = govy.New(
 	govy.For(func(a AlertConditionType) Operator { return a.Operator }).
 		WithName("op").
 		Required().
-		Rules(rules.OneOf(validOperators...)),
+		Include(operatorValidation),
 	govy.ForPointer(func(a AlertConditionType) *float64 { return a.Threshold }).
 		WithName("threshold").
 		Required(),

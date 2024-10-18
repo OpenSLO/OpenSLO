@@ -118,21 +118,25 @@ func TestAlertCondition_Validate_SpecCondition(t *testing.T) {
 			},
 		)
 	})
-	t.Run("valid operator values", func(t *testing.T) {
-		for _, op := range validOperators {
+	t.Run("operator", func(t *testing.T) {
+		runOperatorTests(t, "spec.condition.op", func(o Operator) AlertCondition {
 			condition := validAlertCondition()
-			condition.Spec.Condition.Operator = op
-			err := condition.Validate()
-			govytest.AssertNoError(t, err)
-		}
+			condition.Spec.Condition.Operator = o
+			return condition
+		})
 	})
-	t.Run("invalid operator value", func(t *testing.T) {
-		condition := validAlertCondition()
-		condition.Spec.Condition.Operator = "lessThan"
-		err := condition.Validate()
-		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.condition.op",
-			Code:         rules.ErrorCodeOneOf,
+	t.Run("lookbackWindow", func(t *testing.T) {
+		runDurationShorthandTests(t, "spec.condition.lookbackWindow", func(d DurationShorthand) AlertCondition {
+			condition := validAlertCondition()
+			condition.Spec.Condition.LookbackWindow = d
+			return condition
+		})
+	})
+	t.Run("alertAfter", func(t *testing.T) {
+		runDurationShorthandTests(t, "spec.condition.alertAfter", func(d DurationShorthand) AlertCondition {
+			condition := validAlertCondition()
+			condition.Spec.Condition.AlertAfter = d
+			return condition
 		})
 	})
 }

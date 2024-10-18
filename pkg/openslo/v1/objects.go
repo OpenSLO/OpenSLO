@@ -70,6 +70,15 @@ var validOperators = []Operator{
 	OperatorLTE,
 }
 
+var operatorValidation = govy.New(
+	govy.For(govy.GetSelf[Operator]()).
+		Rules(rules.OneOf(validOperators...)),
+)
+
+func (o Operator) Validate() error {
+	return operatorValidation.Validate(o)
+}
+
 func validationRulesAPIVersion[T openslo.Object](
 	getter func(T) openslo.Version,
 ) govy.PropertyRules[openslo.Version, T] {

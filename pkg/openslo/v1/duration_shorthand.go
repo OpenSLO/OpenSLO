@@ -42,7 +42,7 @@ func (d *DurationShorthand) UnmarshalText(text []byte) error {
 	return nil
 }
 
-// UnmarshalText implements [encoding.TextMarshaler].
+// MarshalText implements [encoding.TextMarshaler].
 func (d DurationShorthand) MarshalText() (text []byte, err error) {
 	return []byte(d.String()), nil
 }
@@ -55,25 +55,26 @@ func (d DurationShorthand) String() string {
 // Duration returns the [time.Duration] representation of [DurationShorthand].
 func (d DurationShorthand) Duration() time.Duration {
 	switch d.unit {
-	case "m":
+	case DurationShorthandUnitMinute:
 		return time.Duration(d.value) * time.Minute
-	case "h":
+	case DurationShorthandUnitHour:
 		return time.Duration(d.value) * time.Hour
-	case "d":
+	case DurationShorthandUnitDay:
 		return time.Duration(d.value) * 24 * time.Hour
-	case "w":
+	case DurationShorthandUnitWeek:
 		return time.Duration(d.value) * 7 * 24 * time.Hour
-	case "M":
+	case DurationShorthandUnitMonth:
 		return time.Duration(d.value) * 30 * 24 * time.Hour
-	case "Q":
+	case DurationShorthandUnitQuarter:
 		return time.Duration(d.value) * 90 * 24 * time.Hour
-	case "Y":
+	case DurationShorthandUnitYear:
 		return time.Duration(d.value) * 365 * 24 * time.Hour
 	default:
 		panic("invalid unit")
 	}
 }
 
+// DurationShorthandUnit is a unit of [DurationShorthand].
 type DurationShorthandUnit string
 
 const (
@@ -86,7 +87,15 @@ const (
 	DurationShorthandUnitYear    DurationShorthandUnit = "Y"
 )
 
-var validDiuartionUnits = []DurationShorthandUnit{"m", "h", "d", "w", "M", "Q", "Y"}
+var validDurationUnits = []DurationShorthandUnit{
+	DurationShorthandUnitMinute,
+	DurationShorthandUnitHour,
+	DurationShorthandUnitDay,
+	DurationShorthandUnitWeek,
+	DurationShorthandUnitMonth,
+	DurationShorthandUnitQuarter,
+	DurationShorthandUnitYear,
+}
 
 // Validate checks if [DurationShorthand] is correct.
 func (d DurationShorthand) Validate() error {
@@ -95,8 +104,10 @@ func (d DurationShorthand) Validate() error {
 
 var durationShortHandValidation = govy.New(
 	govy.For(func(d DurationShorthand) DurationShorthandUnit { return d.unit }).
+		WithName("unit").
 		Required().
-		Rules(rules.OneOf(validDiuartionUnits...)),
+		Rules(rules.OneOf(validDurationUnits...)),
 	govy.For(func(d DurationShorthand) int { return d.value }).
+		WithName("value").
 		Rules(rules.GTE(0)),
 )
