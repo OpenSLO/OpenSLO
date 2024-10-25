@@ -32,9 +32,12 @@
         name: bar-error
       spec:
         thresholdMetric:
-          redshift:
-            accessKeyID: accessKey
-            secretAccessKey: secretAccessKey
+          dataSourceSpec:
+            description: "Metrics Database"
+            type: redshift
+            connectionDetails:
+              accessKeyID: accessKey
+              secretAccessKey: secretAccessKey
           spec:
             region: eu-central-1
             clusterId: metrics-cluster

@@ -5,10 +5,10 @@ import "github.com/thisisibrahimd/openslo/pkg/openslo"
 var _ = openslo.Object(AlertNotificationTarget{})
 
 type AlertNotificationTarget struct {
-	APIVersion openslo.Version             `yaml:"apiVersion"`
-	Kind       openslo.Kind                `yaml:"kind"`
-	Metadata   Metadata                    `yaml:"metadata"`
-	Spec       AlertNotificationTargetSpec `yaml:"spec"`
+	APIVersion openslo.Version             `json:"apiVersion"`
+	Kind       openslo.Kind                `json:"kind"`
+	Metadata   Metadata                    `json:"metadata"`
+	Spec       AlertNotificationTargetSpec `json:"spec"`
 }
 
 func (a AlertNotificationTarget) GetVersion() openslo.Version {
@@ -28,6 +28,6 @@ func (a AlertNotificationTarget) Validate() error {
 }
 
 type AlertNotificationTargetSpec struct {
-	Target      string `yaml:"target"`
-	Description string `yaml:"description,omitempty"`
+	Target      string `json:"target"`
+	Description string `json:"description,omitempty"`
 }

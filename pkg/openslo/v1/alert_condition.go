@@ -5,10 +5,10 @@ import "github.com/thisisibrahimd/openslo/pkg/openslo"
 var _ = openslo.Object(AlertCondition{})
 
 type AlertCondition struct {
-	APIVersion openslo.Version    `yaml:"apiVersion"`
-	Kind       openslo.Kind       `yaml:"kind"`
-	Metadata   Metadata           `yaml:"metadata"`
-	Spec       AlertConditionSpec `yaml:"spec"`
+	APIVersion openslo.Version    `json:"apiVersion"`
+	Kind       openslo.Kind       `json:"kind"`
+	Metadata   Metadata           `json:"metadata"`
+	Spec       AlertConditionSpec `json:"spec"`
 }
 
 func (a AlertCondition) GetVersion() openslo.Version {
@@ -28,14 +28,14 @@ func (a AlertCondition) Validate() error {
 }
 
 type AlertConditionSpec struct {
-	Severity    string             `yaml:"severity"`
-	Condition   AlertConditionType `yaml:"condition"`
-	Description string             `yaml:"description,omitempty"`
+	Severity    string             `json:"severity"`
+	Condition   AlertConditionType `json:"condition"`
+	Description string             `json:"description,omitempty"`
 }
 
 type AlertConditionType struct {
-	Kind           string  `yaml:"kind"`
-	Threshold      float64 `yaml:"threshold"`
-	LookbackWindow string  `yaml:"lookbackWindow"`
-	AlertAfter     string  `yaml:"alertAfter"`
+	Kind           string  `json:"kind"`
+	Threshold      float64 `json:"threshold"`
+	LookbackWindow string  `json:"lookbackWindow"`
+	AlertAfter     string  `json:"alertAfter"`
 }

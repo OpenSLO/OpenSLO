@@ -5,10 +5,10 @@ import "github.com/thisisibrahimd/openslo/pkg/openslo"
 var _ = openslo.Object(AlertPolicy{})
 
 type AlertPolicy struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       AlertPolicySpec `yaml:"spec"`
+	APIVersion openslo.Version `json:"apiVersion"`
+	Kind       openslo.Kind    `json:"kind"`
+	Metadata   Metadata        `json:"metadata"`
+	Spec       AlertPolicySpec `json:"spec"`
 }
 
 func (a AlertPolicy) GetVersion() openslo.Version {
@@ -28,29 +28,29 @@ func (a AlertPolicy) Validate() error {
 }
 
 type AlertPolicyCondition struct {
-	*AlertPolicyConditionRef    `yaml:",inline,omitempty"`
-	*AlertPolicyInlineCondition `yaml:",inline,omitempty"`
+	*AlertPolicyConditionRef    `json:",inline,omitempty"`
+	*AlertPolicyInlineCondition `json:",inline,omitempty"`
 }
 
 type AlertPolicyInlineCondition struct {
-	Kind     string             `yaml:"kind"`
-	Metadata Metadata           `yaml:"metadata"`
-	Spec     AlertConditionSpec `yaml:"spec"`
+	Kind     string             `json:"kind"`
+	Metadata Metadata           `json:"metadata"`
+	Spec     AlertConditionSpec `json:"spec"`
 }
 
 type AlertPolicyConditionRef struct {
-	ConditionRef string `yaml:"conditionRef"`
+	ConditionRef string `json:"conditionRef"`
 }
 
 type AlertPolicyNotificationTarget struct {
-	TargetRef string `yaml:"targetRef"`
+	TargetRef string `json:"targetRef"`
 }
 
 type AlertPolicySpec struct {
-	Description         string                          `yaml:"description,omitempty"`
-	AlertWhenNoData     bool                            `yaml:"alertWhenNoData"`
-	AlertWhenBreaching  bool                            `yaml:"alertWhenBreaching"`
-	AlertWhenResolved   bool                            `yaml:"alertWhenResolved"`
-	Conditions          []AlertPolicyCondition          `yaml:"conditions"`
-	NotificationTargets []AlertPolicyNotificationTarget `yaml:"notificationTargets"`
+	Description         string                          `json:"description,omitempty"`
+	AlertWhenNoData     bool                            `json:"alertWhenNoData"`
+	AlertWhenBreaching  bool                            `json:"alertWhenBreaching"`
+	AlertWhenResolved   bool                            `json:"alertWhenResolved"`
+	Conditions          []AlertPolicyCondition          `json:"conditions"`
+	NotificationTargets []AlertPolicyNotificationTarget `json:"notificationTargets"`
 }

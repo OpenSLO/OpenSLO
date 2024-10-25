@@ -4,6 +4,7 @@ metadata:
   name: cloudWatch-prod
 spec:
   description: "CloudWatch Production Data Source"
-  cloudWatch:
+  type: cloudWatch
+  connectionDetails:
     accessKeyID: accessKey
     secretAccessKey: secretAccessKey

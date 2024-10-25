@@ -21,7 +21,7 @@ spec:
     - duration: 2w  # Two weeks is a good choice in most cases.
       isRolling: true # Rolling timewindow give us better view if service starts to working better.
   budgetingMethod: Occurrences # As said in README.md, occurrences are great for measuring all searches the same way.
-  objective:
+  objectives:
     - displayName: Good experience
       op: lt
       value: 500

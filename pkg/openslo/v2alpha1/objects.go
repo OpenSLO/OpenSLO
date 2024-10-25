@@ -3,9 +3,7 @@ package v2alpha1
 import (
 	"slices"
 
-	"gopkg.in/yaml.v3"
-
-	"github.com/thisisibrahimd/openslo/pkg/openslo"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 const APIVersion = openslo.VersionV2alpha1
@@ -25,27 +23,11 @@ func GetSupportedKinds() []openslo.Kind {
 }
 
 type Metadata struct {
-	Name        string      `yaml:"name"`
+	Name        string      `json:"name"`
 	Labels      Labels      `json:"labels,omitempty"`
 	Annotations Annotations `json:"annotations,omitempty"`
 }
 
-type Labels map[string]Label
+type Labels map[string]string
 
 type Annotations map[string]string
-
-type Label []string
-
-func (a *Label) UnmarshalYAML(value *yaml.Node) error {
-	var multi []string
-	if err := value.Decode(&multi); err != nil {
-		var single string
-		if err = value.Decode(&single); err != nil {
-			return err
-		}
-		*a = []string{single}
-	} else {
-		*a = multi
-	}
-	return nil
-}

@@ -1,14 +1,30 @@
 package v1
 
-import "github.com/thisisibrahimd/openslo/pkg/openslo"
+import (
+	"encoding/json"
+
+	"github.com/nobl9/govy/pkg/govy"
+
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+)
 
 var _ = openslo.Object(DataSource{})
 
+func NewDataSource(metadata Metadata, spec DataSourceSpec) DataSource {
+	return DataSource{
+		APIVersion: APIVersion,
+		Kind:       openslo.KindDataSource,
+		Metadata:   metadata,
+		Spec:       spec,
+	}
+}
+
 type DataSource struct {
-	APIVersion openslo.Version `yaml:"apiVersion"`
-	Kind       openslo.Kind    `yaml:"kind"`
-	Metadata   Metadata        `yaml:"metadata"`
-	Spec       DataSourceSpec  `yaml:"spec"`
+	APIVersion openslo.Version `json:"apiVersion"`
+	Kind       openslo.Kind    `json:"kind"`
+	Metadata   Metadata        `json:"metadata"`
+	Spec       DataSourceSpec  `json:"spec"`
 }
 
 func (d DataSource) GetVersion() openslo.Version {
@@ -24,10 +40,26 @@ func (d DataSource) GetName() string {
 }
 
 func (d DataSource) Validate() error {
-	return nil
+	return dataSourceValidation.Validate(d)
 }
 
 type DataSourceSpec struct {
-	Type              string            `yaml:"type"`
-	ConnectionDetails map[string]string `yaml:"connectionDetails"`
+	Type              string          `json:"type"`
+	ConnectionDetails json.RawMessage `json:"connectionDetails"`
 }
+
+var dataSourceValidation = govy.New(
+	validationRulesAPIVersion(func(d DataSource) openslo.Version { return d.APIVersion }),
+	validationRulesKind(func(d DataSource) openslo.Kind { return d.Kind }, openslo.KindDataSource),
+	validationRulesMetadata(func(d DataSource) Metadata { return d.Metadata }),
+	govy.For(func(d DataSource) DataSourceSpec { return d.Spec }).
+		WithName("spec").
+		Include(govy.New(
+			govy.For(func(spec DataSourceSpec) string { return spec.Type }).
+				WithName("type").
+				Required(),
+			govy.For(func(spec DataSourceSpec) json.RawMessage { return spec.ConnectionDetails }).
+				WithName("connectionDetails").
+				Required(),
+		)),
+).WithNameFunc(internal.ObjectNameFunc[DataSource])
