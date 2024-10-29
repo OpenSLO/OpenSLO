@@ -5,7 +5,7 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
+	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
 	"github.com/OpenSLO/OpenSLO/pkg/openslosdk"
 )
 
