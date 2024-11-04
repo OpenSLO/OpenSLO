@@ -91,21 +91,21 @@ spec:
 
 #### Notes (General Schema)
 
-- **kind** *string* - required, one of: [DataSource](#datasource), [SLO](#slo),
+- **kind** _string_ - required, one of: [DataSource](#datasource), [SLO](#slo),
   [SLI](#sli), [AlertPolicy](#alertpolicy), [AlertCondition](#alertcondition),
   [AlertNotificationTarget](#alertnotificationtarget), [Service](#service)
-- **metadata.name:** *string* - required field
+- **metadata.name:** _string_ - required field
   - all implementations must at least support object names that follow [RFC1123][rfc1123-names]:
     - are up to 63 characters in length
     - contain lowercase alphanumeric characters or `-`
     - start with an alphanumeric character
     - end with an alphanumeric character
-- **metadata.labels:** *map[string]string|string[]* - optional field `key` <> `value`
+- **metadata.labels:** _map[string]string|string[]_ - optional field `key` <> `value`
   - the `key` segment is required and must contain at most 63 characters beginning and ending
-     with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
-     and alphanumerics between.
+    with an alphanumeric character `[a-z0-9A-Z]` with dashes `-`, underscores `_`, dots `.`
+    and alphanumerics between.
   - the `value` of `key` segment can be a string or an array of strings
-- **metadata.annotations:** *map[string]string* - optional field `key` <> `value`
+- **metadata.annotations:** _map[string]string_ - optional field `key` <> `value`
   - `annotations` should be used to define implementation / system specific metadata about the SLO.
     For example, it can be metadata about a dashboard url, or how to name a metric created by the SLI, etc.
   - `key` have two segments: an optional `prefix` and `name`, separated by a slash `/`
@@ -125,13 +125,13 @@ of a positive integer `number` followed by a case–sensitive single–character
 
 Allowed postfixes are:
 
-- *m* – minutes
-- *h* – hours
-- *d* – days
-- *w* – weeks
-- *M* – months
-- *Q* – quarters
-- *Y* – years
+- _m_ – minutes
+- _h_ – hours
+- _d_ – days
+- _w_ – weeks
+- _M_ – months
+- _Q_ – quarters
+- _Y_ – years
 
 Examples: `12h`, `4w`, `1M`, `1Q`, `365d`, `1Y`.
 
@@ -235,28 +235,30 @@ spec:
   One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`.
 - **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
   One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`.
-- **timeWindow[ ]** optional, *TimeWindow* is a list but accepting only exactly one
+- **timeWindow[ ]** optional, _TimeWindow_ is a list but accepting only exactly one
   item, one of the rolling or calendar aligned time window:
+
   - Rolling time window. Duration should be provided in shorthand format
     e.g. 5m, 4w, 31d.
   - Calendar Aligned time window. Duration should be provided in shorthand format
     eg. 1d, 2M, 1Q, 366d.
 
-- **description** *string* optional field, contains at most 1050 characters
+- **description** _string_ optional field, contains at most 1050 characters
 
-- **budgetingMethod** *enum(Occurrences \| Timeslices \| RatioTimeslices)*, required field
+- **budgetingMethod** _enum(Occurrences \| Timeslices \| RatioTimeslices)_, required field
+
   - Occurrences method uses a ratio of counts of good events to the total count of the events.
   - Timeslices method uses a ratio of good time slices to total time slices in a budgeting period.
   - RatioTimeslices method uses an average of all time slices' success ratios in a budgeting period.
 
-- **objectives[ ]** *Threshold*, required field, described in [Objectives](#objectives)
+- **objectives[ ]** _Threshold_, required field, described in [Objectives](#objectives)
   section. If `thresholdMetric` has been defined, only one Threshold can be defined.
   However, if using `ratioMetric` then any number of Thresholds can be defined.
 
-- **alertPolicies\[ \]** *AlertPolicy*, optional field.
+- **alertPolicies\[ \]** _AlertPolicy_, optional field.
   section. An alert policy can be defined inline or can refer to an [Alert Policies](#alertpolicy) object,
   in which case the following are required:
-  - **alertPolicyRef** *string*: this is the name or path to the AlertPolicy
+  - **alertPolicyRef** _string_: this is the name or path to the AlertPolicy
 
 ##### Objectives
 
@@ -289,25 +291,25 @@ objectives:
 
 ###### Notes (Objectives)
 
-- **op** *enum( lte | gte | lt | gt )*, operator used to compare the SLI against the value. Only needed when using a `thresholdMetric`
+- **op** _enum( lte | gte | lt | gt )_, operator used to compare the SLI against the value. Only needed when using a `thresholdMetric`
 
-- **value** *numeric*, required field, used to compare values gathered from
+- **value** _numeric_, required field, used to compare values gathered from
   metric source. Only needed when using a `thresholdMetric`.
 
 Either `target` or `targetPercent` must be used.
 
-- **target** *numeric [0.0, 1.0)*, optional, but either this or `targetPercent` must
+- **target** _numeric [0.0, 1.0)_, optional, but either this or `targetPercent` must
   be used. Budget target for a given objective of the SLO. A `target: 0.9995` is
   equivalent to `targetPercent: 99.95`.
 
-- **targetPercent**: *numeric [0.0, 100)*, optional, but either this or `target` must
+- **targetPercent**: _numeric [0.0, 100)_, optional, but either this or `target` must
   be used. Budget target for a given objective of the SLO. A `targetPercent: 99.95`
   is equivalent to `target: 0.9995`.
 
-- **timeSliceTarget** *numeric [0.0, 1.0]*, required only when budgeting
+- **timeSliceTarget** _numeric [0.0, 1.0]_, required only when budgeting
   method is set to TimeSlices
 
-- **timeSliceWindow** *(numeric | duration-shorthand)*, required only when budgeting
+- **timeSliceWindow** _(numeric | duration-shorthand)_, required only when budgeting
   method is set to TimeSlices or RatioTimeslices. Denotes the size of a time slice for
   which data will be evaluated e.g. 5, 1m, 10m, 2h, 1d. Also ascertains the frequency
   at which to run the queries. Default interpretation of unit if specified as a number
@@ -323,13 +325,13 @@ Either `target` or `targetPercent` must be used.
 ##### Notes (Composite SLO)
 
 **Composite SLO** goal of composite SLO is to enable user an end-to-end journey, it is done by defining many
-  independent objectives. Each objective can have different queries, data sources and targets. The basic implementation
-  assumes that the Composite Error Budget burns if the Error Budget for any of the SLO objectives within the Composite SLO
-  is burning. The logic of those calculations is the same for Composite SLOs as for regular (standard) objectives and SLOs.
+independent objectives. Each objective can have different queries, data sources and targets. The basic implementation
+assumes that the Composite Error Budget burns if the Error Budget for any of the SLO objectives within the Composite SLO
+is burning. The logic of those calculations is the same for Composite SLOs as for regular (standard) objectives and SLOs.
 
 **Weight** allows the user to change the impact of a given SLO on the whole composite SLO. Weight is just multiplier, it
-  means that if weight is `0.5`, SLO will have half impact as default, on the other hand if weight is `100`, this SLO will
-  be 100 times more impactful. By default, weight has value 1 and doesn't need to be specified.
+means that if weight is `0.5`, SLO will have half impact as default, on the other hand if weight is `100`, this SLO will
+be 100 times more impactful. By default, weight has value 1 and doesn't need to be specified.
 
 **Calculations** should be as simple as possible to make composite SLO intuitive and easy to implement. It is hard to compare
 different error budget calculating methods therefore all composite objectives need to be calculated with one type of error
@@ -366,9 +368,10 @@ spec:
         # arbitrary chosen fields for every data source type to make it comfortable to use
         # anything that is valid YAML can be put here.
   ratioMetric: # either thresholdMetric or ratioMetric must be provided
-    counter: true | false # true if the metric is a monotonically increasing counter,
-                          # or false, if it is a single number that can arbitrarily go up or down
-                          # ignored when using "raw"
+    counter:
+      true | false # true if the metric is a monotonically increasing counter,
+      # or false, if it is a single number that can arbitrarily go up or down
+      # ignored when using "raw"
     good: # the numerator, either "good" or "bad" must be provided if "total" is used
       metricSource:
         metricSourceRef: string # optional
@@ -388,9 +391,10 @@ spec:
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
 
-    rawType: success | failure # required with "raw", indicates how the stored ratio was calculated:
-                               #  success – good/total
-                               #  failure – bad/total
+    rawType:
+      success | failure # required with "raw", indicates how the stored ratio was calculated:
+      #  success – good/total
+      #  failure – bad/total
     raw: # the precomputed ratio stored as a metric, can't be used together with good/bad/total
       metricSource:
         metricSourceRef: string # optional
@@ -401,38 +405,38 @@ spec:
 
 ##### Notes (SLI)
 
-- **description** *string* optional field, contains at most 1050 characters
+- **description** _string_ optional field, contains at most 1050 characters
 
 Either `ratioMetric` or `thresholdMetric` must be used.
 
-- **thresholdMetric** *Metric*, represents the query used for
+- **thresholdMetric** _Metric_, represents the query used for
   gathering data from metric sources. Raw data is used to compare objectives
   (threshold) values.
 
-- **ratioMetric** *Metric {good, total}, {bad, total} or raw*.
+- **ratioMetric** _Metric {good, total}, {bad, total} or raw_.
 
-  - **counter** *enum(true \| false)*, specifies whether the metric is a monotonically
-   increasing counter. Has no effect when using a `raw` query.
+  - **counter** _enum(true \| false)_, specifies whether the metric is a monotonically
+    increasing counter. Has no effect when using a `raw` query.
 
   - **good** represents the query used for gathering data from metric sources used
-   as the numerator. Received data is used to compare objectives (threshold)
-   values to find good values. If `bad` is defined then `good` must not be set.
+    as the numerator. Received data is used to compare objectives (threshold)
+    values to find good values. If `bad` is defined then `good` must not be set.
 
   - **bad** represents the query used for gathering data from metric sources used
-   as the numerator. Received data is used to compare objectives (threshold)
-   values to find bad values. If `good` is defined then `bad` must not be set.
+    as the numerator. Received data is used to compare objectives (threshold)
+    values to find bad values. If `good` is defined then `bad` must not be set.
 
   - **total** represents the query used for gathering data from metric sources
-   that is used as the denominator. Received data is used to compare objectives
-   (threshold) values to find total number of metrics.
+    that is used as the denominator. Received data is used to compare objectives
+    (threshold) values to find total number of metrics.
 
-  - **rawType** *enum(success \| failure)*, required when using `raw`, specifies
-   whether the ratios represented by the "raw" ratio metric are of successes or failures.
-   Not to be used with `good` and `bad` as picking one of those determines the type of
-   ratio.
+  - **rawType** _enum(success \| failure)_, required when using `raw`, specifies
+    whether the ratios represented by the "raw" ratio metric are of successes or failures.
+    Not to be used with `good` and `bad` as picking one of those determines the type of
+    ratio.
 
   - **raw** represents the query used for gathering already precomputed ratios.
-   The type of ratio (*success* or *failure*) is specified using `rawType`.
+    The type of ratio (_success_ or _failure_) is specified using `rawType`.
 
 An example of an SLO where SLI is inlined:
 
@@ -474,7 +478,7 @@ If a service level indicator has `ratioMetric` defined, the following maths can
 be used to calculate the value of the SLI. Below we describe the advised formulas
 for calculating the indicator value.
 
-*Good-Total queries*
+_Good-Total queries_
 If the `good` and `total` queries are given then following formula can be used
 to calculate the value:
 
@@ -486,7 +490,7 @@ If we have 99 good requests out of a total of 100 requests, the calculated value
 for the indicator would be: `99 / 100  = 0.99`. This represents 99% on a 0-100 scale
 using the formula `0.99 * 100 = 99`.
 
-*Bad-Total queries*
+_Bad-Total queries_
 If the `bad` and `total` queries are given then following formula can be used
 to calculate the value:
 
@@ -552,9 +556,9 @@ thresholdMetric:
       query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
       accessKeyID: accessKey
       secretAccessKey: secretAccessKey
- ```
+```
 
- Field `type` can't be omitted because the reference to an existing DataSource is not specified.
+Field `type` can't be omitted because the reference to an existing DataSource is not specified.
 
 ---
 
@@ -576,27 +580,27 @@ spec:
   conditions: # list of alert conditions
     - conditionRef: # required when alert condition is not inlined
   notificationTargets:
-  - targetRef: # required when alert notification target is not inlined
+    - targetRef: # required when alert notification target is not inlined
 ```
 
 ##### Notes (AlertPolicy)
 
-- **description** *string*, optional description about the alert policy, contains at most 1050 characters
-- **alertWhenBreaching** *boolean*, `true`, `false`, whether the alert should be triggered
+- **description** _string_, optional description about the alert policy, contains at most 1050 characters
+- **alertWhenBreaching** _boolean_, `true`, `false`, whether the alert should be triggered
   when the condition is breaching
-- **alertWhenResolved** *boolean*, `true`, `false`, whether the alert should be triggered
+- **alertWhenResolved** _boolean_, `true`, `false`, whether the alert should be triggered
   when the condition is resolved
-- **alertWhenNoData** *boolean*, `true`, `false`, whether the alert should be triggered
+- **alertWhenNoData** _boolean_, `true`, `false`, whether the alert should be triggered
   when the condition indicates that no data is available
-- **conditions\[ \]** *Alert Condition*, an array, (max of one condition), required field.
+- **conditions\[ \]** _Alert Condition_, an array, (max of one condition), required field.
   A condition can be defined inline or can refer to external Alert condition defined in this case the following are required:
-  - **conditionRef** *string*: this is the name or path the Alert condition
-- **notificationTargets\[ \]** *Alert Notification Target*, required field.
+  - **conditionRef** _string_: this is the name or path the Alert condition
+- **notificationTargets\[ \]** _Alert Notification Target_, required field.
   A condition can be defined inline or can refer to an [AlertNotificationTarget](#alertnotificationtarget)
   object, in which case the following are required:
-  - **targetRef** *string*: this is the name or path to the AlertNotificationTarget
+  - **targetRef** _string_: this is the name or path to the AlertNotificationTarget
 
-> 💡 **Note:** The `conditions` field is of the type `array` of *AlertCondition*
+> 💡 **Note:** The `conditions` field is of the type `array` of _AlertCondition_
 > but only allows one single condition to be defined.
 > The use of an array is for future-proofing purposes.
 
@@ -674,17 +678,17 @@ spec:
 
 ##### Notes (AlertCondition)
 
-- **description** *string*, optional description about the alert condition, contains at most 1050 characters
-- **severity** *string*, required field describing the severity level of the alert (ex. "sev1", "page", etc.)
+- **description** _string_, optional description about the alert condition, contains at most 1050 characters
+- **severity** _string_, required field describing the severity level of the alert (ex. "sev1", "page", etc.)
 - **condition**, required field. Defines the conditions of the alert
-  - **kind** *enum(burnrate)* the kind of alerting condition thats checked, defaults to `burnrate`
+  - **kind** _enum(burnrate)_ the kind of alerting condition thats checked, defaults to `burnrate`
 
 If the kind is `burnrate` the following fields are required:
 
-- **op** *enum(lte | gte | lt | gt)*, required field, the conditional operator used to compare against the threshold
-- **threshold** *number*, required field, the threshold that you want alert on
-- **lookbackWindow** *duration-shorthand*, required field, the time-frame for which to calculate the threshold e.g. `5m`
-- **alertAfter** *duration-shorthand*: required field, the duration the condition needs to be valid for before alerting, defaults to `0m`
+- **op** _enum(lte | gte | lt | gt)_, required field, the conditional operator used to compare against the threshold
+- **threshold** _number_, required field, the threshold that you want alert on
+- **lookbackWindow** _duration-shorthand_, required field, the time-frame for which to calculate the threshold e.g. `5m`
+- **alertAfter** _duration-shorthand_: required field, the duration the condition needs to be valid for before alerting, defaults to `0m`
 
 If the alert condition is breaching, and the alert policy has `alertWhenBreaching` set to `true`
 the alert will be triggered
@@ -692,10 +696,10 @@ the alert will be triggered
 If the alert condition is resolved, and the alert policy has `alertWhenResolved` set to `true`
 the alert will be triggered
 
-If the *service level objective* associated with the alert condition returns
+If the _service level objective_ associated with the alert condition returns
 no value for the burn rate, for example, due to the service level indicators
 missing data (e.g. no time series being returned) and the `alertWhenNoData`
-is set  to `true` the alert will be triggered.
+is set to `true` the alert will be triggered.
 
 > 💡 **Note:** The `alertWhenBreaching` and `alertWhenResolved`, `alertWhenNoData` can be combined,
 > if you want an alert to trigger whenever at least one of these conditions is true.
@@ -766,8 +770,8 @@ spec:
 
 ##### Notes (AlertNotificationTarget)
 
-- **target** *string*, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
-- **description** *string*, optional description about the notification target, contains at most 1050 characters
+- **target** _string_, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
+- **description** _string_, optional description about the notification target, contains at most 1050 characters
 
 > 💡 **Note:** The way the alert notification targets are is an implementation detail of the
 > system that consumes the OpenSLO specification.
@@ -797,7 +801,7 @@ spec:
 
 ## SDK
 
-*DISCLAIMER: The SDK is a work in progress and is subject to change.*
+_DISCLAIMER: The SDK is a work in progress and is subject to change._
 
 The OpenSLO SDK is a set of utilities designed for programmatic access to
 OpenSLO specification.
