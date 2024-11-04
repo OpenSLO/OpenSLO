@@ -619,10 +619,10 @@ spec:
   conditions:
     - conditionRef: cpu-usage-breach
   notificationTargets:
-    - targetRef: OnCallDevopsMailNotification
+    - targetRef: on-call-devops-mail-notification
 ```
 
-An example of an Alert Policy were the Alert Condition is inlined:
+An example of an Alert Policy where the Alert Condition is inlined:
 
 ```yaml
 apiVersion: openslo/v1
@@ -649,7 +649,7 @@ spec:
           lookbackWindow: 1h
           alertAfter: 5m
   notificationTargets:
-    - targetRef: OnCallDevopsMailNotification
+    - targetRef: on-call-devops-mail-notification
 ```
 
 ---
