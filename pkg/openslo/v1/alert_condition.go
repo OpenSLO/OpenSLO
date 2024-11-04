@@ -1,6 +1,12 @@
 package v1
 
-import "github.com/thisisibrahimd/openslo/pkg/openslo"
+import (
+	"github.com/nobl9/govy/pkg/govy"
+	"github.com/nobl9/govy/pkg/rules"
+
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+)
 
 var _ = openslo.Object(AlertCondition{})
 
