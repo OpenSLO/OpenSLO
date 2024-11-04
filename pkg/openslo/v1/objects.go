@@ -97,7 +97,7 @@ func validationRulesKind[T openslo.Object](
 		Rules(rules.EQ(kind))
 }
 
-func validationRulesMetadata[T openslo.Object](getter func(T) Metadata) govy.PropertyRules[Metadata, T] {
+func validationRulesMetadata[T any](getter func(T) Metadata) govy.PropertyRules[Metadata, T] {
 	return govy.For(getter).
 		WithName("metadata").
 		Include(
