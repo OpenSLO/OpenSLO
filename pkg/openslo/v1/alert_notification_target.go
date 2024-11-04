@@ -4,6 +4,15 @@ import "github.com/thisisibrahimd/openslo/pkg/openslo"
 
 var _ = openslo.Object(AlertNotificationTarget{})
 
+func NewAlertNotificationTarget(metadata Metadata, spec AlertNotificationTargetSpec) AlertNotificationTarget {
+	return AlertNotificationTarget{
+		APIVersion: APIVersion,
+		Kind:       openslo.KindAlertNotificationTarget,
+		Metadata:   metadata,
+		Spec:       spec,
+	}
+}
+
 type AlertNotificationTarget struct {
 	APIVersion openslo.Version             `json:"apiVersion"`
 	Kind       openslo.Kind                `json:"kind"`
@@ -24,10 +33,31 @@ func (a AlertNotificationTarget) GetName() string {
 }
 
 func (a AlertNotificationTarget) Validate() error {
-	return nil
+	return alertNotificationTargetValidation.Validate(a)
 }
 
 type AlertNotificationTargetSpec struct {
 	Description string `json:"description,omitempty"`
 	Target      string `json:"target"`
 }
+
+var alertNotificationTargetValidation = govy.New(
+	validationRulesAPIVersion(
+		func(a AlertNotificationTarget) openslo.Version { return a.APIVersion },
+	),
+	validationRulesKind(
+		func(a AlertNotificationTarget) openslo.Kind { return a.Kind },
+		openslo.KindAlertNotificationTarget,
+	),
+	validationRulesMetadata(func(a AlertNotificationTarget) Metadata { return a.Metadata }),
+	govy.For(func(a AlertNotificationTarget) AlertNotificationTargetSpec { return a.Spec }).
+		WithName("spec").
+		Include(govy.New(
+			govy.For(func(spec AlertNotificationTargetSpec) string { return spec.Target }).
+				WithName("target").
+				Required(),
+			govy.For(func(spec AlertNotificationTargetSpec) string { return spec.Description }).
+				WithName("description").
+				Rules(rules.StringMaxLength(1050)),
+		)),
+).WithNameFunc(internal.ObjectNameFunc[AlertNotificationTarget])
