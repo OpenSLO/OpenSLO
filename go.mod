@@ -1,4 +1,4 @@
-module github.com/thisisibrahimd/openslo
+module github.com/OpenSLO/OpenSLO
 
 go 1.22
 
