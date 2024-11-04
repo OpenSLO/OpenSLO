@@ -32,6 +32,7 @@
       - [Notes (AlertCondition)](#notes-alertcondition)
     - [AlertNotificationTarget](#alertnotificationtarget)
       - [Notes (AlertNotificationTarget)](#notes-alertnotificationtarget)
+    - [BudgetAdjustment](#budgetadjustment)
     - [Service](#service)
 - [Examples](examples/README.md)
 - [Glossary](glossary/README.md)
@@ -779,6 +780,27 @@ spec:
 > For example, if the OpenSLO is consumed by a solution that generates Prometheus recording rules,
 > and alerts, you can imagine that the name of the alert notification gets passed as a label
 > to Alertmanager which then can be routed accordingly based on this label.
+
+---
+
+#### BudgetAdjustment
+
+A BudgetAdjustment is an addition to an SLI percentage for a known and accepted time or unreliability or events of unreliability.
+
+```yaml
+apiVersion: openslo/v1
+kind: BudgetAdjustment
+metadata:
+  name: string
+  displayName: string
+spec:
+  description: string
+  service: string
+  indicatorRef: string
+  startTime: string
+  endTime: string
+  duration: string
+```
 
 ---
 

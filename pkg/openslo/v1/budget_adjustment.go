@@ -1,6 +1,6 @@
 package v1
 
-import "github.com/thisisibrahimd/openslo/pkg/openslo"
+import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 
 var _ = openslo.Object(BudgetAdjustment{})
 
