@@ -37,7 +37,7 @@ func TestDataSource_Validate_VersionAndKind(t *testing.T) {
 }
 
 func TestDataSource_Validate_Metadata(t *testing.T) {
-	runMetadataTests(t, func(m Metadata) DataSource {
+	runMetadataTests(t, "metadata", func(m Metadata) DataSource {
 		dataSource := validDataSource()
 		dataSource.Metadata = m
 		return dataSource

@@ -38,7 +38,7 @@ func TestService_Validate_VersionAndKind(t *testing.T) {
 }
 
 func TestService_Validate_Metadata(t *testing.T) {
-	runMetadataTests(t, func(m Metadata) Service {
+	runMetadataTests(t, "metadata", func(m Metadata) Service {
 		svc := validService()
 		svc.Metadata = m
 		return svc

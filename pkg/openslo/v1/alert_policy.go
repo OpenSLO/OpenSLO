@@ -96,9 +96,11 @@ var alertPolicySpecValidation = govy.New(
 		Rules(rules.StringMaxLength(1050)),
 	govy.ForSlice(func(spec AlertPolicySpec) []AlertPolicyCondition { return spec.Conditions }).
 		WithName("conditions").
+		Rules(rules.SliceLength[[]AlertPolicyCondition](1, 1)).
 		IncludeForEach(alertPolicyConditionValidation),
 	govy.ForSlice(func(spec AlertPolicySpec) []AlertPolicyNotificationTarget { return spec.NotificationTargets }).
 		WithName("notificationTargets").
+		Rules(rules.SliceMinLength[[]AlertPolicyNotificationTarget](1)).
 		IncludeForEach(alertPolicyNotificationTargetValidation),
 )
 
@@ -116,20 +118,20 @@ var alertPolicyConditionValidation = govy.New(
 				WithName("conditionRef").
 				Required().
 				Rules(rules.StringDNSLabel()),
-		)),
+		)).Cascade(govy.CascadeModeContinue),
 	govy.ForPointer(func(a AlertPolicyCondition) *AlertPolicyConditionInline { return a.AlertPolicyConditionInline }).
 		Include(govy.New(
 			govy.For(func(inline AlertPolicyConditionInline) openslo.Kind { return inline.Kind }).
 				WithName("kind").
 				Required().
-				Rules(rules.EQ(openslo.KindAlertPolicy)),
+				Rules(rules.EQ(openslo.KindAlertCondition)),
 			validationRulesMetadata(func(a AlertPolicyConditionInline) Metadata { return a.Metadata }),
 			govy.For(func(inline AlertPolicyConditionInline) AlertConditionSpec { return inline.Spec }).
 				WithName("spec").
 				Required().
 				Include(alertConditionSpecValidation),
-		)),
-)
+		)).Cascade(govy.CascadeModeContinue),
+).Cascade(govy.CascadeModeStop)
 
 var alertPolicyNotificationTargetValidation = govy.New(
 	govy.For(govy.GetSelf[AlertPolicyNotificationTarget]()).
@@ -147,7 +149,7 @@ var alertPolicyNotificationTargetValidation = govy.New(
 				WithName("targetRef").
 				Required().
 				Rules(rules.StringDNSLabel()),
-		)),
+		)).Cascade(govy.CascadeModeContinue),
 	govy.ForPointer(func(a AlertPolicyNotificationTarget) *AlertPolicyNotificationTargetInline {
 		return a.AlertPolicyNotificationTargetInline
 	}).
@@ -161,5 +163,5 @@ var alertPolicyNotificationTargetValidation = govy.New(
 				WithName("spec").
 				Required().
 				Include(alertNotificationTargetSpecValidation),
-		)),
-)
+		)).Cascade(govy.CascadeModeContinue),
+).Cascade(govy.CascadeModeStop)

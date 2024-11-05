@@ -1,7 +1,9 @@
 package v1_test
 
 import (
+	"bytes"
 	"os"
+	"reflect"
 
 	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
 	"github.com/OpenSLO/OpenSLO/pkg/openslosdk"
@@ -47,7 +49,6 @@ func ExampleAlertPolicy() {
 					AlertPolicyConditionRef: &v1.AlertPolicyConditionRef{
 						ConditionRef: "cpu-usage-breach",
 					},
-					AlertPolicyConditionInline: &v1.AlertPolicyConditionInline{},
 				},
 			},
 			NotificationTargets: []v1.AlertPolicyNotificationTarget{
@@ -60,14 +61,14 @@ func ExampleAlertPolicy() {
 		},
 	)
 	// Read the raw AlertPolicy object.
-	// objects, err := openslosdk.Decode(bytes.NewBufferString(alertPolicyYAML), openslosdk.FormatYAML)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	objects, err := openslosdk.Decode(bytes.NewBufferString(alertPolicyYAML), openslosdk.FormatYAML)
+	if err != nil {
+		panic(err)
+	}
 	// Compare the raw AlertPolicy object with the programmatically defined AlertPolicy object.
-	// if !reflect.DeepEqual(objects[0], policy) {
-	// 	panic("AlertPolicy objects are not equal!")
-	// }
+	if !reflect.DeepEqual(objects[0], policy) {
+		panic("AlertPolicy objects are not equal!")
+	}
 	// Validate the AlertPolicy object.
 	if err := policy.Validate(); err != nil {
 		panic(err)
