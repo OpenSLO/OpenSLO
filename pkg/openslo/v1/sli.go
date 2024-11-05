@@ -1,10 +1,11 @@
 package v1
 
 import (
-	"github.com/OpenSLO/OpenSLO/internal"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
+
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 var _ = openslo.Object(SLI{})
@@ -47,13 +48,6 @@ type SLISpec struct {
 	RatioMetric     *RatioMetric   `json:"ratioMetric,omitempty"`
 }
 
-type RawMetricType string
-
-const (
-	RawMetricTypeSuccess RawMetricType = "success"
-	RawMetricTypeFailure RawMetricType = "failure"
-)
-
 type RatioMetric struct {
 	Counter bool           `json:"counter"`
 	Good    *SLIMetricSpec `json:"good,omitempty"`
@@ -72,6 +66,13 @@ type SLIMetricSource struct {
 	Type             string         `json:"type,omitempty"`
 	MetricSourceSpec map[string]any `json:"spec"`
 }
+
+type RawMetricType string
+
+const (
+	RawMetricTypeSuccess RawMetricType = "success"
+	RawMetricTypeFailure RawMetricType = "failure"
+)
 
 var sliValidation = govy.New(
 	validationRulesAPIVersion(func(s SLI) openslo.Version { return s.APIVersion }),
@@ -100,8 +101,6 @@ var sliSpecValidation = govy.New(
 )
 
 var sliRatioMetricValidation = govy.New(
-	govy.For(func(m RatioMetric) bool { return m.Counter }).
-		WithName("counter"),
 	govy.For(govy.GetSelf[RatioMetric]()).
 		Cascade(govy.CascadeModeStop).
 		Rules(rules.MutuallyExclusive(true, map[string]func(m RatioMetric) any{

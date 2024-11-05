@@ -3,10 +3,11 @@ package v1
 import (
 	"testing"
 
-	"github.com/OpenSLO/OpenSLO/internal/assert"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	"github.com/nobl9/govy/pkg/govytest"
 	"github.com/nobl9/govy/pkg/rules"
+
+	"github.com/OpenSLO/OpenSLO/internal/assert"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 var sliValidationMessageRegexp = getValidationMessageRegexp(openslo.KindSLI)
