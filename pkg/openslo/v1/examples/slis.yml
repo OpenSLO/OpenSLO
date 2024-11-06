@@ -53,7 +53,32 @@
           spec:
             applicationName: my-app
             metricPath: End User Experience|App|Normal Requests
-# TODO: add raw and rawType
+- apiVersion: openslo/v1
+  kind: SLI
+  metadata:
+    name: wifi-client-satisfaction
+    displayName: WiFi client satisfaction
+    labels:
+      env:
+        - dev
+      team:
+        - team-a
+        - team-b
+  spec:
+    ratioMetric:
+      description: Monitors that we have an average wifi connection satisfaction
+      rawType: success
+      raw:
+        metricSource:
+          metricSourceRef: prometheus
+          type: Prometheus
+          spec:
+            query: |
+              1 - (
+                sum(sum_over_time(unifipoller_client_satisfaction_ratio[{{.window}}]))
+                /
+                sum(count_over_time(unifipoller_client_satisfaction_ratio[{{.window}}]))
+              )
 - apiVersion: openslo/v1
   kind: SLI
   metadata:

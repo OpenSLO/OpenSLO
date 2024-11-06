@@ -155,13 +155,13 @@ func TestDecode(t *testing.T) {
 								Name: "good",
 							},
 							Spec: v1.SLISpec{
-								RatioMetric: &v1.RatioMetric{
+								RatioMetric: &v1.SLIRatioMetric{
 									Counter: true,
 									Good: &v1.SLIMetricSpec{
 										MetricSource: v1.SLIMetricSource{
 											MetricSourceRef: "thanos",
 											Type:            "Prometheus",
-											MetricSourceSpec: map[string]any{
+											Spec: map[string]any{
 												"query": `http_requests_total{status_code="200"}`,
 												"dimensions": []any{
 													"following",
@@ -174,7 +174,7 @@ func TestDecode(t *testing.T) {
 										MetricSource: v1.SLIMetricSource{
 											MetricSourceRef: "thanos",
 											Type:            "Prometheus",
-											MetricSourceSpec: map[string]any{
+											Spec: map[string]any{
 												"query": `http_requests_total{}`,
 												"dimensions": []any{
 													"following",
@@ -235,13 +235,13 @@ func TestDecode(t *testing.T) {
 									Counter: true,
 									Good: &v2alpha1.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
-										MetricSourceSpec: map[string]any{
+										Spec: map[string]any{
 											"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
 										},
 									},
 									Total: &v2alpha1.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
-										MetricSourceSpec: map[string]any{
+										Spec: map[string]any{
 											"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
 										},
 									},
@@ -270,7 +270,7 @@ func TestDecode(t *testing.T) {
 							},
 							Spec: v2alpha1.SLISpec{
 								ThresholdMetric: &v2alpha1.SLIMetricSpec{
-									MetricSourceSpec: map[string]any{
+									Spec: map[string]any{
 										"region":       "eu-central-1",
 										"clusterId":    "metrics-cluster",
 										"databaseName": "metrics-db",
@@ -319,13 +319,13 @@ func TestEncode(t *testing.T) {
 					Name: "good",
 				},
 				Spec: v1.SLISpec{
-					RatioMetric: &v1.RatioMetric{
+					RatioMetric: &v1.SLIRatioMetric{
 						Counter: true,
 						Good: &v1.SLIMetricSpec{
 							MetricSource: v1.SLIMetricSource{
 								MetricSourceRef: "thanos",
 								Type:            "Prometheus",
-								MetricSourceSpec: map[string]any{
+								Spec: map[string]any{
 									"query": `http_requests_total{status_code="200"}`,
 									"dimensions": []any{
 										"following",
@@ -338,7 +338,7 @@ func TestEncode(t *testing.T) {
 							MetricSource: v1.SLIMetricSource{
 								MetricSourceRef: "thanos",
 								Type:            "Prometheus",
-								MetricSourceSpec: map[string]any{
+								Spec: map[string]any{
 									"query": `http_requests_total{}`,
 									"dimensions": []any{
 										"following",

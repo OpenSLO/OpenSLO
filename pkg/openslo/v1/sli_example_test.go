@@ -52,13 +52,13 @@ func ExampleSLI() {
 		},
 		v1.SLISpec{
 			Description: "X% of search requests are successful",
-			RatioMetric: &v1.RatioMetric{
+			RatioMetric: &v1.SLIRatioMetric{
 				Counter: true,
 				Good: &v1.SLIMetricSpec{
 					MetricSource: v1.SLIMetricSource{
 						MetricSourceRef: "my-datadog",
 						Type:            "Datadog",
-						MetricSourceSpec: map[string]interface{}{
+						Spec: map[string]interface{}{
 							"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
 						},
 					},
@@ -67,7 +67,7 @@ func ExampleSLI() {
 					MetricSource: v1.SLIMetricSource{
 						MetricSourceRef: "my-datadog",
 						Type:            "Datadog",
-						MetricSourceSpec: map[string]interface{}{
+						Spec: map[string]interface{}{
 							"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
 						},
 					},

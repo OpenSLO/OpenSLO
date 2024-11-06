@@ -43,18 +43,18 @@ func (s SLI) Validate() error {
 }
 
 type SLISpec struct {
-	Description     string         `json:"description,omitempty"`
-	ThresholdMetric *SLIMetricSpec `json:"thresholdMetric,omitempty"`
-	RatioMetric     *RatioMetric   `json:"ratioMetric,omitempty"`
+	Description     string          `json:"description,omitempty"`
+	ThresholdMetric *SLIMetricSpec  `json:"thresholdMetric,omitempty"`
+	RatioMetric     *SLIRatioMetric `json:"ratioMetric,omitempty"`
 }
 
-type RatioMetric struct {
-	Counter bool           `json:"counter"`
-	Good    *SLIMetricSpec `json:"good,omitempty"`
-	Bad     *SLIMetricSpec `json:"bad,omitempty"`
-	Total   *SLIMetricSpec `json:"total,omitempty"`
-	RawType RawMetricType  `json:"rawType,omitempty"`
-	Raw     *SLIMetricSpec `json:"raw,omitempty"`
+type SLIRatioMetric struct {
+	Counter bool             `json:"counter"`
+	Good    *SLIMetricSpec   `json:"good,omitempty"`
+	Bad     *SLIMetricSpec   `json:"bad,omitempty"`
+	Total   *SLIMetricSpec   `json:"total,omitempty"`
+	RawType SLIRawMetricType `json:"rawType,omitempty"`
+	Raw     *SLIMetricSpec   `json:"raw,omitempty"`
 }
 
 type SLIMetricSpec struct {
@@ -62,16 +62,16 @@ type SLIMetricSpec struct {
 }
 
 type SLIMetricSource struct {
-	MetricSourceRef  string         `json:"metricSourceRef,omitempty"`
-	Type             string         `json:"type,omitempty"`
-	MetricSourceSpec map[string]any `json:"spec"`
+	MetricSourceRef string         `json:"metricSourceRef,omitempty"`
+	Type            string         `json:"type,omitempty"`
+	Spec            map[string]any `json:"spec"`
 }
 
-type RawMetricType string
+type SLIRawMetricType string
 
 const (
-	RawMetricTypeSuccess RawMetricType = "success"
-	RawMetricTypeFailure RawMetricType = "failure"
+	SLIRawMetricTypeSuccess SLIRawMetricType = "success"
+	SLIRawMetricTypeFailure SLIRawMetricType = "failure"
 )
 
 var sliValidation = govy.New(
@@ -95,56 +95,61 @@ var sliSpecValidation = govy.New(
 	govy.ForPointer(func(spec SLISpec) *SLIMetricSpec { return spec.ThresholdMetric }).
 		WithName("thresholdMetric").
 		Include(sliMetricSpecValidation),
-	govy.ForPointer(func(spec SLISpec) *RatioMetric { return spec.RatioMetric }).
+	govy.ForPointer(func(spec SLISpec) *SLIRatioMetric { return spec.RatioMetric }).
 		WithName("ratioMetric").
 		Include(sliRatioMetricValidation),
 )
 
 var sliRatioMetricValidation = govy.New(
-	govy.For(govy.GetSelf[RatioMetric]()).
+	govy.For(govy.GetSelf[SLIRatioMetric]()).
 		Cascade(govy.CascadeModeStop).
-		Rules(rules.MutuallyExclusive(true, map[string]func(m RatioMetric) any{
-			"total": func(m RatioMetric) any { return m.Total },
-			"raw":   func(m RatioMetric) any { return m.Raw },
+		Rules(rules.MutuallyExclusive(true, map[string]func(m SLIRatioMetric) any{
+			"total": func(m SLIRatioMetric) any { return m.Total },
+			"raw":   func(m SLIRatioMetric) any { return m.Raw },
+		})).
+		Rules(rules.MutuallyExclusive(false, map[string]func(m SLIRatioMetric) any{
+			"raw":  func(m SLIRatioMetric) any { return m.Raw },
+			"good": func(m SLIRatioMetric) any { return m.Good },
+			"bad":  func(m SLIRatioMetric) any { return m.Bad },
 		})).
 		Include(sliFractionMetricValidation).
 		Include(sliRawMetricSpecValidation),
 )
 
 var sliFractionMetricValidation = govy.New(
-	govy.For(govy.GetSelf[RatioMetric]()).
-		Rules(rules.MutuallyExclusive(true, map[string]func(m RatioMetric) any{
-			"good": func(m RatioMetric) any { return m.Good },
-			"bad":  func(m RatioMetric) any { return m.Bad },
+	govy.For(govy.GetSelf[SLIRatioMetric]()).
+		Rules(rules.OneOfProperties(map[string]func(m SLIRatioMetric) any{
+			"good": func(m SLIRatioMetric) any { return m.Good },
+			"bad":  func(m SLIRatioMetric) any { return m.Bad },
 		})),
-	govy.ForPointer(func(m RatioMetric) *SLIMetricSpec { return m.Total }).
+	govy.ForPointer(func(m SLIRatioMetric) *SLIMetricSpec { return m.Total }).
 		WithName("total").
 		Cascade(govy.CascadeModeContinue).
 		Include(sliMetricSpecValidation),
-	govy.ForPointer(func(m RatioMetric) *SLIMetricSpec { return m.Good }).
+	govy.ForPointer(func(m SLIRatioMetric) *SLIMetricSpec { return m.Good }).
 		WithName("good").
 		Cascade(govy.CascadeModeContinue).
-		When(func(m RatioMetric) bool { return m.Good != nil }).
+		When(func(m SLIRatioMetric) bool { return m.Good != nil }).
 		Include(sliMetricSpecValidation),
-	govy.ForPointer(func(m RatioMetric) *SLIMetricSpec { return m.Bad }).
+	govy.ForPointer(func(m SLIRatioMetric) *SLIMetricSpec { return m.Bad }).
 		WithName("bad").
 		Cascade(govy.CascadeModeContinue).
-		When(func(m RatioMetric) bool { return m.Bad != nil }).
+		When(func(m SLIRatioMetric) bool { return m.Bad != nil }).
 		Include(sliMetricSpecValidation),
 ).
 	Cascade(govy.CascadeModeStop).
-	When(func(m RatioMetric) bool { return m.Total != nil })
+	When(func(m SLIRatioMetric) bool { return m.Total != nil })
 
 var sliRawMetricSpecValidation = govy.New(
-	govy.ForPointer(func(m RatioMetric) *SLIMetricSpec { return m.Raw }).
+	govy.ForPointer(func(m SLIRatioMetric) *SLIMetricSpec { return m.Raw }).
 		WithName("raw").
 		Rules(sliMetricSpecValidation),
-	govy.For(func(m RatioMetric) RawMetricType { return m.RawType }).
+	govy.For(func(m SLIRatioMetric) SLIRawMetricType { return m.RawType }).
 		WithName("rawType").
 		Required().
-		Rules(rules.OneOf(RawMetricTypeSuccess, RawMetricTypeFailure)),
+		Rules(rules.OneOf(SLIRawMetricTypeSuccess, SLIRawMetricTypeFailure)),
 ).
-	When(func(m RatioMetric) bool { return m.Raw != nil })
+	When(func(m SLIRatioMetric) bool { return m.Raw != nil })
 
 var sliMetricSpecValidation = govy.New(
 	govy.For(func(spec SLIMetricSpec) SLIMetricSource { return spec.MetricSource }).
@@ -154,8 +159,9 @@ var sliMetricSpecValidation = govy.New(
 				WithName("metricSourceRef").
 				OmitEmpty().
 				Rules(rules.StringDNSLabel()),
-			govy.For(func(source SLIMetricSource) map[string]any { return source.MetricSourceSpec }).
+			govy.For(func(source SLIMetricSource) map[string]any { return source.Spec }).
 				WithName("spec").
-				Required(),
+				Required().
+				Rules(rules.MapMinLength[map[string]any](1)),
 		)),
 )
