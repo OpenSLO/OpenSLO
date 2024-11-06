@@ -178,6 +178,24 @@ func TestSLI_Validate_Spec_RatioMetric(t *testing.T) {
 	}
 }
 
+func TestSLI_Validate_Spec_RatioMetric_FractionMetrics(t *testing.T) {
+	runSLIMetricSpecTests(t, "spec.ratioMetric.total", func(m SLIMetricSpec) SLI {
+		sli := validGoodOverTotalSLI()
+		sli.Spec.RatioMetric.Total = &m
+		return sli
+	})
+	runSLIMetricSpecTests(t, "spec.ratioMetric.good", func(m SLIMetricSpec) SLI {
+		sli := validGoodOverTotalSLI()
+		sli.Spec.RatioMetric.Good = &m
+		return sli
+	})
+	runSLIMetricSpecTests(t, "spec.ratioMetric.bad", func(m SLIMetricSpec) SLI {
+		sli := validBadOverTotalSLI()
+		sli.Spec.RatioMetric.Bad = &m
+		return sli
+	})
+}
+
 func TestSLI_Validate_Spec_RatioMetric_Raw(t *testing.T) {
 	runSLIMetricSpecTests(t, "spec.ratioMetric.raw", func(m SLIMetricSpec) SLI {
 		sli := validRawSLI()
