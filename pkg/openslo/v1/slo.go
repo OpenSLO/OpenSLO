@@ -54,17 +54,29 @@ type SLOSpec struct {
 }
 
 type SLOIndicator struct {
+	*SLOIndicatorRef
+	*SLOIndicatorInline
+}
+
+type SLOIndicatorRef struct {
+	IndicatorRef string `json:"indicatorRef"`
+}
+
+type SLOIndicatorInline struct {
 	Metadata Metadata `json:"metadata"`
 	Spec     SLISpec  `json:"spec"`
 }
 
 type SLOObjective struct {
-	DisplayName     string   `json:"displayName,omitempty"`
-	Op              Operator `json:"op,omitempty"`
-	Value           float64  `json:"value,omitempty"`
-	Target          float64  `json:"target"`
-	TimeSliceTarget float64  `json:"timeSliceTarget,omitempty"`
-	TimeSliceWindow string   `json:"timeSliceWindow,omitempty"`
+	DisplayName     string        `json:"displayName,omitempty"`
+	Op              Operator      `json:"op,omitempty"`
+	Value           float64       `json:"value,omitempty"`
+	Target          float64       `json:"target"`
+	TimeSliceTarget float64       `json:"timeSliceTarget,omitempty"`
+	TimeSliceWindow string        `json:"timeSliceWindow,omitempty"`
+	Indicator       *SLOIndicator `json:"indicator,omitempty"`
+	IndicatorRef    *string       `json:"indicatorRef,omitempty"`
+	CompositeWeight *float64      `json:"compositeWeight,omitempty"`
 }
 
 type SLOTimeWindow struct {
@@ -106,4 +118,23 @@ var sloSpecValidation = govy.New(
 	govy.For(func(spec SLOSpec) string { return spec.Description }).
 		WithName("description").
 		Rules(rules.StringMaxLength(1050)),
+	govy.For(func(spec SLOSpec) string { return spec.Service }).
+		WithName("service").
+		Required(),
+	govy.For(govy.GetSelf[SLOSpec]()).
+		Rules(rules.MutuallyExclusive(true, map[string]func(s SLOSpec) any{
+			"indicator":    func(s SLOSpec) any { return s.Indicator },
+			"indicatorRef": func(s SLOSpec) any { return s.IndicatorRef },
+		})),
+	govy.ForPointer(func(spec SLOSpec) *SLOIndicator { return spec.Indicator }).
+		WithName("indicator").
+		Include(govy.New(
+			validationRulesMetadata(func(i SLOIndicator) Metadata { return i.Metadata }),
+			govy.For(func(i SLOIndicator) SLISpec { return i.Spec }).
+				WithName("spec").
+				Include(sliSpecValidation),
+		)),
+	govy.ForPointer(func(spec SLOSpec) *string { return spec.IndicatorRef }).
+		WithName("indicatorRef").
+		Rules(rules.StringDNSLabel()),
 )

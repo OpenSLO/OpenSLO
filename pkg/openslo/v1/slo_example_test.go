@@ -70,25 +70,27 @@ func ExampleSLO() {
 			Description: "X% of search requests are successful",
 			Service:     "web",
 			Indicator: &v1.SLOIndicator{
-				Metadata: v1.Metadata{
-					Name: "web-successful-requests-ratio",
-				},
-				Spec: v1.SLISpec{
-					RatioMetric: &v1.SLIRatioMetric{
-						Counter: true,
-						Good: &v1.SLIMetricSpec{
-							MetricSource: v1.SLIMetricSource{
-								Type: "Prometheus",
-								Spec: map[string]any{
-									"query": `sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})`,
+				SLOIndicatorInline: &v1.SLOIndicatorInline{
+					Metadata: v1.Metadata{
+						Name: "web-successful-requests-ratio",
+					},
+					Spec: v1.SLISpec{
+						RatioMetric: &v1.SLIRatioMetric{
+							Counter: true,
+							Good: &v1.SLIMetricSpec{
+								MetricSource: v1.SLIMetricSource{
+									Type: "Prometheus",
+									Spec: map[string]any{
+										"query": `sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})`,
+									},
 								},
 							},
-						},
-						Total: &v1.SLIMetricSpec{
-							MetricSource: v1.SLIMetricSource{
-								Type: "Prometheus",
-								Spec: map[string]any{
-									"query": `sum(http_requests{k8s_cluster="prod",component="web"})`,
+							Total: &v1.SLIMetricSpec{
+								MetricSource: v1.SLIMetricSource{
+									Type: "Prometheus",
+									Spec: map[string]any{
+										"query": `sum(http_requests{k8s_cluster="prod",component="web"})`,
+									},
 								},
 							},
 						},
