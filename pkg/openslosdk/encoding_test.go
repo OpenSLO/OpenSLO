@@ -150,7 +150,7 @@ func TestDecode(t *testing.T) {
 					Spec: v1.SLOSpec{
 						BudgetingMethod: "Occurrences",
 						Service:         "foo",
-						Indicator: &v1.SLOIndicator{
+						SLOIndicator: &v1.SLOIndicator{
 							SLOIndicatorInline: &v1.SLOIndicatorInline{
 								Metadata: v1.Metadata{
 									Name: "good",
@@ -316,7 +316,7 @@ func TestEncode(t *testing.T) {
 		Spec: v1.SLOSpec{
 			BudgetingMethod: "Occurrences",
 			Service:         "foo",
-			Indicator: &v1.SLOIndicator{
+			SLOIndicator: &v1.SLOIndicator{
 				SLOIndicatorInline: &v1.SLOIndicatorInline{
 					Metadata: v1.Metadata{
 						Name: "good",
@@ -381,7 +381,7 @@ func TestEncode(t *testing.T) {
 			var buf bytes.Buffer
 			err := Encode(&buf, getFileFormat(tc.testDataFile), tc.objects...)
 			assert.Require(t, assert.NoError(t, err))
-			assert.Equal(t, data, buf.Bytes())
+			assert.Equal(t, string(data), buf.String())
 		})
 	}
 }

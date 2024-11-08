@@ -69,7 +69,7 @@ func ExampleSLO() {
 		v1.SLOSpec{
 			Description: "X% of search requests are successful",
 			Service:     "web",
-			Indicator: &v1.SLOIndicator{
+			SLOIndicator: &v1.SLOIndicator{
 				SLOIndicatorInline: &v1.SLOIndicatorInline{
 					Metadata: v1.Metadata{
 						Name: "web-successful-requests-ratio",
@@ -107,7 +107,7 @@ func ExampleSLO() {
 					},
 				},
 			},
-			BudgetingMethod: "Timeslices",
+			BudgetingMethod: v1.SLOBudgetingMethodTimeslices,
 			Objectives: []v1.SLOObjective{
 				{
 					DisplayName:     "Good",

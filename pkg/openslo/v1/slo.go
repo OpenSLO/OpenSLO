@@ -43,23 +43,32 @@ func (s SLO) Validate() error {
 }
 
 type SLOSpec struct {
-	Description     string           `json:"description,omitempty"`
-	Service         string           `json:"service"`
-	Indicator       *SLOIndicator    `json:"indicator,omitempty"`
-	IndicatorRef    *string          `json:"indicatorRef,omitempty"`
-	BudgetingMethod string           `json:"budgetingMethod"`
-	TimeWindow      []SLOTimeWindow  `json:"timeWindow,omitempty"`
-	Objectives      []SLOObjective   `json:"objectives"`
-	AlertPolicies   []SLOAlertPolicy `json:"alertPolicies,omitempty"`
+	*SLOIndicator
+	Description     string             `json:"description,omitempty"`
+	Service         string             `json:"service"`
+	BudgetingMethod SLOBudgetingMethod `json:"budgetingMethod"`
+	TimeWindow      []SLOTimeWindow    `json:"timeWindow,omitempty"`
+	Objectives      []SLOObjective     `json:"objectives"`
+	AlertPolicies   []SLOAlertPolicy   `json:"alertPolicies,omitempty"`
+}
+
+type SLOBudgetingMethod string
+
+const (
+	SLOBudgetingMethodOccurrences     SLOBudgetingMethod = "Occurrences"
+	SLOBudgetingMethodTimeslices      SLOBudgetingMethod = "Timeslices"
+	SLOBudgetingMethodRatioTimeslices SLOBudgetingMethod = "RatioTimeslices"
+)
+
+var validSLOBudgetingMethods = []SLOBudgetingMethod{
+	SLOBudgetingMethodOccurrences,
+	SLOBudgetingMethodTimeslices,
+	SLOBudgetingMethodRatioTimeslices,
 }
 
 type SLOIndicator struct {
-	*SLOIndicatorRef
-	*SLOIndicatorInline
-}
-
-type SLOIndicatorRef struct {
-	IndicatorRef string `json:"indicatorRef"`
+	IndicatorRef        *string `json:"indicatorRef,omitempty"`
+	*SLOIndicatorInline `json:"indicator,omitempty"`
 }
 
 type SLOIndicatorInline struct {
@@ -68,15 +77,15 @@ type SLOIndicatorInline struct {
 }
 
 type SLOObjective struct {
-	DisplayName     string        `json:"displayName,omitempty"`
-	Op              Operator      `json:"op,omitempty"`
-	Value           float64       `json:"value,omitempty"`
-	Target          float64       `json:"target"`
-	TimeSliceTarget float64       `json:"timeSliceTarget,omitempty"`
-	TimeSliceWindow string        `json:"timeSliceWindow,omitempty"`
-	Indicator       *SLOIndicator `json:"indicator,omitempty"`
-	IndicatorRef    *string       `json:"indicatorRef,omitempty"`
-	CompositeWeight *float64      `json:"compositeWeight,omitempty"`
+	*SLOIndicator
+	DisplayName     string   `json:"displayName,omitempty"`
+	Op              Operator `json:"op,omitempty"`
+	Value           float64  `json:"value,omitempty"`
+	Target          float64  `json:"target"`
+	TimeSliceTarget float64  `json:"timeSliceTarget,omitempty"`
+	TimeSliceWindow string   `json:"timeSliceWindow,omitempty"`
+	IndicatorRef    *string  `json:"indicatorRef,omitempty"`
+	CompositeWeight *float64 `json:"compositeWeight,omitempty"`
 }
 
 type SLOTimeWindow struct {
@@ -102,7 +111,7 @@ type SLOAlertPolicyInline struct {
 }
 
 type SLOAlertPolicyRef struct {
-	TargetRef string `json:"targetRef"`
+	Ref string `json:"alertPolicyRef"`
 }
 
 var sloValidation = govy.New(
@@ -121,20 +130,34 @@ var sloSpecValidation = govy.New(
 	govy.For(func(spec SLOSpec) string { return spec.Service }).
 		WithName("service").
 		Required(),
-	govy.For(govy.GetSelf[SLOSpec]()).
-		Rules(rules.MutuallyExclusive(true, map[string]func(s SLOSpec) any{
-			"indicator":    func(s SLOSpec) any { return s.Indicator },
-			"indicatorRef": func(s SLOSpec) any { return s.IndicatorRef },
+	govy.ForPointer(func(spec SLOSpec) *SLOIndicator { return spec.SLOIndicator }).
+		// TODO: account for composites here.
+		// When().
+		Include(sloIndicatorValidation),
+	govy.For(func(spec SLOSpec) SLOBudgetingMethod { return spec.BudgetingMethod }).
+		WithName("budgetingMethod").
+		Required().
+		Rules(rules.OneOf(validSLOBudgetingMethods...)),
+)
+
+var sloIndicatorValidation = govy.New(
+	govy.For(govy.GetSelf[SLOIndicator]()).
+		Rules(rules.MutuallyExclusive(true, map[string]func(i SLOIndicator) any{
+			"indicatorRef": func(i SLOIndicator) any { return i.IndicatorRef },
+			"indicator":    func(i SLOIndicator) any { return i.SLOIndicatorInline },
 		})),
-	govy.ForPointer(func(spec SLOSpec) *SLOIndicator { return spec.Indicator }).
+	govy.For(govy.GetSelf[SLOIndicator]()).
 		WithName("indicator").
+		When(func(s SLOIndicator) bool { return s.SLOIndicatorInline != nil }).
+		Cascade(govy.CascadeModeContinue).
 		Include(govy.New(
 			validationRulesMetadata(func(i SLOIndicator) Metadata { return i.Metadata }),
 			govy.For(func(i SLOIndicator) SLISpec { return i.Spec }).
 				WithName("spec").
 				Include(sliSpecValidation),
 		)),
-	govy.ForPointer(func(spec SLOSpec) *string { return spec.IndicatorRef }).
+	govy.ForPointer(func(i SLOIndicator) *string { return i.IndicatorRef }).
 		WithName("indicatorRef").
 		Rules(rules.StringDNSLabel()),
-)
+).
+	Cascade(govy.CascadeModeStop)

@@ -74,6 +74,11 @@ const (
 	SLIRawMetricTypeFailure SLIRawMetricType = "failure"
 )
 
+var validSLIRawMetricTypes = []SLIRawMetricType{
+	SLIRawMetricTypeSuccess,
+	SLIRawMetricTypeFailure,
+}
+
 var sliValidation = govy.New(
 	validationRulesAPIVersion(func(s SLI) openslo.Version { return s.APIVersion }),
 	validationRulesKind(func(s SLI) openslo.Kind { return s.Kind }, openslo.KindSLI),
@@ -147,7 +152,7 @@ var sliRawMetricSpecValidation = govy.New(
 	govy.For(func(m SLIRatioMetric) SLIRawMetricType { return m.RawType }).
 		WithName("rawType").
 		Required().
-		Rules(rules.OneOf(SLIRawMetricTypeSuccess, SLIRawMetricTypeFailure)),
+		Rules(rules.OneOf(validSLIRawMetricTypes...)),
 ).
 	When(func(m SLIRatioMetric) bool { return m.Raw != nil })
 

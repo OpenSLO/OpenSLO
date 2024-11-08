@@ -212,7 +212,7 @@ func TestSLI_Validate_Spec_RatioMetric_Raw(t *testing.T) {
 			Code:         rules.ErrorCodeOneOf,
 		})
 	})
-	for _, rawType := range []SLIRawMetricType{SLIRawMetricTypeSuccess, SLIRawMetricTypeFailure} {
+	for _, rawType := range validSLIRawMetricTypes {
 		t.Run(fmt.Sprintf("rawType %s", rawType), func(t *testing.T) {
 			sli := validRawSLI()
 			sli.Spec.RatioMetric.RawType = rawType
