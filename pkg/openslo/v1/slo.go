@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"errors"
+
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
 
@@ -42,6 +44,10 @@ func (s SLO) Validate() error {
 	return sloValidation.Validate(s)
 }
 
+func (s SLO) IsComposite() bool {
+	return s.Spec.HasCompositeObjectives()
+}
+
 type SLOSpec struct {
 	*SLOIndicator
 	Description     string             `json:"description,omitempty"`
@@ -50,6 +56,15 @@ type SLOSpec struct {
 	TimeWindow      []SLOTimeWindow    `json:"timeWindow,omitempty"`
 	Objectives      []SLOObjective     `json:"objectives"`
 	AlertPolicies   []SLOAlertPolicy   `json:"alertPolicies,omitempty"`
+}
+
+func (s SLOSpec) HasCompositeObjectives() bool {
+	for i := range s.Objectives {
+		if s.Objectives[i].SLOIndicator != nil {
+			return true
+		}
+	}
+	return false
 }
 
 type SLOBudgetingMethod string
@@ -124,6 +139,8 @@ var sloValidation = govy.New(
 ).WithNameFunc(internal.ObjectNameFunc[SLO])
 
 var sloSpecValidation = govy.New(
+	govy.For(govy.GetSelf[SLOSpec]()).
+		Rules(validationRuleForIndicator()),
 	govy.For(func(spec SLOSpec) string { return spec.Description }).
 		WithName("description").
 		Rules(rules.StringMaxLength(1050)),
@@ -131,8 +148,6 @@ var sloSpecValidation = govy.New(
 		WithName("service").
 		Required(),
 	govy.ForPointer(func(spec SLOSpec) *SLOIndicator { return spec.SLOIndicator }).
-		// TODO: account for composites here.
-		// When().
 		Include(sloIndicatorValidation),
 	govy.For(func(spec SLOSpec) SLOBudgetingMethod { return spec.BudgetingMethod }).
 		WithName("budgetingMethod").
@@ -161,3 +176,18 @@ var sloIndicatorValidation = govy.New(
 		Rules(rules.StringDNSLabel()),
 ).
 	Cascade(govy.CascadeModeStop)
+
+func validationRuleForIndicator() govy.Rule[SLOSpec] {
+	msg := "'indicator' or 'indicatorRef' fields must either be defined on the 'spec' level (standard SLOs)" +
+		" or on the 'spec.objectives[*]' level (composite SLOs), but not both"
+	return govy.NewRule(func(s SLOSpec) error {
+		hasComposites := s.HasCompositeObjectives()
+		hasIndicator := s.SLOIndicator != nil
+		if hasComposites == hasIndicator {
+			return errors.New(msg)
+		}
+		return nil
+	}).
+		WithErrorCode(rules.ErrorCodeMutuallyExclusive).
+		WithDescription(msg)
+}

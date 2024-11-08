@@ -67,6 +67,99 @@ func TestSLO_Validate_Spec(t *testing.T) {
 			govytest.AssertNoError(t, err)
 		})
 	}
+	t.Run("missing service", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.Service = ""
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.service",
+			Code:         rules.ErrorCodeRequired,
+		})
+	})
+	t.Run("missing both indicator definition in spec and objectives", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.SLOIndicator = nil
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec",
+			Message: "'indicator' or 'indicatorRef' fields must either be defined on the 'spec' level (standard SLOs)" +
+				" or on the 'spec.objectives[*]' level (composite SLOs), but not both",
+			Code: rules.ErrorCodeMutuallyExclusive,
+		})
+	})
+}
+
+func TestSLO_Validate_Spec_Indicator(t *testing.T) {
+	runSLOIndicatorTests(t, "spec", func(s SLOIndicator) SLO {
+		slo := validSLO()
+		slo.Spec.SLOIndicator = &s
+		return slo
+	})
+}
+
+func runSLOIndicatorTests(t *testing.T, path string, sloGetter func(SLOIndicator) SLO) {
+	t.Helper()
+
+	t.Run("missing both indicator and indicatorRef", func(t *testing.T) {
+		slo := sloGetter(SLOIndicator{})
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: path,
+			Message:      "one of [indicator, indicatorRef] properties must be set, none was provided",
+			Code:         rules.ErrorCodeMutuallyExclusive,
+		})
+	})
+	t.Run("both indicator and indicatorRef are provided", func(t *testing.T) {
+		slo := sloGetter(SLOIndicator{
+			IndicatorRef:       new(string),
+			SLOIndicatorInline: &SLOIndicatorInline{},
+		})
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: path,
+			Message:      "[indicator, indicatorRef] properties are mutually exclusive, provide only one of them",
+			Code:         rules.ErrorCodeMutuallyExclusive,
+		})
+	})
+	t.Run("valid indicatorRef", func(t *testing.T) {
+		slo := sloGetter(SLOIndicator{IndicatorRef: ptr("my-sli")})
+		err := slo.Validate()
+		govytest.AssertNoError(t, err)
+	})
+	t.Run("invalid indicatorRef", func(t *testing.T) {
+		slo := sloGetter(SLOIndicator{IndicatorRef: ptr("my sli")})
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: path + ".indicatorRef",
+			Code:         rules.ErrorCodeStringDNSLabel,
+		})
+	})
+	t.Run("indicator.metadata", func(t *testing.T) {
+		runMetadataTests(t, "spec.indicator.metadata", func(m Metadata) SLO {
+			return sloGetter(SLOIndicator{
+				SLOIndicatorInline: &SLOIndicatorInline{
+					Metadata: m,
+					Spec:     validSLI().Spec,
+				},
+			})
+		})
+	})
+	t.Run("indicator.spec", func(t *testing.T) {
+		runSLISpecTests(t, "spec.indicator.spec", func(spec SLISpec) SLO {
+			slo := validSLO()
+			slo.Spec.Spec = spec
+			return slo
+		})
+	})
+}
+
+func TestSLO_Validate_Spec_TimeWindows(t *testing.T) {
+}
+
+func TestSLO_Validate_Spec_Objectives(t *testing.T) {
+}
+
+func TestSLO_Validate_Spec_AlertPolicies(t *testing.T) {
 }
 
 func validSLO() SLO {
