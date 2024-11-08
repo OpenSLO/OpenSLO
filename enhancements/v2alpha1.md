@@ -47,6 +47,7 @@ spec:
       isRolling: false # if omitted assumed `false` if `calendar:` is present
   budgetingMethod: Occurrences | Timeslices | RatioTimeslices
   objectives: # see objectives below for details
+  compositeObjectives: # see composite objectives below for details
   alertPolicies: # see alert policies below for details
 ```
 
@@ -59,6 +60,24 @@ the tolerance levels for your metrics.
 
 ```yaml
 objectives:
+  - displayName: string # optional
+    labels: object # optional
+    op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
+    value: numeric # optional, value used to compare threshold metrics. Only needed when using a thresholdMetric
+    target: numeric [0.0, 1.0) # budget target for given objective of the SLO, can't be used with targetPercent
+    targetPercent: numeric [0.0, 100) # budget target for given objective of the SLO, can't be used with target
+    timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
+    timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
+```
+
+### Composite objectives
+
+**Note:** While in previous versions an SLO was deemed composite if there were at least two objectives,
+each having either `indicator` or `indicatorRef` defined.
+With `v2alpha1` we'll better distinct both types of SLO by either having `objectives` or `compositeObjectives` defined.
+
+```yaml
+compositeObjectives:
   - displayName: string # optional
     labels: object # optional
     op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
