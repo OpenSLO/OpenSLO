@@ -314,7 +314,7 @@ func validSLO() SLO {
 			Objectives: []SLOObjective{
 				{
 					DisplayName:     "Good",
-					Op:              OperatorGT,
+					Operator:              OperatorGT,
 					Target:          0.995,
 					TimeSliceTarget: 0.95,
 					TimeSliceWindow: "1m",

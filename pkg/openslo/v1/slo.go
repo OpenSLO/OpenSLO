@@ -95,11 +95,12 @@ type SLOIndicatorInline struct {
 type SLOObjective struct {
 	*SLOIndicator
 	DisplayName     string   `json:"displayName,omitempty"`
-	Op              Operator `json:"op,omitempty"`
+	Operator        Operator `json:"op,omitempty"`
 	Value           float64  `json:"value,omitempty"`
-	Target          float64  `json:"target"`
-	TimeSliceTarget float64  `json:"timeSliceTarget,omitempty"`
-	TimeSliceWindow string   `json:"timeSliceWindow,omitempty"`
+	Target          *float64 `json:"target"`
+	TargetPercent   *float64 `json:"targetPercent"`
+	TimeSliceTarget *float64 `json:"timeSliceTarget,omitempty"`
+	TimeSliceWindow *string  `json:"timeSliceWindow,omitempty"`
 	IndicatorRef    *string  `json:"indicatorRef,omitempty"`
 	CompositeWeight *float64 `json:"compositeWeight,omitempty"`
 }
@@ -141,7 +142,11 @@ var sloValidation = govy.New(
 
 var sloSpecValidation = govy.New(
 	govy.For(govy.GetSelf[SLOSpec]()).
-		Rules(validationRuleForIndicator()),
+		Rules(validationRuleForIndicator()).
+		Include(
+			sloTimeSlicesObjectiveValidation,
+			sloRatioTimeSlicesObjectiveValidation,
+		),
 	govy.For(func(spec SLOSpec) string { return spec.Description }).
 		WithName("description").
 		Rules(rules.StringMaxLength(1050)),
@@ -161,6 +166,9 @@ var sloSpecValidation = govy.New(
 	govy.ForSlice(func(spec SLOSpec) []SLOAlertPolicy { return spec.AlertPolicies }).
 		WithName("alertPolicies").
 		IncludeForEach(sloAlertPolicyValidation),
+	govy.ForSlice(func(spec SLOSpec) []SLOObjective { return spec.Objectives }).
+		WithName("objectives").
+		IncludeForEach(sloObjectiveValidation),
 )
 
 var sloIndicatorValidation = govy.New(
@@ -234,6 +242,55 @@ var sloAlertPolicyValidation = govy.New(
 				Include(alertPolicySpecValidation),
 		)).Cascade(govy.CascadeModeContinue),
 ).Cascade(govy.CascadeModeStop)
+
+var sloObjectiveValidation = govy.New(
+	// Since operator is only required when using threshold metric SLI we have no way of checking it
+	// if the SLI is only referenced and not inlined, thus it's not required.
+	govy.For(func(s SLOObjective) Operator { return s.Operator }).
+		WithName("op").
+		OmitEmpty().
+		Include(operatorValidation),
+	govy.For(govy.GetSelf[SLOObjective]()).
+		Rules(rules.MutuallyExclusive(true, map[string]func(o SLOObjective) any{
+			"traget":        func(o SLOObjective) any { return o.Target },
+			"targetPercent": func(o SLOObjective) any { return o.TargetPercent },
+		})),
+	govy.ForPointer(func(s SLOObjective) *float64 { return s.Target }).
+		WithName("target").
+		Rules(rules.GTE(0.0), rules.LT(1.0)),
+	govy.ForPointer(func(s SLOObjective) *float64 { return s.TargetPercent }).
+		WithName("targetPercent").
+		Rules(rules.GTE(0.0), rules.LT(100.0)),
+)
+
+var sloTimeSlicesObjectiveValidation = govy.New(
+	govy.ForSlice(func(spec SLOSpec) []SLOObjective { return spec.Objectives }).
+		WithName("objectives").
+		IncludeForEach(govy.New(
+			govy.ForPointer(func(s SLOObjective) *float64 { return s.TimeSliceTarget }).
+				WithName("timeSliceTarget").
+				Required().
+				Rules(rules.GT(0.0), rules.LTE(1.0)),
+			validationRulesForTimeSliceWindow(),
+		)),
+).
+	When(func(s SLOSpec) bool { return s.BudgetingMethod == SLOBudgetingMethodTimeslices })
+
+var sloRatioTimeSlicesObjectiveValidation = govy.New(
+	govy.ForSlice(func(spec SLOSpec) []SLOObjective { return spec.Objectives }).
+		WithName("objectives").
+		IncludeForEach(govy.New(
+			validationRulesForTimeSliceWindow(),
+		)),
+).
+	When(func(s SLOSpec) bool { return s.BudgetingMethod == SLOBudgetingMethodRatioTimeslices })
+
+func validationRulesForTimeSliceWindow() govy.PropertyRules[float64, SLOObjective] {
+	return govy.ForPointer(func(s SLOObjective) *float64 { return s.TimeSliceTarget }).
+		WithName("timeSliceWindow").
+		Required().
+		Rules(rules.GT(0.0), rules.LTE(1.0))
+}
 
 func validationRuleForIndicator() govy.Rule[SLOSpec] {
 	msg := "'indicator' or 'indicatorRef' fields must either be defined on the 'spec' level (standard SLOs)" +

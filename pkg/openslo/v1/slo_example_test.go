@@ -111,7 +111,7 @@ func ExampleSLO() {
 			Objectives: []v1.SLOObjective{
 				{
 					DisplayName:     "Good",
-					Op:              v1.OperatorGT,
+					Operator:              v1.OperatorGT,
 					Target:          0.995,
 					TimeSliceTarget: 0.95,
 					TimeSliceWindow: "1m",
