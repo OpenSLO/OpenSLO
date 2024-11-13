@@ -99,7 +99,7 @@ func ExampleSLO() {
 			},
 			TimeWindow: []v1.SLOTimeWindow{
 				{
-					Duration:  "1w",
+					Duration:  v1.NewDurationShorthand(1, v1.DurationShorthandUnitWeek),
 					IsRolling: false,
 					Calendar: &v1.SLOCalendar{
 						StartTime: "2022-01-01 12:00:00",

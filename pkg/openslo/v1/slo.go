@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"time"
 
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
@@ -104,9 +105,9 @@ type SLOObjective struct {
 }
 
 type SLOTimeWindow struct {
-	Duration  string       `json:"duration"`
-	IsRolling bool         `json:"isRolling"`
-	Calendar  *SLOCalendar `json:"calendar,omitempty"`
+	Duration  DurationShorthand `json:"duration"`
+	IsRolling bool              `json:"isRolling"`
+	Calendar  *SLOCalendar      `json:"calendar,omitempty"`
 }
 
 type SLOCalendar struct {
@@ -153,6 +154,13 @@ var sloSpecValidation = govy.New(
 		WithName("budgetingMethod").
 		Required().
 		Rules(rules.OneOf(validSLOBudgetingMethods...)),
+	govy.ForSlice(func(spec SLOSpec) []SLOTimeWindow { return spec.TimeWindow }).
+		WithName("timeWindow").
+		Rules(rules.SliceLength[[]SLOTimeWindow](1, 1)).
+		IncludeForEach(sloTimeWindowValidation),
+	govy.ForSlice(func(spec SLOSpec) []SLOAlertPolicy { return spec.AlertPolicies }).
+		WithName("alertPolicies").
+		IncludeForEach(sloAlertPolicyValidation),
 )
 
 var sloIndicatorValidation = govy.New(
@@ -176,6 +184,56 @@ var sloIndicatorValidation = govy.New(
 		Rules(rules.StringDNSLabel()),
 ).
 	Cascade(govy.CascadeModeStop)
+
+var sloTimeWindowValidation = govy.New(
+	govy.For(func(t SLOTimeWindow) DurationShorthand { return t.Duration }).
+		WithName("duration").
+		Required().
+		Include(durationShortHandValidation),
+	govy.ForPointer(func(t SLOTimeWindow) *SLOCalendar { return t.Calendar }).
+		WithName("calendar").
+		Include(govy.New(
+			govy.For(func(c SLOCalendar) string { return c.StartTime }).
+				WithName("startTime").
+				Rules(rules.StringDateTime(time.DateTime)),
+			govy.For(func(c SLOCalendar) string { return c.TimeZone }).
+				WithName("timeZone").
+				Rules(rules.StringTimeZone()),
+		)),
+)
+
+var sloAlertPolicyValidation = govy.New(
+	govy.For(govy.GetSelf[SLOAlertPolicy]()).
+		Rules(rules.MutuallyExclusive(true, map[string]func(a SLOAlertPolicy) any{
+			"targetRef": func(a SLOAlertPolicy) any { return a.SLOAlertPolicyRef },
+			// It's impossible to list all fields that constitute the inlined version in the error message,
+			// therefore 'spec' must suffice.
+			"spec": func(a SLOAlertPolicy) any { return a.SLOAlertPolicyInline },
+		})),
+	govy.ForPointer(func(a SLOAlertPolicy) *SLOAlertPolicyRef {
+		return a.SLOAlertPolicyRef
+	}).
+		Include(govy.New(
+			govy.For(func(ref SLOAlertPolicyRef) string { return ref.Ref }).
+				WithName("alertPolicyRef").
+				Required().
+				Rules(rules.StringDNSLabel()),
+		)).Cascade(govy.CascadeModeContinue),
+	govy.ForPointer(func(a SLOAlertPolicy) *SLOAlertPolicyInline {
+		return a.SLOAlertPolicyInline
+	}).
+		Include(govy.New(
+			govy.For(func(inline SLOAlertPolicyInline) openslo.Kind { return inline.Kind }).
+				WithName("kind").
+				Required().
+				Rules(rules.EQ(openslo.KindAlertPolicy)),
+			validationRulesMetadata(func(a SLOAlertPolicyInline) Metadata { return a.Metadata }),
+			govy.For(func(inline SLOAlertPolicyInline) AlertPolicySpec { return inline.Spec }).
+				WithName("spec").
+				Required().
+				Include(alertPolicySpecValidation),
+		)).Cascade(govy.CascadeModeContinue),
+).Cascade(govy.CascadeModeStop)
 
 func validationRuleForIndicator() govy.Rule[SLOSpec] {
 	msg := "'indicator' or 'indicatorRef' fields must either be defined on the 'spec' level (standard SLOs)" +

@@ -16,6 +16,7 @@ var sloValidationMessageRegexp = getValidationMessageRegexp(openslo.KindSLO)
 func TestSLO_Validate_Ok(t *testing.T) {
 	for _, slo := range []SLO{
 		validSLO(),
+		validSLOWithInlinedAlertPolicy(),
 	} {
 		err := slo.Validate()
 		govytest.AssertNoError(t, err)
@@ -97,6 +98,111 @@ func TestSLO_Validate_Spec_Indicator(t *testing.T) {
 	})
 }
 
+func TestSLO_Validate_Spec_TimeWindows(t *testing.T) {
+	t.Run("missing timeWindow", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.TimeWindow = []SLOTimeWindow{}
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.timeWindow",
+			Code:         rules.ErrorCodeSliceLength,
+		})
+	})
+	t.Run("too many timeWindows", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.TimeWindow = []SLOTimeWindow{
+			slo.Spec.TimeWindow[0],
+			slo.Spec.TimeWindow[0],
+		}
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.timeWindow",
+			Code:         rules.ErrorCodeSliceLength,
+		})
+	})
+	t.Run("missing duration", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.TimeWindow[0].Duration = DurationShorthand{}
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.timeWindow[0].duration",
+			Code:         rules.ErrorCodeRequired,
+		})
+	})
+	t.Run("duration", func(t *testing.T) {
+		runDurationShorthandTests(t, "spec.timeWindow[0].duration", func(d DurationShorthand) SLO {
+			slo := validSLO()
+			slo.Spec.TimeWindow[0].Duration = d
+			return slo
+		})
+	})
+}
+
+func TestSLO_Validate_Spec_Objectives(t *testing.T) {
+}
+
+func TestSLO_Validate_Spec_AlertPolicies(t *testing.T) {
+	t.Run("no policies", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.AlertPolicies = nil
+		err := slo.Validate()
+		govytest.AssertNoError(t, err)
+	})
+	t.Run("both ref and inline are set", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.AlertPolicies[0].SLOAlertPolicyRef = &SLOAlertPolicyRef{}
+		slo.Spec.AlertPolicies[0].SLOAlertPolicyInline = &SLOAlertPolicyInline{}
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.alertPolicies[0]",
+			Code:         rules.ErrorCodeMutuallyExclusive,
+		})
+	})
+	t.Run("ref missing", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.AlertPolicies[0].SLOAlertPolicyRef = &SLOAlertPolicyRef{}
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.alertPolicies[0].alertPolicyRef",
+			Code:         rules.ErrorCodeRequired,
+		})
+	})
+	t.Run("invalid condition ref", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.AlertPolicies[0].SLOAlertPolicyRef = &SLOAlertPolicyRef{
+			Ref: "invalid ref",
+		}
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.alertPolicies[0].alertPolicyRef",
+			Code:         rules.ErrorCodeStringDNSLabel,
+		})
+	})
+	t.Run("invalid inline kind", func(t *testing.T) {
+		slo := validSLOWithInlinedAlertPolicy()
+		slo.Spec.AlertPolicies[0].Kind = openslo.KindDataSource
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.alertPolicies[0].kind",
+			Code:         rules.ErrorCodeEqualTo,
+		})
+	})
+	t.Run("metadata", func(t *testing.T) {
+		runMetadataTests(t, "spec.alertPolicies[0].metadata", func(m Metadata) SLO {
+			slo := validSLOWithInlinedAlertPolicy()
+			slo.Spec.AlertPolicies[0].Metadata = m
+			return slo
+		})
+	})
+	t.Run("spec", func(t *testing.T) {
+		runAlertPolicySpecTests(t, "spec.alertPolicies[0].spec", func(s AlertPolicySpec) SLO {
+			slo := validSLOWithInlinedAlertPolicy()
+			slo.Spec.AlertPolicies[0].Spec = s
+			return slo
+		})
+	})
+}
+
 func runSLOIndicatorTests(t *testing.T, path string, sloGetter func(SLOIndicator) SLO) {
 	t.Helper()
 
@@ -153,15 +259,6 @@ func runSLOIndicatorTests(t *testing.T, path string, sloGetter func(SLOIndicator
 	})
 }
 
-func TestSLO_Validate_Spec_TimeWindows(t *testing.T) {
-}
-
-func TestSLO_Validate_Spec_Objectives(t *testing.T) {
-}
-
-func TestSLO_Validate_Spec_AlertPolicies(t *testing.T) {
-}
-
 func validSLO() SLO {
 	return NewSLO(
 		Metadata{
@@ -205,7 +302,7 @@ func validSLO() SLO {
 			},
 			TimeWindow: []SLOTimeWindow{
 				{
-					Duration:  "1w",
+					Duration:  NewDurationShorthand(1, DurationShorthandUnitWeek),
 					IsRolling: false,
 					Calendar: &SLOCalendar{
 						StartTime: "2022-01-01 12:00:00",
@@ -223,6 +320,22 @@ func validSLO() SLO {
 					TimeSliceWindow: "1m",
 				},
 			},
+			AlertPolicies: []SLOAlertPolicy{
+				{SLOAlertPolicyRef: &SLOAlertPolicyRef{Ref: "alert-policy-1"}},
+			},
 		},
 	)
+}
+
+func validSLOWithInlinedAlertPolicy() SLO {
+	slo := validSLO()
+	alertPolicy := validAlertPolicy()
+	slo.Spec.AlertPolicies[0] = SLOAlertPolicy{
+		SLOAlertPolicyInline: &SLOAlertPolicyInline{
+			Kind:     alertPolicy.Kind,
+			Metadata: alertPolicy.Metadata,
+			Spec:     alertPolicy.Spec,
+		},
+	}
+	return slo
 }

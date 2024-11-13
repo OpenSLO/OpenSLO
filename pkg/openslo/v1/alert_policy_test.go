@@ -52,18 +52,34 @@ func TestAlertPolicy_Validate_Metadata(t *testing.T) {
 }
 
 func TestAlertPolicy_Validate_Spec(t *testing.T) {
+	runAlertPolicySpecTests(t, "spec", func(s AlertPolicySpec) AlertPolicy {
+		policy := validAlertPolicy()
+		policy.Spec = s
+		return policy
+	})
+}
+
+func runAlertPolicySpecTests[T openslo.Object](
+	t *testing.T,
+	path string,
+	objectGetter func(s AlertPolicySpec) T,
+) {
+	t.Helper()
+
 	t.Run("description ok", func(t *testing.T) {
 		policy := validAlertPolicy()
 		policy.Spec.Description = strings.Repeat("A", 1050)
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertNoError(t, err)
 	})
 	t.Run("description too long", func(t *testing.T) {
 		policy := validAlertPolicy()
 		policy.Spec.Description = strings.Repeat("A", 1051)
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.description",
+			PropertyName: path + ".description",
 			Code:         rules.ErrorCodeStringMaxLength,
 		})
 	})
@@ -72,21 +88,23 @@ func TestAlertPolicy_Validate_Spec(t *testing.T) {
 		policy.Spec.AlertWhenBreaching = true
 		policy.Spec.AlertWhenResolved = true
 		policy.Spec.AlertWhenNoData = true
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertNoError(t, err)
 	})
 	t.Run("no targets and conditions set", func(t *testing.T) {
 		policy := validAlertPolicy()
 		policy.Spec.NotificationTargets = []AlertPolicyNotificationTarget{}
 		policy.Spec.Conditions = []AlertPolicyCondition{}
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err,
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.conditions",
+				PropertyName: path + ".conditions",
 				Code:         rules.ErrorCodeSliceLength,
 			},
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.notificationTargets",
+				PropertyName: path + ".notificationTargets",
 				Code:         rules.ErrorCodeSliceMinLength,
 			},
 		)
@@ -97,32 +115,47 @@ func TestAlertPolicy_Validate_Spec(t *testing.T) {
 			{AlertPolicyConditionRef: &AlertPolicyConditionRef{ConditionRef: "cpu-usage-breach"}},
 			{AlertPolicyConditionRef: &AlertPolicyConditionRef{ConditionRef: "memory-usage-breach"}},
 		}
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.conditions",
+			PropertyName: path + ".conditions",
 			Code:         rules.ErrorCodeSliceLength,
 		})
 	})
+	t.Run("conditions", func(t *testing.T) {
+		runAlertPolicySpecConditionsTests(t, path, objectGetter)
+	})
+	t.Run("notificationTargets", func(t *testing.T) {
+		runAlertPolicySpecNotificationTargetsTests(t, path, objectGetter)
+	})
 }
 
-func TestAlertPolicy_Validate_Spec_Conditions(t *testing.T) {
+func runAlertPolicySpecConditionsTests[T openslo.Object](
+	t *testing.T,
+	path string,
+	objectGetter func(s AlertPolicySpec) T,
+) {
+	t.Helper()
+
 	t.Run("both ref and inline are set", func(t *testing.T) {
 		policy := validAlertPolicy()
 		policy.Spec.Conditions[0].AlertPolicyConditionRef = &AlertPolicyConditionRef{}
 		policy.Spec.Conditions[0].AlertPolicyConditionInline = &AlertPolicyConditionInline{}
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		fmt.Println(err)
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.conditions[0]",
+			PropertyName: path + ".conditions[0]",
 			Code:         rules.ErrorCodeMutuallyExclusive,
 		})
 	})
 	t.Run("ref missing", func(t *testing.T) {
 		policy := validAlertPolicy()
 		policy.Spec.Conditions[0].AlertPolicyConditionRef = &AlertPolicyConditionRef{}
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.conditions[0].conditionRef",
+			PropertyName: path + ".conditions[0].conditionRef",
 			Code:         rules.ErrorCodeRequired,
 		})
 	})
@@ -131,54 +164,66 @@ func TestAlertPolicy_Validate_Spec_Conditions(t *testing.T) {
 		policy.Spec.Conditions[0].AlertPolicyConditionRef = &AlertPolicyConditionRef{
 			ConditionRef: "invalid ref",
 		}
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.conditions[0].conditionRef",
+			PropertyName: path + ".conditions[0].conditionRef",
 			Code:         rules.ErrorCodeStringDNSLabel,
 		})
 	})
 	t.Run("invalid inline kind", func(t *testing.T) {
 		policy := validAlertPolicyWithInlineDefinitions()
 		policy.Spec.Conditions[0].Kind = openslo.KindSLO
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.conditions[0].kind",
+			PropertyName: path + ".conditions[0].kind",
 			Code:         rules.ErrorCodeEqualTo,
 		})
 	})
 	t.Run("metadata", func(t *testing.T) {
-		runMetadataTests(t, "spec.conditions[0].metadata", func(m Metadata) AlertPolicy {
+		runMetadataTests(t, path+".conditions[0].metadata", func(m Metadata) T {
 			policy := validAlertPolicyWithInlineDefinitions()
 			policy.Spec.Conditions[0].Metadata = m
-			return policy
+			object := objectGetter(policy.Spec)
+			return object
 		})
 	})
 	t.Run("spec", func(t *testing.T) {
-		runAlertConditionSpecTests(t, "spec.conditions[0].spec", func(s AlertConditionSpec) AlertPolicy {
+		runAlertConditionSpecTests(t, path+".conditions[0].spec", func(s AlertConditionSpec) T {
 			policy := validAlertPolicyWithInlineDefinitions()
 			policy.Spec.Conditions[0].Spec = s
-			return policy
+			object := objectGetter(policy.Spec)
+			return object
 		})
 	})
 }
 
-func TestAlertPolicy_Validate_Spec_NotificationTargets(t *testing.T) {
+func runAlertPolicySpecNotificationTargetsTests[T openslo.Object](
+	t *testing.T,
+	path string,
+	objectGetter func(s AlertPolicySpec) T,
+) {
+	t.Helper()
+
 	t.Run("both ref and inline are set", func(t *testing.T) {
 		policy := validAlertPolicy()
 		policy.Spec.NotificationTargets[0].AlertPolicyNotificationTargetRef = &AlertPolicyNotificationTargetRef{}
 		policy.Spec.NotificationTargets[0].AlertPolicyNotificationTargetInline = &AlertPolicyNotificationTargetInline{}
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.notificationTargets[0]",
+			PropertyName: path + ".notificationTargets[0]",
 			Code:         rules.ErrorCodeMutuallyExclusive,
 		})
 	})
 	t.Run("ref missing", func(t *testing.T) {
 		policy := validAlertPolicy()
 		policy.Spec.NotificationTargets[0].AlertPolicyNotificationTargetRef = &AlertPolicyNotificationTargetRef{}
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.notificationTargets[0].targetRef",
+			PropertyName: path + ".notificationTargets[0].targetRef",
 			Code:         rules.ErrorCodeRequired,
 		})
 	})
@@ -187,36 +232,40 @@ func TestAlertPolicy_Validate_Spec_NotificationTargets(t *testing.T) {
 		policy.Spec.NotificationTargets[0].AlertPolicyNotificationTargetRef = &AlertPolicyNotificationTargetRef{
 			TargetRef: "invalid ref",
 		}
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.notificationTargets[0].targetRef",
+			PropertyName: path + ".notificationTargets[0].targetRef",
 			Code:         rules.ErrorCodeStringDNSLabel,
 		})
 	})
 	t.Run("invalid inline kind", func(t *testing.T) {
 		policy := validAlertPolicyWithInlineDefinitions()
 		policy.Spec.NotificationTargets[0].Kind = openslo.KindSLO
-		err := policy.Validate()
+		object := objectGetter(policy.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.notificationTargets[0].kind",
+			PropertyName: path + ".notificationTargets[0].kind",
 			Code:         rules.ErrorCodeEqualTo,
 		})
 	})
 	t.Run("metadata", func(t *testing.T) {
-		runMetadataTests(t, "spec.notificationTargets[0].metadata", func(m Metadata) AlertPolicy {
+		runMetadataTests(t, path+".notificationTargets[0].metadata", func(m Metadata) T {
 			policy := validAlertPolicyWithInlineDefinitions()
 			policy.Spec.NotificationTargets[0].Metadata = m
-			return policy
+			object := objectGetter(policy.Spec)
+			return object
 		})
 	})
 	t.Run("spec", func(t *testing.T) {
 		runAlertNotificationTargetSpecTests(
 			t,
-			"spec.notificationTargets[0].spec",
-			func(s AlertNotificationTargetSpec) AlertPolicy {
+			path+".notificationTargets[0].spec",
+			func(s AlertNotificationTargetSpec) T {
 				policy := validAlertPolicyWithInlineDefinitions()
 				policy.Spec.NotificationTargets[0].Spec = s
-				return policy
+				object := objectGetter(policy.Spec)
+				return object
 			},
 		)
 	})
