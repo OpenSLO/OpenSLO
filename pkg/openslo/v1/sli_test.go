@@ -336,9 +336,9 @@ func validRawSLI() SLI {
 						Spec: map[string]interface{}{
 							"query": `
 1 - (
-  sum(sum_over_time(unifipoller_client_satisfaction_ratio[{{.window}}]))
+  sum(sum_over_time(poller_client_satisfaction_ratio[{{.window}}]))
   /
-  sum(count_over_time(unifipoller_client_satisfaction_ratio[{{.window}}]))
+  sum(count_over_time(poller_client_satisfaction_ratio[{{.window}}]))
 )`,
 						},
 					},
@@ -365,6 +365,7 @@ func validThresholdSLI() SLI {
 					MetricSourceRef: "my-prometheus",
 					Type:            "Prometheus",
 					Spec: map[string]interface{}{
+						// nolint: lll
 						"query": `sum(min_over_time(kafka_consumergroup_lag{k8s_cluster="prod", consumergroup="annotator", topic="annotator-in"}[2m]))`,
 					},
 				},

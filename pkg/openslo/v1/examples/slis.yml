@@ -75,9 +75,9 @@
           spec:
             query: |
               1 - (
-                sum(sum_over_time(unifipoller_client_satisfaction_ratio[{{.window}}]))
+                sum(sum_over_time(poller_client_satisfaction_ratio[{{.window}}]))
                 /
-                sum(count_over_time(unifipoller_client_satisfaction_ratio[{{.window}}]))
+                sum(count_over_time(poller_client_satisfaction_ratio[{{.window}}]))
               )
 - apiVersion: openslo/v1
   kind: SLI
