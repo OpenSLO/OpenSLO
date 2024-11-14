@@ -16,6 +16,8 @@ var parseDurationShorthandTestCases = []struct {
 	expected DurationShorthand
 	err      bool
 }{
+	{"", DurationShorthand{value: 0, unit: ""}, false},
+	{"0w", DurationShorthand{value: 0, unit: DurationShorthandUnitWeek}, false},
 	{"10m", DurationShorthand{value: 10, unit: DurationShorthandUnitMinute}, false},
 	{"5h", DurationShorthand{value: 5, unit: DurationShorthandUnitHour}, false},
 	{"2d", DurationShorthand{value: 2, unit: DurationShorthandUnitDay}, false},
@@ -51,21 +53,22 @@ func TestDurationShorthandUnmarshalText(t *testing.T) {
 	}
 }
 
-func TestDurationShorthandMarshalText(t *testing.T) {
-	tests := []struct {
-		input    DurationShorthand
-		expected string
-	}{
-		{DurationShorthand{value: 10, unit: DurationShorthandUnitMinute}, "10m"},
-		{DurationShorthand{value: 5, unit: DurationShorthandUnitHour}, "5h"},
-		{DurationShorthand{value: 2, unit: DurationShorthandUnitDay}, "2d"},
-		{DurationShorthand{value: 1, unit: DurationShorthandUnitWeek}, "1w"},
-		{DurationShorthand{value: 3, unit: DurationShorthandUnitMonth}, "3M"},
-		{DurationShorthand{value: 1, unit: DurationShorthandUnitQuarter}, "1Q"},
-		{DurationShorthand{value: 1, unit: DurationShorthandUnitYear}, "1Y"},
-	}
+var encodeDurationShorthandTestCases = []struct {
+	input    DurationShorthand
+	expected string
+}{
+	{DurationShorthand{value: 0, unit: DurationShorthandUnitWeek}, ""},
+	{DurationShorthand{value: 10, unit: DurationShorthandUnitMinute}, "10m"},
+	{DurationShorthand{value: 5, unit: DurationShorthandUnitHour}, "5h"},
+	{DurationShorthand{value: 2, unit: DurationShorthandUnitDay}, "2d"},
+	{DurationShorthand{value: 1, unit: DurationShorthandUnitWeek}, "1w"},
+	{DurationShorthand{value: 3, unit: DurationShorthandUnitMonth}, "3M"},
+	{DurationShorthand{value: 1, unit: DurationShorthandUnitQuarter}, "1Q"},
+	{DurationShorthand{value: 1, unit: DurationShorthandUnitYear}, "1Y"},
+}
 
-	for _, tc := range tests {
+func TestDurationShorthandMarshalText(t *testing.T) {
+	for _, tc := range encodeDurationShorthandTestCases {
 		text, err := tc.input.MarshalText()
 		assert.NoError(t, err)
 		assert.Equal(t, tc.expected, string(text))
@@ -73,20 +76,7 @@ func TestDurationShorthandMarshalText(t *testing.T) {
 }
 
 func TestDurationShorthandString(t *testing.T) {
-	tests := []struct {
-		input    DurationShorthand
-		expected string
-	}{
-		{DurationShorthand{value: 10, unit: DurationShorthandUnitMinute}, "10m"},
-		{DurationShorthand{value: 5, unit: DurationShorthandUnitHour}, "5h"},
-		{DurationShorthand{value: 2, unit: DurationShorthandUnitDay}, "2d"},
-		{DurationShorthand{value: 1, unit: DurationShorthandUnitWeek}, "1w"},
-		{DurationShorthand{value: 3, unit: DurationShorthandUnitMonth}, "3M"},
-		{DurationShorthand{value: 1, unit: DurationShorthandUnitQuarter}, "1Q"},
-		{DurationShorthand{value: 1, unit: DurationShorthandUnitYear}, "1Y"},
-	}
-
-	for _, tc := range tests {
+	for _, tc := range encodeDurationShorthandTestCases {
 		assert.Equal(t, tc.expected, tc.input.String())
 	}
 }
@@ -96,6 +86,7 @@ func TestDurationShorthandDuration(t *testing.T) {
 		input    DurationShorthand
 		expected time.Duration
 	}{
+		{DurationShorthand{value: 0, unit: DurationShorthandUnitWeek}, 0},
 		{DurationShorthand{value: 10, unit: DurationShorthandUnitMinute}, 10 * time.Minute},
 		{DurationShorthand{value: 5, unit: DurationShorthandUnitHour}, 5 * time.Hour},
 		{DurationShorthand{value: 2, unit: DurationShorthandUnitDay}, 2 * 24 * time.Hour},
@@ -112,10 +103,12 @@ func TestDurationShorthandDuration(t *testing.T) {
 
 func runDurationShorthandTests[T openslo.Object](t *testing.T, path string, objectGetter func(d DurationShorthand) T) {
 	t.Helper()
+
 	tests := []struct {
 		input        DurationShorthand
 		expectedErrs []govytest.ExpectedRuleError
 	}{
+		{DurationShorthand{value: 0, unit: DurationShorthandUnitWeek}, nil},
 		{DurationShorthand{value: 10, unit: DurationShorthandUnitMinute}, nil},
 		{DurationShorthand{value: 5, unit: DurationShorthandUnitHour}, nil},
 		{DurationShorthand{value: 2, unit: DurationShorthandUnitDay}, nil},

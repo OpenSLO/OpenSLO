@@ -191,7 +191,7 @@ func TestDecode(t *testing.T) {
 						Objectives: []v1.SLOObjective{
 							{
 								DisplayName: "Foo Availability",
-								Target:      0.98,
+								Target:      ptr(0.98),
 							},
 						},
 					},
@@ -357,7 +357,7 @@ func TestEncode(t *testing.T) {
 			Objectives: []v1.SLOObjective{
 				{
 					DisplayName: "Foo Availability",
-					Target:      0.98,
+					Target:      ptr(0.98),
 				},
 			},
 		},
