@@ -91,6 +91,17 @@ func TestSLO_Validate_Spec(t *testing.T) {
 			Code: rules.ErrorCodeMutuallyExclusive,
 		})
 	})
+	t.Run("indicator definition both in spec and objectives", func(t *testing.T) {
+		slo := validCompositeSLOWithSLIRef()
+		slo.Spec.SLOIndicator = slo.Spec.Objectives[0].SLOIndicator
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec",
+			Message: "'indicator' or 'indicatorRef' fields must either be defined on the 'spec' level (standard SLOs)" +
+				" or on the 'spec.objectives[*]' level (composite SLOs), but not both",
+			Code: rules.ErrorCodeMutuallyExclusive,
+		})
+	})
 }
 
 func TestSLO_Validate_Spec_Indicator(t *testing.T) {
