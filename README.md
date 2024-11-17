@@ -258,7 +258,7 @@ spec:
 - **alertPolicies\[ \]** _AlertPolicy_, optional field.
   section. An alert policy can be defined inline or can refer to an [Alert Policies](#alertpolicy) object,
   in which case the following are required:
-  - **alertPolicyRef** _string_: this is the name or path to the AlertPolicy
+  - **alertPolicyRef** _string_: this is the name of the AlertPolicy
 
 ##### Objectives
 
@@ -594,11 +594,11 @@ spec:
   when the condition indicates that no data is available
 - **conditions\[ \]** _Alert Condition_, an array, (max of one condition), required field.
   A condition can be defined inline or can refer to external Alert condition defined in this case the following are required:
-  - **conditionRef** _string_: this is the name or path the Alert condition
+  - **conditionRef** _string_: this is the name of the Alert condition
 - **notificationTargets\[ \]** _Alert Notification Target_, required field.
   A condition can be defined inline or can refer to an [AlertNotificationTarget](#alertnotificationtarget)
   object, in which case the following are required:
-  - **targetRef** _string_: this is the name or path to the AlertNotificationTarget
+  - **targetRef** _string_: this is the name of the AlertNotificationTarget
 
 > 💡 **Note:** The `conditions` field is of the type `array` of _AlertCondition_
 > but only allows one single condition to be defined.
@@ -619,7 +619,7 @@ spec:
   conditions:
     - conditionRef: cpu-usage-breach
   notificationTargets:
-    - targetRef: OnCallDevopsMailNotification
+    - targetRef: on-call-devops-mail-notification
 ```
 
 An example of an Alert Policy were the Alert Condition is inlined:
@@ -649,7 +649,7 @@ spec:
           lookbackWindow: 1h
           alertAfter: 5m
   notificationTargets:
-    - targetRef: OnCallDevopsMailNotification
+    - targetRef: on-call-devops-mail-notification
 ```
 
 ---
