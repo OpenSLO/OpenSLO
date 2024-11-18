@@ -622,7 +622,7 @@ spec:
     - targetRef: on-call-devops-mail-notification
 ```
 
-An example of an Alert Policy were the Alert Condition is inlined:
+An example of an Alert Policy where the Alert Condition is inlined:
 
 ```yaml
 apiVersion: openslo/v1
