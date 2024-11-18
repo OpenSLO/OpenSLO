@@ -44,7 +44,7 @@ type SLIRatioMetric struct {
 }
 
 type SLIMetricSpec struct {
-	DataSourceRef    string          `json:"dataSourceRef,omitempty"`
-	DataSourceSpec   *DataSourceSpec `json:"dataSourceSpec,omitempty"`
-	MetricSourceSpec map[string]any  `json:"spec,omitempty"`
+	DataSourceRef  string          `json:"dataSourceRef,omitempty"`
+	DataSourceSpec *DataSourceSpec `json:"dataSourceSpec,omitempty"`
+	Spec           map[string]any  `json:"spec,omitempty"`
 }
