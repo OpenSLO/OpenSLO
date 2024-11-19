@@ -1,4 +1,4 @@
-# v2alpha1
+# v2alpha
 
 This is the place for refining ideas for new versions of OpenSLO spec. It's not supposed to be stable, this is a living document
 
@@ -23,7 +23,7 @@ in the specification to reach that goal.
 it tells which kind of object should be referred there. This change should also apply to each objective.
 
 ```yaml
-apiVersion: openslo.com/v2alpha1
+apiVersion: openslo.com/v2alpha
 kind: SLO
 metadata:
   name: string
@@ -55,7 +55,7 @@ spec:
 Objectives are the thresholds for your SLOs. You can use objectives to define
 the tolerance levels for your metrics.
 
-**Note:** While in the previous version only one objective was allowed for Threshold metrics, with `v2alpha1` we'll allow any number of objectives.
+**Note:** While in the previous version only one objective was allowed for Threshold metrics, with `v2alpha` we'll allow any number of objectives.
 
 ```yaml
 objectives:
@@ -77,7 +77,7 @@ objectives:
 **Rationale:** Get rid of `metricSource` (reduce the level of indentation), and use the new syntax of `DataSource` directly.
 
 ```yaml
-apiVersion: openslo.com/v2alpha1
+apiVersion: openslo.com/v2alpha
 kind: SLI
 metadata:
   name: string
@@ -144,7 +144,7 @@ spec:
 An example of an SLO where SLI is inlined:
 
 ```yaml
-apiVersion: openslo.com/v2alpha1
+apiVersion: openslo.com/v2alpha
 kind: SLO
 metadata:
   name: foo-slo

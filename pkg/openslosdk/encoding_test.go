@@ -14,7 +14,7 @@ import (
 	"github.com/OpenSLO/OpenSLO/internal/assert"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha1"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha"
 )
 
 //go:embed test_data
@@ -200,15 +200,15 @@ func TestDecode(t *testing.T) {
 			testDataFile: "decode/v1_slos.yaml",
 		},
 		"v2alpha data source": {
-			testDataFile: "decode/v2alpha1_data_source.yaml",
+			testDataFile: "decode/v2alpha_data_source.yaml",
 			expected: []openslo.Object{
-				v2alpha1.DataSource{
-					APIVersion: openslo.VersionV2alpha1,
+				v2alpha.DataSource{
+					APIVersion: openslo.VersionV2alpha,
 					Kind:       openslo.KindDataSource,
-					Metadata: v2alpha1.Metadata{
+					Metadata: v2alpha.Metadata{
 						Name: "cloudWatch-prod",
 					},
-					Spec: v2alpha1.DataSourceSpec{
+					Spec: v2alpha.DataSourceSpec{
 						Description: "CloudWatch Production Data Source",
 						Type:        "cloudWatch",
 						ConnectionDetails: json.RawMessage(
@@ -220,28 +220,28 @@ func TestDecode(t *testing.T) {
 		},
 		"v2alpha slos": {
 			expected: []openslo.Object{
-				v2alpha1.SLO{
-					APIVersion: openslo.VersionV2alpha1,
+				v2alpha.SLO{
+					APIVersion: openslo.VersionV2alpha,
 					Kind:       openslo.KindSLO,
-					Metadata: v2alpha1.Metadata{
+					Metadata: v2alpha.Metadata{
 						Name: "foo-slo",
 					},
-					Spec: v2alpha1.SLOSpec{
+					Spec: v2alpha.SLOSpec{
 						Service: "foo",
-						SLI: &v2alpha1.SLOEmbeddedSLI{
-							Metadata: v2alpha1.Metadata{
+						SLI: &v2alpha.SLOEmbeddedSLI{
+							Metadata: v2alpha.Metadata{
 								Name: "foo-error",
 							},
-							Spec: v2alpha1.SLISpec{
-								RatioMetric: &v2alpha1.SLIRatioMetric{
+							Spec: v2alpha.SLISpec{
+								RatioMetric: &v2alpha.SLIRatioMetric{
 									Counter: true,
-									Good: &v2alpha1.SLIMetricSpec{
+									Good: &v2alpha.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
 										Spec: map[string]any{
 											"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
 										},
 									},
-									Total: &v2alpha1.SLIMetricSpec{
+									Total: &v2alpha.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
 										Spec: map[string]any{
 											"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
@@ -250,7 +250,7 @@ func TestDecode(t *testing.T) {
 								},
 							},
 						},
-						Objectives: []v2alpha1.Objective{
+						Objectives: []v2alpha.Objective{
 							{
 								DisplayName: "Foo Total Errors",
 								Target:      ptr(0.98),
@@ -258,27 +258,27 @@ func TestDecode(t *testing.T) {
 						},
 					},
 				},
-				v2alpha1.SLO{
-					APIVersion: openslo.VersionV2alpha1,
+				v2alpha.SLO{
+					APIVersion: openslo.VersionV2alpha,
 					Kind:       openslo.KindSLO,
-					Metadata: v2alpha1.Metadata{
+					Metadata: v2alpha.Metadata{
 						Name: "bar-slo",
 					},
-					Spec: v2alpha1.SLOSpec{
+					Spec: v2alpha.SLOSpec{
 						Service: "bar",
-						SLI: &v2alpha1.SLOEmbeddedSLI{
-							Metadata: v2alpha1.Metadata{
+						SLI: &v2alpha.SLOEmbeddedSLI{
+							Metadata: v2alpha.Metadata{
 								Name: "bar-error",
 							},
-							Spec: v2alpha1.SLISpec{
-								ThresholdMetric: &v2alpha1.SLIMetricSpec{
+							Spec: v2alpha.SLISpec{
+								ThresholdMetric: &v2alpha.SLIMetricSpec{
 									Spec: map[string]any{
 										"region":       "eu-central-1",
 										"clusterId":    "metrics-cluster",
 										"databaseName": "metrics-db",
 										"query":        "SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to",
 									},
-									DataSourceSpec: &v2alpha1.DataSourceSpec{
+									DataSourceSpec: &v2alpha.DataSourceSpec{
 										Description: "Metrics Database",
 										Type:        "redshift",
 										ConnectionDetails: json.RawMessage(
@@ -291,7 +291,7 @@ func TestDecode(t *testing.T) {
 					},
 				},
 			},
-			testDataFile: "decode/v2alpha1_slos.yaml",
+			testDataFile: "decode/v2alpha_slos.yaml",
 		},
 	}
 	for name, tc := range tests {
