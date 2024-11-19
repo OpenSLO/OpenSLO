@@ -325,7 +325,8 @@ Either `target` or `targetPercent` must be used.
 ##### Notes (Composite SLO)
 
 **Composite SLO** goal of composite SLO is to enable user an end-to-end journey, it is done by defining many
-independent objectives. Each objective can have different queries, data sources and targets. The basic implementation
+independent objectives with indicator defined on the objective level.
+Each objective can have different queries, data sources and targets. The basic implementation
 assumes that the Composite Error Budget burns if the Error Budget for any of the SLO objectives within the Composite SLO
 is burning. The logic of those calculations is the same for Composite SLOs as for regular (standard) objectives and SLOs.
 
