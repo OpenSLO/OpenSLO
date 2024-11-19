@@ -1,4 +1,4 @@
-- apiVersion: openslo/v1
+- apiVersion: openslo/v1alpha
   kind: Service
   metadata:
     displayName: Example Service
