@@ -52,8 +52,8 @@ type AlertPolicySpec struct {
 }
 
 type AlertPolicyCondition struct {
-	*AlertPolicyConditionRef    `json:",omitempty"`
-	*AlertPolicyConditionInline `json:",omitempty"`
+	*AlertPolicyConditionRef
+	*AlertPolicyConditionInline
 }
 
 type AlertPolicyConditionInline struct {
@@ -67,8 +67,8 @@ type AlertPolicyConditionRef struct {
 }
 
 type AlertPolicyNotificationTarget struct {
-	*AlertPolicyNotificationTargetRef    `json:",omitempty"`
-	*AlertPolicyNotificationTargetInline `json:",omitempty"`
+	*AlertPolicyNotificationTargetRef
+	*AlertPolicyNotificationTargetInline
 }
 
 type AlertPolicyNotificationTargetInline struct {

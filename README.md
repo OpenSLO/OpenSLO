@@ -273,7 +273,7 @@ objectives:
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO, can't be used with targetPercent
     targetPercent: numeric [0.0, 100) # budget target for given objective of the SLO, can't be used with target
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
-    timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
+    timeSliceWindow: duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
     indicator: # required only when creating composite SLO, see SLI below for more details
     indicatorRef: string # required only when creating composite SLO, required if indicator is not given.
     compositeWeight: numeric (0.0, inf+] # optional, supported only when declaring multiple objectives, default value 1.

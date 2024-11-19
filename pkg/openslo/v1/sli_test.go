@@ -55,27 +55,40 @@ func TestSLI_Validate_Metadata(t *testing.T) {
 }
 
 func TestSLI_Validate_Spec(t *testing.T) {
+	runSLISpecTests(t, "spec", func(spec SLISpec) SLI {
+		sli := validSLI()
+		sli.Spec = spec
+		return sli
+	})
+}
+
+func runSLISpecTests[T openslo.Object](t *testing.T, path string, objectGetter func(SLISpec) T) {
+	t.Helper()
+
 	t.Run("description ok", func(t *testing.T) {
 		sli := validSLI()
 		sli.Spec.Description = strings.Repeat("A", 1050)
-		err := sli.Validate()
+		object := objectGetter(sli.Spec)
+		err := object.Validate()
 		govytest.AssertNoError(t, err)
 	})
 	t.Run("description too long", func(t *testing.T) {
 		sli := validSLI()
 		sli.Spec.Description = strings.Repeat("A", 1051)
-		err := sli.Validate()
+		object := objectGetter(sli.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.description",
+			PropertyName: path + ".description",
 			Code:         rules.ErrorCodeStringMaxLength,
 		})
 	})
 	t.Run("no metric defined", func(t *testing.T) {
 		sli := validSLI()
 		sli.Spec = SLISpec{}
-		err := sli.Validate()
+		object := objectGetter(sli.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec",
+			PropertyName: path,
 			Message:      "one of [ratioMetric, thresholdMetric] properties must be set, none was provided",
 			Code:         rules.ErrorCodeMutuallyExclusive,
 		})
@@ -86,25 +99,27 @@ func TestSLI_Validate_Spec(t *testing.T) {
 			RatioMetric:     &SLIRatioMetric{},
 			ThresholdMetric: &SLIMetricSpec{},
 		}
-		err := sli.Validate()
-		fmt.Println(err)
+		object := objectGetter(sli.Spec)
+		err := object.Validate()
 		govytest.AssertErrorContains(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec",
+			PropertyName: path,
 			Message:      "[ratioMetric, thresholdMetric] properties are mutually exclusive, provide only one of them",
 			Code:         rules.ErrorCodeMutuallyExclusive,
 		})
 	})
-}
-
-func TestSLI_Validate_Spec_ThresholdMetric(t *testing.T) {
-	runSLIMetricSpecTests(t, "spec.thresholdMetric", func(m SLIMetricSpec) SLI {
+	runSLIMetricSpecTests(t, path+".thresholdMetric", func(m SLIMetricSpec) T {
 		sli := validThresholdSLI()
 		sli.Spec.ThresholdMetric = &m
-		return sli
+		return objectGetter(sli.Spec)
+	})
+	t.Run("ratioMetric", func(t *testing.T) {
+		runSLIRatioMetricTests(t, path+".ratioMetric", func(s SLISpec) T {
+			return objectGetter(s)
+		})
 	})
 }
 
-func TestSLI_Validate_Spec_RatioMetric(t *testing.T) {
+func runSLIRatioMetricTests[T openslo.Object](t *testing.T, path string, objectGetter func(SLISpec) T) {
 	testCases := map[string]struct {
 		metric *SLIRatioMetric
 		code   govy.ErrorCode
@@ -169,57 +184,60 @@ func TestSLI_Validate_Spec_RatioMetric(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			sli := validSLI()
 			sli.Spec.RatioMetric = tc.metric
-			err := sli.Validate()
+			object := objectGetter(sli.Spec)
+			err := object.Validate()
 			govytest.AssertError(t, err, govytest.ExpectedRuleError{
-				PropertyName: "spec.ratioMetric",
+				PropertyName: path,
 				Code:         tc.code,
 			})
 		})
 	}
-}
 
-func TestSLI_Validate_Spec_RatioMetric_FractionMetrics(t *testing.T) {
-	runSLIMetricSpecTests(t, "spec.ratioMetric.total", func(m SLIMetricSpec) SLI {
-		sli := validGoodOverTotalSLI()
-		sli.Spec.RatioMetric.Total = &m
-		return sli
-	})
-	runSLIMetricSpecTests(t, "spec.ratioMetric.good", func(m SLIMetricSpec) SLI {
-		sli := validGoodOverTotalSLI()
-		sli.Spec.RatioMetric.Good = &m
-		return sli
-	})
-	runSLIMetricSpecTests(t, "spec.ratioMetric.bad", func(m SLIMetricSpec) SLI {
-		sli := validBadOverTotalSLI()
-		sli.Spec.RatioMetric.Bad = &m
-		return sli
-	})
-}
-
-func TestSLI_Validate_Spec_RatioMetric_Raw(t *testing.T) {
-	runSLIMetricSpecTests(t, "spec.ratioMetric.raw", func(m SLIMetricSpec) SLI {
-		sli := validRawSLI()
-		sli.Spec.RatioMetric.Raw = &m
-		sli.Spec.RatioMetric.RawType = SLIRawMetricTypeSuccess
-		return sli
-	})
-	t.Run("invalid rawType", func(t *testing.T) {
-		sli := validRawSLI()
-		sli.Spec.RatioMetric.RawType = "invalid"
-		err := sli.Validate()
-		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.ratioMetric.rawType",
-			Code:         rules.ErrorCodeOneOf,
+	t.Run("fraction metrics", func(t *testing.T) {
+		runSLIMetricSpecTests(t, path+".total", func(m SLIMetricSpec) T {
+			sli := validGoodOverTotalSLI()
+			sli.Spec.RatioMetric.Total = &m
+			return objectGetter(sli.Spec)
+		})
+		runSLIMetricSpecTests(t, path+".good", func(m SLIMetricSpec) T {
+			sli := validGoodOverTotalSLI()
+			sli.Spec.RatioMetric.Good = &m
+			return objectGetter(sli.Spec)
+		})
+		runSLIMetricSpecTests(t, path+".bad", func(m SLIMetricSpec) T {
+			sli := validBadOverTotalSLI()
+			sli.Spec.RatioMetric.Bad = &m
+			return objectGetter(sli.Spec)
 		})
 	})
-	for _, rawType := range []SLIRawMetricType{SLIRawMetricTypeSuccess, SLIRawMetricTypeFailure} {
-		t.Run(fmt.Sprintf("rawType %s", rawType), func(t *testing.T) {
+
+	t.Run("raw metrics", func(t *testing.T) {
+		runSLIMetricSpecTests(t, path+".raw", func(m SLIMetricSpec) T {
 			sli := validRawSLI()
-			sli.Spec.RatioMetric.RawType = rawType
-			err := sli.Validate()
-			govytest.AssertNoError(t, err)
+			sli.Spec.RatioMetric.Raw = &m
+			sli.Spec.RatioMetric.RawType = SLIRawMetricTypeSuccess
+			return objectGetter(sli.Spec)
 		})
-	}
+		t.Run("invalid rawType", func(t *testing.T) {
+			sli := validRawSLI()
+			sli.Spec.RatioMetric.RawType = "invalid"
+			object := objectGetter(sli.Spec)
+			err := object.Validate()
+			govytest.AssertError(t, err, govytest.ExpectedRuleError{
+				PropertyName: path + ".rawType",
+				Code:         rules.ErrorCodeOneOf,
+			})
+		})
+		for _, rawType := range validSLIRawMetricTypes {
+			t.Run(fmt.Sprintf("rawType %s", rawType), func(t *testing.T) {
+				sli := validRawSLI()
+				sli.Spec.RatioMetric.RawType = rawType
+				object := objectGetter(sli.Spec)
+				err := object.Validate()
+				govytest.AssertNoError(t, err)
+			})
+		}
+	})
 }
 
 func runSLIMetricSpecTests[T openslo.Object](t *testing.T, path string, objectGetter func(m SLIMetricSpec) T) {

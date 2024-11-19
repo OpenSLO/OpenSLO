@@ -85,10 +85,11 @@ func runAlertConditionSpecTests[T openslo.Object](
 		)
 	})
 	t.Run("condition", func(t *testing.T) {
-		runAlertConditionTypeTests(t, "spec", func(s AlertConditionType) AlertCondition {
+		runAlertConditionTypeTests(t, path, func(s AlertConditionType) T {
 			condition := validAlertCondition()
 			condition.Spec.Condition = s
-			return condition
+			object := objectGetter(condition.Spec)
+			return object
 		})
 	})
 }

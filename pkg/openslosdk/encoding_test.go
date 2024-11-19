@@ -150,35 +150,37 @@ func TestDecode(t *testing.T) {
 					Spec: v1.SLOSpec{
 						BudgetingMethod: "Occurrences",
 						Service:         "foo",
-						Indicator: &v1.SLOIndicator{
-							Metadata: v1.Metadata{
-								Name: "good",
-							},
-							Spec: v1.SLISpec{
-								RatioMetric: &v1.SLIRatioMetric{
-									Counter: true,
-									Good: &v1.SLIMetricSpec{
-										MetricSource: v1.SLIMetricSource{
-											MetricSourceRef: "thanos",
-											Type:            "Prometheus",
-											Spec: map[string]any{
-												"query": `http_requests_total{status_code="200"}`,
-												"dimensions": []any{
-													"following",
-													"another",
+						SLOIndicator: &v1.SLOIndicator{
+							SLOIndicatorInline: &v1.SLOIndicatorInline{
+								Metadata: v1.Metadata{
+									Name: "good",
+								},
+								Spec: v1.SLISpec{
+									RatioMetric: &v1.SLIRatioMetric{
+										Counter: true,
+										Good: &v1.SLIMetricSpec{
+											MetricSource: v1.SLIMetricSource{
+												MetricSourceRef: "thanos",
+												Type:            "Prometheus",
+												Spec: map[string]any{
+													"query": `http_requests_total{status_code="200"}`,
+													"dimensions": []any{
+														"following",
+														"another",
+													},
 												},
 											},
 										},
-									},
-									Total: &v1.SLIMetricSpec{
-										MetricSource: v1.SLIMetricSource{
-											MetricSourceRef: "thanos",
-											Type:            "Prometheus",
-											Spec: map[string]any{
-												"query": `http_requests_total{}`,
-												"dimensions": []any{
-													"following",
-													"another",
+										Total: &v1.SLIMetricSpec{
+											MetricSource: v1.SLIMetricSource{
+												MetricSourceRef: "thanos",
+												Type:            "Prometheus",
+												Spec: map[string]any{
+													"query": `http_requests_total{}`,
+													"dimensions": []any{
+														"following",
+														"another",
+													},
 												},
 											},
 										},
@@ -186,10 +188,10 @@ func TestDecode(t *testing.T) {
 								},
 							},
 						},
-						Objectives: []v1.Objective{
+						Objectives: []v1.SLOObjective{
 							{
 								DisplayName: "Foo Availability",
-								Target:      0.98,
+								Target:      ptr(0.98),
 							},
 						},
 					},
@@ -314,35 +316,37 @@ func TestEncode(t *testing.T) {
 		Spec: v1.SLOSpec{
 			BudgetingMethod: "Occurrences",
 			Service:         "foo",
-			Indicator: &v1.SLOIndicator{
-				Metadata: v1.Metadata{
-					Name: "good",
-				},
-				Spec: v1.SLISpec{
-					RatioMetric: &v1.SLIRatioMetric{
-						Counter: true,
-						Good: &v1.SLIMetricSpec{
-							MetricSource: v1.SLIMetricSource{
-								MetricSourceRef: "thanos",
-								Type:            "Prometheus",
-								Spec: map[string]any{
-									"query": `http_requests_total{status_code="200"}`,
-									"dimensions": []any{
-										"following",
-										"another",
+			SLOIndicator: &v1.SLOIndicator{
+				SLOIndicatorInline: &v1.SLOIndicatorInline{
+					Metadata: v1.Metadata{
+						Name: "good",
+					},
+					Spec: v1.SLISpec{
+						RatioMetric: &v1.SLIRatioMetric{
+							Counter: true,
+							Good: &v1.SLIMetricSpec{
+								MetricSource: v1.SLIMetricSource{
+									MetricSourceRef: "thanos",
+									Type:            "Prometheus",
+									Spec: map[string]any{
+										"query": `http_requests_total{status_code="200"}`,
+										"dimensions": []any{
+											"following",
+											"another",
+										},
 									},
 								},
 							},
-						},
-						Total: &v1.SLIMetricSpec{
-							MetricSource: v1.SLIMetricSource{
-								MetricSourceRef: "thanos",
-								Type:            "Prometheus",
-								Spec: map[string]any{
-									"query": `http_requests_total{}`,
-									"dimensions": []any{
-										"following",
-										"another",
+							Total: &v1.SLIMetricSpec{
+								MetricSource: v1.SLIMetricSource{
+									MetricSourceRef: "thanos",
+									Type:            "Prometheus",
+									Spec: map[string]any{
+										"query": `http_requests_total{}`,
+										"dimensions": []any{
+											"following",
+											"another",
+										},
 									},
 								},
 							},
@@ -350,10 +354,10 @@ func TestEncode(t *testing.T) {
 					},
 				},
 			},
-			Objectives: []v1.Objective{
+			Objectives: []v1.SLOObjective{
 				{
 					DisplayName: "Foo Availability",
-					Target:      0.98,
+					Target:      ptr(0.98),
 				},
 			},
 		},
@@ -377,7 +381,7 @@ func TestEncode(t *testing.T) {
 			var buf bytes.Buffer
 			err := Encode(&buf, getFileFormat(tc.testDataFile), tc.objects...)
 			assert.Require(t, assert.NoError(t, err))
-			assert.Equal(t, data, buf.Bytes())
+			assert.Equal(t, string(data), buf.String())
 		})
 	}
 }
