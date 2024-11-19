@@ -198,6 +198,16 @@ var sloIndicatorValidation = govy.New(
 	Cascade(govy.CascadeModeStop)
 
 var sloTimeWindowValidation = govy.New(
+	govy.For(govy.GetSelf[SLOTimeWindow]()).
+		Rules(govy.NewRule(func(s SLOTimeWindow) error {
+			if s.IsRolling && s.Calendar != nil {
+				return govy.NewRuleError("'calendar' cannot be set when 'isRolling' is true")
+			}
+			if !s.IsRolling && s.Calendar == nil {
+				return govy.NewRuleError("'calendar' must be set when 'isRolling' is false")
+			}
+			return nil
+		})),
 	govy.For(func(t SLOTimeWindow) DurationShorthand { return t.Duration }).
 		WithName("duration").
 		Required().

@@ -150,6 +150,35 @@ func TestSLO_Validate_Spec_TimeWindows(t *testing.T) {
 			return slo
 		})
 	})
+	t.Run("calendar set when isRolling is true", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.TimeWindow[0] = SLOTimeWindow{
+			Duration:  NewDurationShorthand(1, DurationShorthandUnitWeek),
+			IsRolling: true,
+			Calendar: &SLOCalendar{
+				StartTime: "2022-01-01 12:00:00",
+				TimeZone:  "America/New_York",
+			},
+		}
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.timeWindow[0]",
+			Message:      "'calendar' cannot be set when 'isRolling' is true",
+		})
+	})
+	t.Run("calendar missing when isRolling is false", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.TimeWindow[0] = SLOTimeWindow{
+			Duration:  NewDurationShorthand(1, DurationShorthandUnitWeek),
+			IsRolling: false,
+			Calendar:  nil,
+		}
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.timeWindow[0]",
+			Message:      "'calendar' must be set when 'isRolling' is false",
+		})
+	})
 }
 
 func TestSLO_Validate_Spec_Objectives(t *testing.T) {
