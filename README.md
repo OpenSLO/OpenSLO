@@ -36,7 +36,7 @@
 - [Examples](examples/README.md)
 - [Glossary](glossary/README.md)
 - Work in progress for future versions
-  - [v2alpha1](enhancements/v2alpha1.md)
+  - [v2alpha](enhancements/v2alpha.md)
 - [SDK](#sdk)
 
 ## Introduction
@@ -151,7 +151,7 @@ prescriptive stance on this issue.
 
 A DataSource represents connection details with a particular metric source.
 
-> [Check work in progress for v2.](enhancements/v2alpha1.md#datasource)
+> [Check work in progress for v2.](enhancements/v2alpha.md#datasource)
 
 ```yaml
 apiVersion: openslo/v1
@@ -198,7 +198,7 @@ spec:
 A service level objective (SLO) is a target value or a range of values for
 a service level that is described by a service level indicator (SLI).
 
-> [Check work in progress for v2.](enhancements/v2alpha1.md#slo)
+> [Check work in progress for v2.](enhancements/v2alpha.md#slo)
 
 ```yaml
 apiVersion: openslo/v1
@@ -350,7 +350,7 @@ impact:
 
 A service level indicator (SLI) represents how to read metrics from data sources.
 
-> [Check work in progress for v2.](enhancements/v2alpha1.md#sli)
+> [Check work in progress for v2.](enhancements/v2alpha.md#sli)
 
 ```yaml
 apiVersion: openslo/v1

@@ -1,4 +1,4 @@
-- apiVersion: openslo.com/v2alpha1
+- apiVersion: openslo.com/v2alpha
   kind: SLO
   metadata:
     name: foo-slo
@@ -21,7 +21,7 @@
     objectives:
       - displayName: Foo Total Errors
         target: 0.98
-- apiVersion: openslo.com/v2alpha1
+- apiVersion: openslo.com/v2alpha
   kind: SLO
   metadata:
     name: bar-slo

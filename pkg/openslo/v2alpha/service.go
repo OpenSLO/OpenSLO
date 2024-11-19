@@ -1,4 +1,4 @@
-package v2alpha1
+package v2alpha
 
 import "github.com/OpenSLO/OpenSLO/pkg/openslo"
 

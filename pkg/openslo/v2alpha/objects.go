@@ -1,4 +1,4 @@
-package v2alpha1
+package v2alpha
 
 import (
 	"slices"
@@ -6,7 +6,7 @@ import (
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
-const APIVersion = openslo.VersionV2alpha1
+const APIVersion = openslo.VersionV2alpha
 
 var supportedKinds = []openslo.Kind{
 	openslo.KindSLO,

@@ -1,4 +1,4 @@
-// Package v2alpha1 contains the OpenSLO specification version v2alpha1 definitions.
+// Package v2alpha contains the OpenSLO specification version v2alpha definitions.
 // It is a prototype of the next version of the OpenSLO specification.
 // It is not stable and is subject to breaking changes.
-package v2alpha1
+package v2alpha
