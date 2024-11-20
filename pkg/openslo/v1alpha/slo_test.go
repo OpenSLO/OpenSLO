@@ -191,6 +191,15 @@ func TestSLO_Validate_Spec_Objectives(t *testing.T) {
 			Code:         rules.ErrorCodeRequired,
 		})
 	})
+	t.Run("value is missing", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.Objectives[0].Value = nil
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.objectives[0].value",
+			Code:         rules.ErrorCodeRequired,
+		})
+	})
 	t.Run("ratioMetrics - operator set", func(t *testing.T) {
 		slo := validSLO()
 		slo.Spec.Objectives[0].Operator = OperatorGT
@@ -225,6 +234,23 @@ func TestSLO_Validate_Spec_Objectives(t *testing.T) {
 			PropertyName: "spec.objectives[0].op",
 			Code:         rules.ErrorCodeOneOf,
 		})
+	})
+	t.Run("budgeting method timeslices - missing timeSliceTarget", func(t *testing.T) {
+		slo := validThresholdSLO()
+		slo.Spec.BudgetingMethod = SLOBudgetingMethodTimeslices
+		slo.Spec.Objectives[0].TimeSliceTarget = nil
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.objectives[0].timeSliceTarget",
+			Code:         rules.ErrorCodeRequired,
+		})
+	})
+	t.Run("budgeting method occurences - missing timeSliceTarget", func(t *testing.T) {
+		slo := validThresholdSLO()
+		slo.Spec.BudgetingMethod = SLOBudgetingMethodOccurrences
+		slo.Spec.Objectives[0].TimeSliceTarget = nil
+		err := slo.Validate()
+		govytest.AssertNoError(t, err)
 	})
 }
 
@@ -283,8 +309,9 @@ func validSLO() SLO {
 					DisplayName:     "Good",
 					BudgetTarget:    ptr(0.995),
 					TimeSliceTarget: ptr(0.95),
+					Value:           ptr(1.0),
 					RatioMetrics: &SLORatioMetrics{
-						Counter: true,
+						Incremental: true,
 						Good: SLOMetricSourceSpec{
 							Source:    "datadog",
 							QueryType: "query",
@@ -335,6 +362,7 @@ func validThresholdSLO() SLO {
 					DisplayName:     "Good",
 					BudgetTarget:    ptr(0.995),
 					TimeSliceTarget: ptr(0.95),
+					Value:           ptr(1.0),
 				},
 			},
 		},

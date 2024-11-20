@@ -78,7 +78,7 @@ type SLOMetricSourceSpec struct {
 
 type SLOObjective struct {
 	DisplayName     string           `json:"displayName"`
-	Value           float64          `json:"value"`
+	Value           *float64         `json:"value"`
 	RatioMetrics    *SLORatioMetrics `json:"ratioMetrics"`
 	BudgetTarget    *float64         `json:"target"`
 	TimeSliceTarget *float64         `json:"timeSliceTarget,omitempty"`
@@ -86,9 +86,9 @@ type SLOObjective struct {
 }
 
 type SLORatioMetrics struct {
-	Good    SLOMetricSourceSpec `json:"good"`
-	Total   SLOMetricSourceSpec `json:"total"`
-	Counter bool                `json:"counter"`
+	Good        SLOMetricSourceSpec `json:"good"`
+	Total       SLOMetricSourceSpec `json:"total"`
+	Incremental bool                `json:"incremental"`
 }
 
 type SLOTimeWindow struct {
@@ -167,6 +167,8 @@ var sloValidation = govy.New(
 ).WithNameFunc(internal.ObjectNameFunc[SLO])
 
 var sloSpecValidation = govy.New(
+	govy.For(govy.GetSelf[SLOSpec]()).
+		Include(sloTimeSlicesObjectiveValidation),
 	govy.For(func(spec SLOSpec) string { return spec.Description }).
 		WithName("description").
 		Rules(rules.StringMaxLength(1050)),
@@ -233,6 +235,9 @@ var sloObjectiveValidation = govy.New(
 	govy.ForPointer(func(s SLOObjective) *SLORatioMetrics { return s.RatioMetrics }).
 		WithName("ratioMetrics").
 		Include(sloRatioMetricsValidation),
+	govy.ForPointer(func(s SLOObjective) *float64 { return s.Value }).
+		WithName("value").
+		Required(),
 	govy.ForPointer(func(s SLOObjective) *float64 { return s.BudgetTarget }).
 		WithName("target").
 		Required().
@@ -253,6 +258,18 @@ var sloObjectiveValidation = govy.New(
 		).
 		Rules(rules.Forbidden[Operator]()),
 )
+
+var sloTimeSlicesObjectiveValidation = govy.New(
+	govy.ForSlice(func(spec SLOSpec) []SLOObjective { return spec.Objectives }).
+		WithName("objectives").
+		IncludeForEach(govy.New(
+			govy.ForPointer(func(s SLOObjective) *float64 { return s.TimeSliceTarget }).
+				WithName("timeSliceTarget").
+				Required().
+				Rules(rules.GTE(0.0), rules.LTE(1.0)),
+		)),
+).
+	When(func(s SLOSpec) bool { return s.BudgetingMethod == SLOBudgetingMethodTimeslices })
 
 var sloRatioMetricsValidation = govy.New(
 	govy.For(func(s SLORatioMetrics) SLOMetricSourceSpec { return s.Good }).

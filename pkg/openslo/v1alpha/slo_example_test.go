@@ -70,7 +70,7 @@ func ExampleSLO() {
 					BudgetTarget:    ptr(0.995),
 					TimeSliceTarget: ptr(0.95),
 					RatioMetrics: &v1alpha.SLORatioMetrics{
-						Counter: true,
+						Incremental: true,
 						Good: v1alpha.SLOMetricSourceSpec{
 							Source:    "datadog",
 							QueryType: "query",
