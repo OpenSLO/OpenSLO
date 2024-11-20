@@ -2,6 +2,7 @@ package v1alpha
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/nobl9/govy/pkg/govy"
@@ -51,6 +52,21 @@ func TestSLO_Validate_Metadata(t *testing.T) {
 }
 
 func TestSLO_Validate_Spec(t *testing.T) {
+	t.Run("description ok", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.Description = strings.Repeat("A", 1050)
+		err := slo.Validate()
+		govytest.AssertNoError(t, err)
+	})
+	t.Run("description too long", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.Description = strings.Repeat("A", 1051)
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.description",
+			Code:         rules.ErrorCodeStringMaxLength,
+		})
+	})
 	t.Run("invalid budgetingMethod", func(t *testing.T) {
 		slo := validSLO()
 		slo.Spec.BudgetingMethod = "invalid"
@@ -77,15 +93,43 @@ func TestSLO_Validate_Spec(t *testing.T) {
 			Code:         rules.ErrorCodeRequired,
 		})
 	})
-	t.Run("missing both indicator definition in spec and objectives", func(t *testing.T) {
+	t.Run("both 'indicator' and 'ratioMetric' defined", func(t *testing.T) {
 		slo := validSLO()
-		slo.Spec.Indicator = nil
+		slo.Spec.Indicator = &SLOIndicator{
+			ThresholdMetric: slo.Spec.Objectives[0].RatioMetrics.Good,
+		}
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
 			PropertyName: "spec",
-			Message: "'indicator' or 'indicatorRef' fields must either be defined on the 'spec' level (standard SLOs)" +
-				" or on the 'spec.objectives[*]' level (composite SLOs), but not both",
-			Code: rules.ErrorCodeMutuallyExclusive,
+			Message:      "only one of 'indicator' and 'objectives[*].ratioMetrics' can be set",
+			Code:         rules.ErrorCodeMutuallyExclusive,
+		})
+	})
+	t.Run("neither 'indicator' nor 'ratioMetric' defined", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.Indicator = nil
+		slo.Spec.Objectives[0].RatioMetrics = nil
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec",
+			Message:      "one of 'indicator' or 'objectives[*].ratioMetrics' must be set",
+			Code:         rules.ErrorCodeMutuallyExclusive,
+		})
+	})
+	t.Run("missing thresholdMetric", func(t *testing.T) {
+		slo := validThresholdSLO()
+		slo.Spec.Indicator.ThresholdMetric = SLOMetricSourceSpec{}
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.indicator.thresholdMetric",
+			Code:         rules.ErrorCodeRequired,
+		})
+	})
+	t.Run("indicator metric source spec", func(t *testing.T) {
+		runMetricSourceSpecTests(t, "spec.indicator.thresholdMetric", func(s SLOMetricSourceSpec) SLO {
+			slo := validThresholdSLO()
+			slo.Spec.Indicator.ThresholdMetric = s
+			return slo
 		})
 	})
 }
@@ -143,27 +187,38 @@ func TestSLO_Validate_Spec_Objectives(t *testing.T) {
 		slo.Spec.Objectives[0].BudgetTarget = nil
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.objectives[0]",
-			Message:      "one of [target, targetPercent] properties must be set, none was provided",
-			Code:         rules.ErrorCodeMutuallyExclusive,
+			PropertyName: "spec.objectives[0].target",
+			Code:         rules.ErrorCodeRequired,
 		})
 	})
-	t.Run("empty operator", func(t *testing.T) {
+	t.Run("ratioMetrics - operator set", func(t *testing.T) {
 		slo := validSLO()
+		slo.Spec.Objectives[0].Operator = OperatorGT
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.objectives[0].op",
+			Code:         rules.ErrorCodeForbidden,
+		})
+	})
+	t.Run("threshold - empty operator", func(t *testing.T) {
+		slo := validThresholdSLO()
 		slo.Spec.Objectives[0].Operator = ""
 		err := slo.Validate()
-		govytest.AssertNoError(t, err)
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.objectives[0].op",
+			Code:         rules.ErrorCodeRequired,
+		})
 	})
-	t.Run("valid operator values", func(t *testing.T) {
+	t.Run("threshold - valid operator values", func(t *testing.T) {
 		for _, op := range validOperators {
-			slo := validSLO()
+			slo := validThresholdSLO()
 			slo.Spec.Objectives[0].Operator = op
 			err := slo.Validate()
 			govytest.AssertNoError(t, err)
 		}
 	})
-	t.Run("invalid operator value", func(t *testing.T) {
-		slo := validSLO()
+	t.Run("threshold - invalid operator value", func(t *testing.T) {
+		slo := validThresholdSLO()
 		slo.Spec.Objectives[0].Operator = "less_than"
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
@@ -173,7 +228,34 @@ func TestSLO_Validate_Spec_Objectives(t *testing.T) {
 	})
 }
 
-func runSLOMetricSpecValidationTests(t *testing.T) {}
+func runMetricSourceSpecTests(t *testing.T, path string, sloGetter func(s SLOMetricSourceSpec) SLO) {
+	t.Helper()
+
+	for name, spec := range map[string]SLOMetricSourceSpec{
+		".query": {
+			Source:    "datadog",
+			QueryType: "query",
+		},
+		".source": {
+			Query:     "datadog",
+			QueryType: "query",
+		},
+		".queryType": {
+			Source: "datadog",
+			Query:  "query",
+		},
+	} {
+		t.Run("missing "+name, func(t *testing.T) {
+			slo := sloGetter(spec)
+			err := slo.Validate()
+			fmt.Println(err)
+			govytest.AssertError(t, err, govytest.ExpectedRuleError{
+				PropertyName: path + name,
+				Code:         rules.ErrorCodeRequired,
+			})
+		})
+	}
+}
 
 func validSLO() SLO {
 	return NewSLO(
@@ -214,6 +296,45 @@ func validSLO() SLO {
 							Query:     "sum:requests{service:web}",
 						},
 					},
+				},
+			},
+		},
+	)
+}
+
+func validThresholdSLO() SLO {
+	return NewSLO(
+		Metadata{
+			Name:        "web-availability",
+			DisplayName: "SLO for web availability",
+		},
+		SLOSpec{
+			Service: "web",
+			Indicator: &SLOIndicator{
+				ThresholdMetric: SLOMetricSourceSpec{
+					Source:    "datadog",
+					QueryType: "query",
+					Query:     "sum:requests{service:web,status:2xx}",
+				},
+			},
+			TimeWindows: []SLOTimeWindow{
+				{
+					Unit:      SLOTimeWindowUnitWeek,
+					Count:     1,
+					IsRolling: false,
+					Calendar: &SLOCalendar{
+						StartTime: "2022-01-01 12:00:00",
+						TimeZone:  "America/New_York",
+					},
+				},
+			},
+			BudgetingMethod: SLOBudgetingMethodTimeslices,
+			Objectives: []SLOObjective{
+				{
+					Operator:        OperatorGT,
+					DisplayName:     "Good",
+					BudgetTarget:    ptr(0.995),
+					TimeSliceTarget: ptr(0.95),
 				},
 			},
 		},

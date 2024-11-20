@@ -12,7 +12,7 @@ import (
 func ExampleSLO() {
 	// Raw SLO object in YAML format.
 	const sloYAML = `
-- apiVersion: openslo/v1
+- apiVersion: openslo/v1alpha
   kind: SLO
   metadata:
     name: web-availability
@@ -20,24 +20,9 @@ func ExampleSLO() {
   spec:
     description: X% of search requests are successful
     service: web
-    indicator:
-      metadata:
-        name: web-successful-requests-ratio
-      spec:
-        ratioMetric:
-          counter: true
-          good:
-            metricSource:
-              type: Prometheus
-              spec:
-                query: sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})
-          total:
-            metricSource:
-              type: Prometheus
-              spec:
-                query: sum(http_requests{k8s_cluster="prod",component="web"})
-    timeWindow:
-      - duration: 1w
+    timeWindows:
+      - unit: Week
+        count: 1
         isRolling: false
         calendar:
           startTime: 2022-01-01 12:00:00
@@ -45,10 +30,18 @@ func ExampleSLO() {
     budgetingMethod: Timeslices
     objectives:
       - displayName: Good
-        op: gt
         target: 0.995
         timeSliceTarget: 0.95
-        timeSliceWindow: 1m
+        ratioMetrics:
+          counter: true
+          good:
+            source: datadog
+            queryType: query
+            query: sum:requests{service:web,status:2xx}
+          total:
+            source: datadog
+            queryType: query
+            query: sum:requests{service:web}
 `
 	// Define SLO programmatically.
 	slo := v1alpha.NewSLO(
@@ -57,12 +50,38 @@ func ExampleSLO() {
 			DisplayName: "SLO for web availability",
 		},
 		v1alpha.SLOSpec{
-			Description:     "X% of search requests are successful",
-			Service:         "web",
+			Description: "X% of search requests are successful",
+			Service:     "web",
+			TimeWindows: []v1alpha.SLOTimeWindow{
+				{
+					Unit:      v1alpha.SLOTimeWindowUnitWeek,
+					Count:     1,
+					IsRolling: false,
+					Calendar: &v1alpha.SLOCalendar{
+						StartTime: "2022-01-01 12:00:00",
+						TimeZone:  "America/New_York",
+					},
+				},
+			},
 			BudgetingMethod: v1alpha.SLOBudgetingMethodTimeslices,
 			Objectives: []v1alpha.SLOObjective{
 				{
-					DisplayName: "Good",
+					DisplayName:     "Good",
+					BudgetTarget:    ptr(0.995),
+					TimeSliceTarget: ptr(0.95),
+					RatioMetrics: &v1alpha.SLORatioMetrics{
+						Counter: true,
+						Good: v1alpha.SLOMetricSourceSpec{
+							Source:    "datadog",
+							QueryType: "query",
+							Query:     "sum:requests{service:web,status:2xx}",
+						},
+						Total: v1alpha.SLOMetricSourceSpec{
+							Source:    "datadog",
+							QueryType: "query",
+							Query:     "sum:requests{service:web}",
+						},
+					},
 				},
 			},
 		},
@@ -86,7 +105,7 @@ func ExampleSLO() {
 	}
 
 	// Output:
-	// - apiVersion: openslo/v1
+	// - apiVersion: openslo/v1alpha
 	//   kind: SLO
 	//   metadata:
 	//     displayName: SLO for web availability
@@ -94,33 +113,30 @@ func ExampleSLO() {
 	//   spec:
 	//     budgetingMethod: Timeslices
 	//     description: X% of search requests are successful
-	//     indicator:
-	//       metadata:
-	//         name: web-successful-requests-ratio
-	//       spec:
-	//         ratioMetric:
-	//           counter: true
-	//           good:
-	//             metricSource:
-	//               spec:
-	//                 query: sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})
-	//               type: Prometheus
-	//           total:
-	//             metricSource:
-	//               spec:
-	//                 query: sum(http_requests{k8s_cluster="prod",component="web"})
-	//               type: Prometheus
+	//     indicator: null
 	//     objectives:
 	//     - displayName: Good
-	//       op: gt
+	//       ratioMetrics:
+	//         counter: true
+	//         good:
+	//           query: sum:requests{service:web,status:2xx}
+	//           queryType: query
+	//           source: datadog
+	//         total:
+	//           query: sum:requests{service:web}
+	//           queryType: query
+	//           source: datadog
 	//       target: 0.995
 	//       timeSliceTarget: 0.95
-	//       timeSliceWindow: 1m
+	//       value: 0
 	//     service: web
-	//     timeWindow:
+	//     timeWindows:
 	//     - calendar:
 	//         startTime: "2022-01-01 12:00:00"
 	//         timeZone: America/New_York
-	//       duration: 1w
+	//       count: 1
 	//       isRolling: false
+	//       unit: Week
 }
+
+func ptr[T any](v T) *T { return &v }

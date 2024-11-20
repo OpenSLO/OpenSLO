@@ -2,6 +2,7 @@ package v1
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/nobl9/govy/pkg/govy"
@@ -54,6 +55,21 @@ func TestSLO_Validate_Metadata(t *testing.T) {
 }
 
 func TestSLO_Validate_Spec(t *testing.T) {
+	t.Run("description ok", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.Description = strings.Repeat("A", 1050)
+		err := slo.Validate()
+		govytest.AssertNoError(t, err)
+	})
+	t.Run("description too long", func(t *testing.T) {
+		slo := validSLO()
+		slo.Spec.Description = strings.Repeat("A", 1051)
+		err := slo.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: "spec.description",
+			Code:         rules.ErrorCodeStringMaxLength,
+		})
+	})
 	t.Run("invalid budgetingMethod", func(t *testing.T) {
 		slo := validSLO()
 		slo.Spec.BudgetingMethod = "invalid"
@@ -494,6 +510,20 @@ func runSLOIndicatorTests(t *testing.T, path string, sloGetter func(SLOIndicator
 	})
 }
 
+func TestSLO_IsComposite(t *testing.T) {
+	slo := validSLO()
+	assert.False(t, slo.IsComposite())
+
+	slo = validCompositeSLOWithSLIRef()
+	assert.True(t, slo.IsComposite())
+
+	t.Run("at least one objective is composite", func(t *testing.T) {
+		slo.Spec.Objectives = append(slo.Spec.Objectives, slo.Spec.Objectives[0])
+		slo.Spec.Objectives[0].SLOIndicator = nil
+		assert.True(t, slo.IsComposite())
+	})
+}
+
 func validSLO() SLO {
 	return NewSLO(
 		Metadata{
@@ -560,20 +590,6 @@ func validSLO() SLO {
 			},
 		},
 	)
-}
-
-func TestSLO_IsComposite(t *testing.T) {
-	slo := validSLO()
-	assert.False(t, slo.IsComposite())
-
-	slo = validCompositeSLOWithSLIRef()
-	assert.True(t, slo.IsComposite())
-
-	t.Run("at least one objective is composite", func(t *testing.T) {
-		slo.Spec.Objectives = append(slo.Spec.Objectives, slo.Spec.Objectives[0])
-		slo.Spec.Objectives[0].SLOIndicator = nil
-		assert.True(t, slo.IsComposite())
-	})
 }
 
 func validSLOWithInlinedAlertPolicy() SLO {

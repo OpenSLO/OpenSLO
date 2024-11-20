@@ -1,12 +1,14 @@
 package v1alpha
 
 import (
+	"errors"
 	"time"
+
+	"github.com/nobl9/govy/pkg/govy"
+	"github.com/nobl9/govy/pkg/rules"
 
 	"github.com/OpenSLO/OpenSLO/internal"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
-	"github.com/nobl9/govy/pkg/govy"
-	"github.com/nobl9/govy/pkg/rules"
 )
 
 var _ = openslo.Object(SLO{})
@@ -141,6 +143,26 @@ var sloValidation = govy.New(
 	validationRulesMetadata(func(s SLO) Metadata { return s.Metadata }),
 	govy.For(func(s SLO) SLOSpec { return s.Spec }).
 		WithName("spec").
+		Cascade(govy.CascadeModeStop).
+		Rules(
+			govy.NewRule(func(s SLOSpec) error {
+				hasRatioMetrics := false
+				for i := range s.Objectives {
+					if s.Objectives[i].RatioMetrics != nil {
+						hasRatioMetrics = true
+						break
+					}
+				}
+				hasIndicator := s.Indicator != nil
+				if hasRatioMetrics && hasIndicator {
+					return errors.New("only one of 'indicator' and 'objectives[*].ratioMetrics' can be set")
+				}
+				if !hasRatioMetrics && !hasIndicator {
+					return errors.New("one of 'indicator' or 'objectives[*].ratioMetrics' must be set")
+				}
+				return nil
+			}).WithErrorCode(rules.ErrorCodeMutuallyExclusive),
+		).
 		Include(sloSpecValidation),
 ).WithNameFunc(internal.ObjectNameFunc[SLO])
 
@@ -165,7 +187,7 @@ var sloSpecValidation = govy.New(
 	govy.ForSlice(func(spec SLOSpec) []SLOObjective { return spec.Objectives }).
 		WithName("objectives").
 		IncludeForEach(sloObjectiveValidation),
-)
+).Cascade(govy.CascadeModeContinue)
 
 var sloIndicatorValidation = govy.New(
 	govy.For(func(i SLOIndicator) SLOMetricSourceSpec { return i.ThresholdMetric }).
@@ -221,7 +243,15 @@ var sloObjectiveValidation = govy.New(
 			func(s SLOObjective) bool { return s.RatioMetrics == nil },
 			govy.WhenDescription("only required when 'thresholdMetric' is set"),
 		).
+		Required().
 		Rules(rules.OneOf(validOperators...)),
+	govy.For(func(s SLOObjective) Operator { return s.Operator }).
+		WithName("op").
+		When(
+			func(s SLOObjective) bool { return s.RatioMetrics != nil },
+			govy.WhenDescription("forbidden when 'ratioMetrics' is set"),
+		).
+		Rules(rules.Forbidden[Operator]()),
 )
 
 var sloRatioMetricsValidation = govy.New(
