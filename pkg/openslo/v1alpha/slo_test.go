@@ -245,7 +245,7 @@ func TestSLO_Validate_Spec_Objectives(t *testing.T) {
 			Code:         rules.ErrorCodeRequired,
 		})
 	})
-	t.Run("budgeting method occurences - missing timeSliceTarget", func(t *testing.T) {
+	t.Run("budgeting method occurrences - missing timeSliceTarget", func(t *testing.T) {
 		slo := validThresholdSLO()
 		slo.Spec.BudgetingMethod = SLOBudgetingMethodOccurrences
 		slo.Spec.Objectives[0].TimeSliceTarget = nil
