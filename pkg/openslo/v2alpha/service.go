@@ -1,10 +1,11 @@
 package v2alpha
 
 import (
-	"github.com/OpenSLO/OpenSLO/internal"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
+
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 var _ = openslo.Object(Service{})

@@ -4,9 +4,10 @@ import (
 	"regexp"
 	"slices"
 
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
+
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 const APIVersion = openslo.VersionV2alpha
@@ -101,7 +102,8 @@ func validationRulesMetadata[T any](getter func(T) Metadata) govy.PropertyRules[
 var (
 	// nolint: lll
 	labelKeyRegexp = regexp.MustCompile(
-		`^([a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?(\.[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?)*/)?[a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?$`)
+		`^([a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?(\.[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?)*/)?[a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?$`,
+	)
 	labelKeyLengthRegexp = regexp.MustCompile(`^(.{0,253}/)?.{0,63}$`)
 	labelValueRegexp     = regexp.MustCompile(`^([a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?)?$`)
 )
