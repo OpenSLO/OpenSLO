@@ -16,7 +16,7 @@ func (s SLO) GetVersion() openslo.Version {
 }
 
 func (s SLO) GetKind() openslo.Kind {
-	return openslo.KindService
+	return openslo.KindSLO
 }
 
 func (s SLO) GetName() string {

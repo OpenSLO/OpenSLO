@@ -14,11 +14,11 @@ spec:
     spec:
       thresholdMetric:
         metricSource:
-          type: Any # Here put any service that holds information you need.
-          spec:
-            # Fields needed to query service for latency data.
+          type: Any # Any service with needed metrics.
+          spec: # Fields necessary to query service for the data.
+            query: Any # 'query' is just an example field.
   timeWindow:
-    - duration: 2w  # Two weeks is a good choice in most cases.
+    - duration: 2w # Two weeks is a good choice in most cases.
       isRolling: true # Rolling timewindow give us better view if service starts to working better.
   budgetingMethod: Occurrences # As said in README.md, occurrences are great for measuring all searches the same way.
   objectives:

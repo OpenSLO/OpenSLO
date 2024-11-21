@@ -6,9 +6,9 @@ import "fmt"
 type Version string
 
 const (
-	VersionV1alpha  Version = "openslo/v1alpha"
-	VersionV1       Version = "openslo/v1"
-	VersionV2alpha1 Version = "openslo.com/v2alpha1"
+	VersionV1alpha Version = "openslo/v1alpha"
+	VersionV1      Version = "openslo/v1"
+	VersionV2alpha Version = "openslo.com/v2alpha"
 )
 
 func (v Version) String() string {
@@ -19,7 +19,7 @@ func (v Version) Validate() error {
 	switch v {
 	case VersionV1alpha,
 		VersionV1,
-		VersionV2alpha1:
+		VersionV2alpha:
 		return nil
 	default:
 		return fmt.Errorf("unsupported %[1]T: %[1]s", v)

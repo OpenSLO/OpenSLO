@@ -1,6 +1,7 @@
-package v1
+package v1alpha
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -24,6 +25,7 @@ func TestService_Validate_VersionAndKind(t *testing.T) {
 	svc.Kind = openslo.KindSLO
 	err := svc.Validate()
 	assert.Require(t, assert.Error(t, err))
+	fmt.Println(err)
 	assert.True(t, serviceValidationMessageRegexp.MatchString(err.Error()))
 	govytest.AssertError(t, err,
 		govytest.ExpectedRuleError{
@@ -68,13 +70,6 @@ func validService() Service {
 		Metadata{
 			Name:        "service",
 			DisplayName: "My Service",
-			Labels: Labels{
-				"team": {"team-a", "team-b"},
-				"env":  {"prod"},
-			},
-			Annotations: Annotations{
-				"key": "value",
-			},
 		},
 		ServiceSpec{
 			Description: "Some service",

@@ -14,7 +14,7 @@ import (
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo/v1alpha"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha1"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha"
 )
 
 func Decode(r io.Reader, format ObjectFormat) ([]openslo.Object, error) {
@@ -145,7 +145,7 @@ func decodeGenericObjects(genericObjects []genericObject) ([]openslo.Object, err
 			decodeFunc = decodeV1alphaObject
 		case openslo.VersionV1:
 			decodeFunc = decodeV1Object
-		case openslo.VersionV2alpha1:
+		case openslo.VersionV2alpha:
 			decodeFunc = decodeV2alphaObject
 		default:
 			return nil, fmt.Errorf("unsupported %[1]T: %[1]s", obj.apiVersion)
@@ -196,19 +196,19 @@ func decodeV1Object(generic genericObject) (openslo.Object, error) {
 func decodeV2alphaObject(generic genericObject) (openslo.Object, error) {
 	switch generic.kind {
 	case openslo.KindService:
-		return decodeJSONObject[v2alpha1.Service](generic.data)
+		return decodeJSONObject[v2alpha.Service](generic.data)
 	case openslo.KindSLO:
-		return decodeJSONObject[v2alpha1.SLO](generic.data)
+		return decodeJSONObject[v2alpha.SLO](generic.data)
 	case openslo.KindSLI:
-		return decodeJSONObject[v2alpha1.SLI](generic.data)
+		return decodeJSONObject[v2alpha.SLI](generic.data)
 	case openslo.KindDataSource:
-		return decodeJSONObject[v2alpha1.DataSource](generic.data)
+		return decodeJSONObject[v2alpha.DataSource](generic.data)
 	case openslo.KindAlertPolicy:
-		return decodeJSONObject[v2alpha1.AlertPolicy](generic.data)
+		return decodeJSONObject[v2alpha.AlertPolicy](generic.data)
 	case openslo.KindAlertCondition:
-		return decodeJSONObject[v2alpha1.AlertCondition](generic.data)
+		return decodeJSONObject[v2alpha.AlertCondition](generic.data)
 	case openslo.KindAlertNotificationTarget:
-		return decodeJSONObject[v2alpha1.AlertNotificationTarget](generic.data)
+		return decodeJSONObject[v2alpha.AlertNotificationTarget](generic.data)
 	default:
 		return nil, fmt.Errorf("unsupported %[1]T: %[1]s for version: %[2]s", generic.kind, generic.apiVersion)
 	}

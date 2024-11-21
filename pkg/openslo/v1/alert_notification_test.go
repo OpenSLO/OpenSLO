@@ -38,7 +38,7 @@ func TestAlertNotificationTarget_Validate_VersionAndKind(t *testing.T) {
 }
 
 func TestAlertNotificationTarget_Validate_Metadata(t *testing.T) {
-	runMetadataTests(t, func(m Metadata) AlertNotificationTarget {
+	runMetadataTests(t, "metadata", func(m Metadata) AlertNotificationTarget {
 		target := validAlertNotificationTarget()
 		target.Metadata = m
 		return target
@@ -46,24 +46,40 @@ func TestAlertNotificationTarget_Validate_Metadata(t *testing.T) {
 }
 
 func TestAlertNotificationTarget_Validate_Spec(t *testing.T) {
+	runAlertNotificationTargetSpecTests(t, "spec", func(s AlertNotificationTargetSpec) AlertNotificationTarget {
+		target := validAlertNotificationTarget()
+		target.Spec = s
+		return target
+	})
+}
+
+func runAlertNotificationTargetSpecTests[T openslo.Object](
+	t *testing.T,
+	path string,
+	objectGetter func(s AlertNotificationTargetSpec) T,
+) {
+	t.Helper()
+
 	t.Run("description ok", func(t *testing.T) {
 		target := validAlertNotificationTarget()
 		target.Spec.Description = strings.Repeat("A", 1050)
-		err := target.Validate()
+		object := objectGetter(target.Spec)
+		err := object.Validate()
 		govytest.AssertNoError(t, err)
 	})
 	t.Run("description too long and missing target", func(t *testing.T) {
 		target := validAlertNotificationTarget()
 		target.Spec.Target = ""
 		target.Spec.Description = strings.Repeat("A", 1051)
-		err := target.Validate()
+		object := objectGetter(target.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err,
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.target",
+				PropertyName: path + ".target",
 				Code:         rules.ErrorCodeRequired,
 			},
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.description",
+				PropertyName: path + ".description",
 				Code:         rules.ErrorCodeStringMaxLength,
 			},
 		)

@@ -37,7 +37,7 @@
 - [Examples](examples/README.md)
 - [Glossary](glossary/README.md)
 - Work in progress for future versions
-  - [v2alpha1](enhancements/v2alpha1.md)
+  - [v2alpha](enhancements/v2alpha.md)
 - [SDK](#sdk)
 
 ## Introduction
@@ -152,7 +152,7 @@ prescriptive stance on this issue.
 
 A DataSource represents connection details with a particular metric source.
 
-> [Check work in progress for v2.](enhancements/v2alpha1.md#datasource)
+> [Check work in progress for v2.](enhancements/v2alpha.md#datasource)
 
 ```yaml
 apiVersion: openslo/v1
@@ -199,7 +199,7 @@ spec:
 A service level objective (SLO) is a target value or a range of values for
 a service level that is described by a service level indicator (SLI).
 
-> [Check work in progress for v2.](enhancements/v2alpha1.md#slo)
+> [Check work in progress for v2.](enhancements/v2alpha.md#slo)
 
 ```yaml
 apiVersion: openslo/v1
@@ -259,7 +259,7 @@ spec:
 - **alertPolicies\[ \]** _AlertPolicy_, optional field.
   section. An alert policy can be defined inline or can refer to an [Alert Policies](#alertpolicy) object,
   in which case the following are required:
-  - **alertPolicyRef** _string_: this is the name or path to the AlertPolicy
+  - **alertPolicyRef** _string_: this is the name of the AlertPolicy
 
 ##### Objectives
 
@@ -274,7 +274,7 @@ objectives:
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO, can't be used with targetPercent
     targetPercent: numeric [0.0, 100) # budget target for given objective of the SLO, can't be used with target
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to TimeSlices
-    timeSliceWindow: number | duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
+    timeSliceWindow: duration-shorthand # required only when budgetingMethod is set to TimeSlices or RatioTimeslices
     indicator: # required only when creating composite SLO, see SLI below for more details
     indicatorRef: string # required only when creating composite SLO, required if indicator is not given.
     compositeWeight: numeric (0.0, inf+] # optional, supported only when declaring multiple objectives, default value 1.
@@ -351,7 +351,7 @@ impact:
 
 A service level indicator (SLI) represents how to read metrics from data sources.
 
-> [Check work in progress for v2.](enhancements/v2alpha1.md#sli)
+> [Check work in progress for v2.](enhancements/v2alpha.md#sli)
 
 ```yaml
 apiVersion: openslo/v1
@@ -595,11 +595,11 @@ spec:
   when the condition indicates that no data is available
 - **conditions\[ \]** _Alert Condition_, an array, (max of one condition), required field.
   A condition can be defined inline or can refer to external Alert condition defined in this case the following are required:
-  - **conditionRef** _string_: this is the name or path the Alert condition
+  - **conditionRef** _string_: this is the name of the Alert condition
 - **notificationTargets\[ \]** _Alert Notification Target_, required field.
   A condition can be defined inline or can refer to an [AlertNotificationTarget](#alertnotificationtarget)
   object, in which case the following are required:
-  - **targetRef** _string_: this is the name or path to the AlertNotificationTarget
+  - **targetRef** _string_: this is the name of the AlertNotificationTarget
 
 > 💡 **Note:** The `conditions` field is of the type `array` of _AlertCondition_
 > but only allows one single condition to be defined.
@@ -620,10 +620,10 @@ spec:
   conditions:
     - conditionRef: cpu-usage-breach
   notificationTargets:
-    - targetRef: OnCallDevopsMailNotification
+    - targetRef: on-call-devops-mail-notification
 ```
 
-An example of an Alert Policy were the Alert Condition is inlined:
+An example of an Alert Policy where the Alert Condition is inlined:
 
 ```yaml
 apiVersion: openslo/v1
@@ -650,7 +650,7 @@ spec:
           lookbackWindow: 1h
           alertAfter: 5m
   notificationTargets:
-    - targetRef: OnCallDevopsMailNotification
+    - targetRef: on-call-devops-mail-notification
 ```
 
 ---

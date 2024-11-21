@@ -38,7 +38,7 @@ func TestAlertCondition_Validate_VersionAndKind(t *testing.T) {
 }
 
 func TestAlertCondition_Validate_Metadata(t *testing.T) {
-	runMetadataTests(t, func(m Metadata) AlertCondition {
+	runMetadataTests(t, "metadata", func(m Metadata) AlertCondition {
 		condition := validAlertCondition()
 		condition.Metadata = m
 		return condition
@@ -46,46 +46,78 @@ func TestAlertCondition_Validate_Metadata(t *testing.T) {
 }
 
 func TestAlertCondition_Validate_Spec(t *testing.T) {
+	runAlertConditionSpecTests(t, "spec", func(s AlertConditionSpec) AlertCondition {
+		condition := validAlertCondition()
+		condition.Spec = s
+		return condition
+	})
+}
+
+func runAlertConditionSpecTests[T openslo.Object](
+	t *testing.T,
+	path string,
+	objectGetter func(s AlertConditionSpec) T,
+) {
+	t.Helper()
+
 	t.Run("description ok", func(t *testing.T) {
 		condition := validAlertCondition()
 		condition.Spec.Description = strings.Repeat("A", 1050)
-		err := condition.Validate()
+		object := objectGetter(condition.Spec)
+		err := object.Validate()
 		govytest.AssertNoError(t, err)
 	})
 	t.Run("missing severity and description too long", func(t *testing.T) {
 		condition := validAlertCondition()
 		condition.Spec.Severity = ""
 		condition.Spec.Description = strings.Repeat("A", 1051)
-		err := condition.Validate()
+		object := objectGetter(condition.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err,
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.severity",
+				PropertyName: path + ".severity",
 				Code:         rules.ErrorCodeRequired,
 			},
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.description",
+				PropertyName: path + ".description",
 				Code:         rules.ErrorCodeStringMaxLength,
 			},
 		)
 	})
+	t.Run("condition", func(t *testing.T) {
+		runAlertConditionTypeTests(t, path, func(s AlertConditionType) T {
+			condition := validAlertCondition()
+			condition.Spec.Condition = s
+			object := objectGetter(condition.Spec)
+			return object
+		})
+	})
 }
 
-func TestAlertCondition_Validate_SpecCondition(t *testing.T) {
+func runAlertConditionTypeTests[T openslo.Object](
+	t *testing.T,
+	path string,
+	objectGetter func(s AlertConditionType) T,
+) {
+	t.Helper()
+
 	t.Run("missing kind", func(t *testing.T) {
 		condition := validAlertCondition()
 		condition.Spec.Condition.Kind = ""
-		err := condition.Validate()
+		object := objectGetter(condition.Spec.Condition)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.condition.kind",
+			PropertyName: path + ".condition.kind",
 			Code:         rules.ErrorCodeRequired,
 		})
 	})
 	t.Run("invalid kind", func(t *testing.T) {
 		condition := validAlertCondition()
 		condition.Spec.Condition.Kind = "wrong"
-		err := condition.Validate()
+		object := objectGetter(condition.Spec.Condition)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.condition.kind",
+			PropertyName: path + ".condition.kind",
 			Code:         rules.ErrorCodeOneOf,
 		})
 	})
@@ -98,45 +130,49 @@ func TestAlertCondition_Validate_SpecCondition(t *testing.T) {
 			LookbackWindow: DurationShorthand{},
 			AlertAfter:     DurationShorthand{},
 		}
-		err := condition.Validate()
+		object := objectGetter(condition.Spec.Condition)
+		err := object.Validate()
 		govytest.AssertError(t, err,
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.condition.op",
+				PropertyName: path + ".condition.op",
 				Code:         rules.ErrorCodeRequired,
 			},
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.condition.threshold",
+				PropertyName: path + ".condition.threshold",
 				Code:         rules.ErrorCodeRequired,
 			},
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.condition.lookbackWindow",
+				PropertyName: path + ".condition.lookbackWindow",
 				Code:         rules.ErrorCodeRequired,
 			},
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.condition.alertAfter",
+				PropertyName: path + ".condition.alertAfter",
 				Code:         rules.ErrorCodeRequired,
 			},
 		)
 	})
 	t.Run("operator", func(t *testing.T) {
-		runOperatorTests(t, "spec.condition.op", func(o Operator) AlertCondition {
+		runOperatorTests(t, path+".condition.op", func(o Operator) T {
 			condition := validAlertCondition()
 			condition.Spec.Condition.Operator = o
-			return condition
+			object := objectGetter(condition.Spec.Condition)
+			return object
 		})
 	})
 	t.Run("lookbackWindow", func(t *testing.T) {
-		runDurationShorthandTests(t, "spec.condition.lookbackWindow", func(d DurationShorthand) AlertCondition {
+		runDurationShorthandTests(t, path+".condition.lookbackWindow", func(d DurationShorthand) T {
 			condition := validAlertCondition()
 			condition.Spec.Condition.LookbackWindow = d
-			return condition
+			object := objectGetter(condition.Spec.Condition)
+			return object
 		})
 	})
 	t.Run("alertAfter", func(t *testing.T) {
-		runDurationShorthandTests(t, "spec.condition.alertAfter", func(d DurationShorthand) AlertCondition {
+		runDurationShorthandTests(t, path+".condition.alertAfter", func(d DurationShorthand) T {
 			condition := validAlertCondition()
 			condition.Spec.Condition.AlertAfter = d
-			return condition
+			object := objectGetter(condition.Spec.Condition)
+			return object
 		})
 	})
 }

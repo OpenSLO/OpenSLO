@@ -19,7 +19,7 @@ func getValidationMessageRegexp(kind openslo.Kind) *regexp.Regexp {
 `), kind))
 }
 
-func runMetadataTests[T openslo.Object](t *testing.T, objectGetter func(m Metadata) T) {
+func runMetadataTests[T openslo.Object](t *testing.T, path string, objectGetter func(m Metadata) T) {
 	t.Run("name and display name", func(t *testing.T) {
 		object := objectGetter(Metadata{
 			Name:        strings.Repeat("MY SERVICE", 20),
@@ -28,17 +28,17 @@ func runMetadataTests[T openslo.Object](t *testing.T, objectGetter func(m Metada
 		err := object.Validate()
 		govytest.AssertError(t, err,
 			govytest.ExpectedRuleError{
-				PropertyName: "metadata.name",
+				PropertyName: path + ".name",
 				Code:         rules.ErrorCodeStringDNSLabel,
 			},
 			govytest.ExpectedRuleError{
-				PropertyName: "metadata.displayName",
+				PropertyName: path + ".displayName",
 				Code:         rules.ErrorCodeStringMaxLength,
 			},
 		)
 	})
 	t.Run("labels", func(t *testing.T) {
-		for name, test := range getLabelsTestCases(t, "metadata.labels") {
+		for name, test := range getLabelsTestCases(t, path+".labels") {
 			t.Run(name, func(t *testing.T) {
 				object := objectGetter(Metadata{
 					Name:   "ok",
@@ -49,7 +49,7 @@ func runMetadataTests[T openslo.Object](t *testing.T, objectGetter func(m Metada
 		}
 	})
 	t.Run("annotations", func(t *testing.T) {
-		for name, test := range getAnnotationsTestCases(t, "metadata.annotations") {
+		for name, test := range getAnnotationsTestCases(t, path+".annotations") {
 			t.Run(name, func(t *testing.T) {
 				object := objectGetter(Metadata{
 					Name:        "ok",

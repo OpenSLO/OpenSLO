@@ -32,23 +32,28 @@ type DurationShorthand struct {
 
 // UnmarshalText implements [encoding.TextUnmarshaler].
 func (d *DurationShorthand) UnmarshalText(text []byte) error {
-	n, err := fmt.Sscanf(string(text), "%d%s", &d.value, &d.unit)
-	if err != nil {
-		return err
+	if len(text) == 0 {
+		return nil
 	}
-	if n != 2 {
+	if n, err := fmt.Sscanf(string(text), "%d%s", &d.value, &d.unit); err != nil || n != 2 {
 		return fmt.Errorf("invalid duration shorthand: %s, expected [0-9]+[mhdwMQY]", text)
 	}
 	return nil
 }
 
 // MarshalText implements [encoding.TextMarshaler].
-func (d DurationShorthand) MarshalText() (text []byte, err error) {
+func (d DurationShorthand) MarshalText() ([]byte, error) {
+	if d.value == 0 {
+		return []byte{}, nil
+	}
 	return []byte(d.String()), nil
 }
 
 // String implements [fmt.Stringer].
 func (d DurationShorthand) String() string {
+	if d.value == 0 {
+		return ""
+	}
 	return fmt.Sprintf("%d%s", d.value, d.unit)
 }
 

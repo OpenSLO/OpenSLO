@@ -68,22 +68,24 @@ var alertConditionValidation = govy.New(
 	validationRulesMetadata(func(a AlertCondition) Metadata { return a.Metadata }),
 	govy.For(func(a AlertCondition) AlertConditionSpec { return a.Spec }).
 		WithName("spec").
-		Include(govy.New(
-			govy.For(func(spec AlertConditionSpec) string { return spec.Description }).
-				WithName("description").
-				Rules(rules.StringMaxLength(1050)),
-			govy.For(func(spec AlertConditionSpec) string { return spec.Severity }).
-				WithName("severity").
-				Required(),
-			govy.For(func(spec AlertConditionSpec) AlertConditionType { return spec.Condition }).
-				WithName("condition").
-				Required().
-				Include(
-					alertConditionTypeValidation,
-					alertConditionBurnRateValidation,
-				),
-		)),
+		Include(alertConditionSpecValidation),
 ).WithNameFunc(internal.ObjectNameFunc[AlertCondition])
+
+var alertConditionSpecValidation = govy.New(
+	govy.For(func(spec AlertConditionSpec) string { return spec.Description }).
+		WithName("description").
+		Rules(rules.StringMaxLength(1050)),
+	govy.For(func(spec AlertConditionSpec) string { return spec.Severity }).
+		WithName("severity").
+		Required(),
+	govy.For(func(spec AlertConditionSpec) AlertConditionType { return spec.Condition }).
+		WithName("condition").
+		Required().
+		Include(
+			alertConditionTypeValidation,
+			alertConditionBurnRateValidation,
+		),
+)
 
 var alertConditionTypeValidation = govy.New(
 	govy.For(func(a AlertConditionType) AlertConditionKind { return a.Kind }).
