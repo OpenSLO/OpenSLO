@@ -103,13 +103,17 @@ var (
 	labelKeyRegexp = regexp.MustCompile(
 		`^([a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?(\.[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?)*/)?[a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?$`)
 	labelKeyLengthRegexp = regexp.MustCompile(`^(.{0,253}/)?.{0,63}$`)
-	labelValueRegexp     = regexp.MustCompile(`^[a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?$`)
+	labelValueRegexp     = regexp.MustCompile(`^([a-z0-9]([-._a-z0-9]{0,61}[a-z0-9])?)?$`)
 )
 
 func labelsValidator() govy.Validator[Labels] {
 	return govy.New(
 		govy.ForMap(govy.GetSelf[Labels]()).
-			RulesForKeys(labelKeyRuleSet()).
+			Cascade(govy.CascadeModeStop).
+			RulesForKeys(
+				rules.StringMatchRegexp(labelKeyLengthRegexp),
+				rules.StringMatchRegexp(labelKeyRegexp, "my-domain.org/my-key", "openslo.com/annotation"),
+			).
 			RulesForValues(rules.StringMatchRegexp(labelValueRegexp, "my-label", "my.domain_123-label")),
 	)
 }
@@ -118,13 +122,9 @@ func annotationsValidator() govy.Validator[Annotations] {
 	return govy.New(
 		govy.ForMap(govy.GetSelf[Annotations]()).
 			Cascade(govy.CascadeModeStop).
-			RulesForKeys(labelKeyRuleSet()),
-	)
-}
-
-func labelKeyRuleSet() govy.RuleSet[string] {
-	return govy.NewRuleSet(
-		rules.StringMatchRegexp(labelKeyLengthRegexp),
-		rules.StringMatchRegexp(labelKeyRegexp, "my-domain.org/my-key", "openslo.com/annotation"),
+			RulesForKeys(
+				rules.StringMatchRegexp(labelKeyLengthRegexp),
+				rules.StringMatchRegexp(labelKeyRegexp, "my-domain.org/my-key", "openslo.com/annotation"),
+			),
 	)
 }

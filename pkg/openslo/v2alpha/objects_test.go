@@ -54,6 +54,48 @@ func runMetadataTests[T openslo.Object](t *testing.T, path string, objectGetter 
 	})
 }
 
+var labelKeyTestCases = []struct {
+	in         string
+	shouldFail bool
+}{
+	{strings.Repeat("l", 63), false},
+	{getTheLongestLabelKeyPrefix() + "/" + strings.Repeat("l", 63), false},
+	{"net", false},
+	{"9net", false},
+	{"net9", false},
+	{"openslo.com/service", false},
+	{"domain/service", false},
+	{"domain.org/service", false},
+	{"domain.this.org/service", false},
+	{strings.Repeat("l", 64), true},
+	{strings.Repeat("l", 254) + "/net", true},
+	{strings.Repeat("l", 253) + "/" + strings.Repeat("l", 64), true},
+	{strings.Repeat("l", 254) + "/" + strings.Repeat("l", 63), true},
+	{"net_", true},
+	{"net.", true},
+	{"net-", true},
+	{"_net", true},
+	{"-net", true},
+	{".net", true},
+	{"nEt", true},
+	{"openslo.com/", true},
+	{"openslo.com!/service", true},
+	{"-openslo.com/service", true},
+	{"_openslo.com/service", true},
+	{".openslo.com/service", true},
+	{"openslo.com./service", true},
+	{"openslo.com_/service", true},
+	{"openslo.com-/service", true},
+	{"openslo..this.com/service", true},
+	{"openslo.-this.com/service", true},
+	{"openslo._this.com/service", true},
+	{"openslo.this..com/service", true},
+	{"openslo.this-.com/service", true},
+	{"openslo.this_.com/service", true},
+	{"openslo_this.org/service", true},
+	{"openslo_this.my-org.com/service", true},
+}
+
 type labelsTestCase struct {
 	Labels  Labels
 	isValid bool
@@ -71,40 +113,59 @@ func (tc labelsTestCase) Test(t *testing.T, object openslo.Object) {
 
 func getLabelsTestCases(t *testing.T, propertyPath string) map[string]labelsTestCase {
 	t.Helper()
-	validLabels := []Labels{
-		{strings.Repeat("l", 63): ""},
-		{"net": "this"},
-		{"net": ""},
-		{"net_this.that-this": ""},
-		{"net_.-this": ""},
-		{"9net": ""},
-		{"net9": ""},
+
+	labelValues := []struct {
+		in         string
+		shouldFail bool
+	}{
+		{strings.Repeat("l", 63), false},
+		{"", false},
+		{"net", false},
+		{"net_this.that-this", false},
+		{"net_.-this", false},
+		{"9net", false},
+		{"net9", false},
+		{strings.Repeat("l", 64), true},
+		{"net_", true},
+		{"net.", true},
+		{"net-", true},
+		{"_net", true},
+		{"-net", true},
+		{".net", true},
+		{"nEt", true},
 	}
-	invalidLabels := []Labels{
-		{strings.Repeat("l", 64): ""},
-		{"net_": ""},
-		{"net.": ""},
-		{"net-": ""},
-		{"_net": ""},
-		{"-net": ""},
-		{".net": ""},
-		{"nEt": ""},
-	}
-	testCases := make(map[string]labelsTestCase, len(validLabels)+len(invalidLabels))
-	for _, labels := range validLabels {
-		testCases[fmt.Sprintf("valid: %v", labels)] = labelsTestCase{
-			Labels:  labels,
-			isValid: true,
+	testCases := make(map[string]labelsTestCase, len(labelKeyTestCases)+len(labelValues))
+	for _, tc := range labelValues {
+		if tc.shouldFail {
+			testCases[fmt.Sprintf("invalid value: %s", tc.in)] = labelsTestCase{
+				Labels: Labels{"ok": tc.in},
+				error: govytest.ExpectedRuleError{
+					PropertyName: propertyPath + ".ok",
+					Code:         rules.ErrorCodeStringMatchRegexp,
+				},
+			}
+		} else {
+			testCases[fmt.Sprintf("valid value: %s", tc.in)] = labelsTestCase{
+				Labels:  Labels{"ok": tc.in},
+				isValid: true,
+			}
 		}
 	}
-	for _, labels := range invalidLabels {
-		testCases[fmt.Sprintf("invalid: %v", labels)] = labelsTestCase{
-			Labels: labels,
-			error: govytest.ExpectedRuleError{
-				PropertyName: propertyPath + "." + getMapFirstKey(labels),
-				IsKeyError:   true,
-				Code:         rules.ErrorCodeStringMatchRegexp,
-			},
+	for _, tc := range labelKeyTestCases {
+		if tc.shouldFail {
+			testCases[fmt.Sprintf("invalid key: %s", tc.in)] = labelsTestCase{
+				Labels: Labels{tc.in: ""},
+				error: govytest.ExpectedRuleError{
+					PropertyName: propertyPath + "." + tc.in,
+					IsKeyError:   true,
+					Code:         rules.ErrorCodeStringMatchRegexp,
+				},
+			}
+		} else {
+			testCases[fmt.Sprintf("valid key: %s", tc.in)] = labelsTestCase{
+				Labels:  Labels{tc.in: ""},
+				isValid: true,
+			}
 		}
 	}
 	return testCases
@@ -127,64 +188,23 @@ func (tc annotationsTestCase) Test(t *testing.T, object openslo.Object) {
 
 func getAnnotationsTestCases(t *testing.T, propertyPath string) map[string]annotationsTestCase {
 	t.Helper()
-	theLongestPrefix := strings.Repeat(strings.Repeat("l", 63)+".", 3)
-	theLongestPrefix = theLongestPrefix[:len(theLongestPrefix)-1]
-	validAnnotations := []Annotations{
-		{strings.Repeat("l", 63): "this"},
-		{theLongestPrefix + "/" + strings.Repeat("l", 63): ""},
-		{"net": "this"},
-		{"net": ""},
-		{"9net": ""},
-		{"net9": ""},
-		{"openslo.com/service": ""},
-		{"domain/service": ""},
-		{"domain.org/service": ""},
-		{"domain.this.org/service": ""},
-	}
-	invalidAnnotations := []Annotations{
-		{strings.Repeat("l", 64): ""},
-		{strings.Repeat("l", 254) + "/net": ""},
-		{strings.Repeat("l", 253) + "/" + strings.Repeat("l", 64): ""},
-		{strings.Repeat("l", 254) + "/" + strings.Repeat("l", 63): ""},
-		{"net_": ""},
-		{"net.": ""},
-		{"net-": ""},
-		{"_net": ""},
-		{"-net": ""},
-		{".net": ""},
-		{"nEt": ""},
-		{"openslo.com/": ""},
-		{"openslo.com!/service": ""},
-		{"-openslo.com/service": ""},
-		{"_openslo.com/service": ""},
-		{".openslo.com/service": ""},
-		{"openslo.com./service": ""},
-		{"openslo.com_/service": ""},
-		{"openslo.com-/service": ""},
-		{"openslo..this.com/service": ""},
-		{"openslo.-this.com/service": ""},
-		{"openslo._this.com/service": ""},
-		{"openslo.this..com/service": ""},
-		{"openslo.this-.com/service": ""},
-		{"openslo.this_.com/service": ""},
-		{"openslo_this.org/service": ""},
-		{"openslo_this.my-org.com/service": ""},
-	}
-	testCases := make(map[string]annotationsTestCase, len(validAnnotations)+len(invalidAnnotations))
-	for _, annotations := range validAnnotations {
-		testCases[fmt.Sprintf("valid: %v", annotations)] = annotationsTestCase{
-			Annotations: annotations,
-			isValid:     true,
-		}
-	}
-	for _, annotations := range invalidAnnotations {
-		testCases[fmt.Sprintf("invalid: %v", annotations)] = annotationsTestCase{
-			Annotations: annotations,
-			error: govytest.ExpectedRuleError{
-				PropertyName: propertyPath + "." + getMapFirstKey(annotations),
-				IsKeyError:   true,
-				Code:         rules.ErrorCodeStringMatchRegexp,
-			},
+
+	testCases := make(map[string]annotationsTestCase, len(labelKeyTestCases))
+	for _, tc := range labelKeyTestCases {
+		if tc.shouldFail {
+			testCases[fmt.Sprintf("invalid: %s", tc.in)] = annotationsTestCase{
+				Annotations: Annotations{tc.in: ""},
+				error: govytest.ExpectedRuleError{
+					PropertyName: propertyPath + "." + tc.in,
+					IsKeyError:   true,
+					Code:         rules.ErrorCodeStringMatchRegexp,
+				},
+			}
+		} else {
+			testCases[fmt.Sprintf("valid: %s", tc.in)] = annotationsTestCase{
+				Annotations: Annotations{tc.in: ""},
+				isValid:     true,
+			}
 		}
 	}
 	return testCases
@@ -213,4 +233,10 @@ func getMapFirstKey[V any](l map[string]V) string {
 		return k
 	}
 	return ""
+}
+
+func getTheLongestLabelKeyPrefix() string {
+	prefix := strings.Repeat(strings.Repeat("l", 63)+".", 3)
+	prefix = prefix[:len(prefix)-1]
+	return prefix
 }
