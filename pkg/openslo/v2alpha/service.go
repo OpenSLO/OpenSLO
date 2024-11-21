@@ -1,8 +1,22 @@
 package v2alpha
 
-import "github.com/OpenSLO/OpenSLO/pkg/openslo"
+import (
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+	"github.com/nobl9/govy/pkg/govy"
+	"github.com/nobl9/govy/pkg/rules"
+)
 
 var _ = openslo.Object(Service{})
+
+func NewService(metadata Metadata, spec ServiceSpec) Service {
+	return Service{
+		APIVersion: APIVersion,
+		Kind:       openslo.KindService,
+		Metadata:   metadata,
+		Spec:       spec,
+	}
+}
 
 type Service struct {
 	APIVersion openslo.Version `json:"apiVersion"`
@@ -24,9 +38,22 @@ func (s Service) GetName() string {
 }
 
 func (s Service) Validate() error {
-	return nil
+	return serviceValidation.Validate(s)
 }
 
 type ServiceSpec struct {
 	Description string `json:"description,omitempty"`
 }
+
+var serviceValidation = govy.New(
+	validationRulesAPIVersion(func(s Service) openslo.Version { return s.APIVersion }),
+	validationRulesKind(func(s Service) openslo.Kind { return s.Kind }, openslo.KindService),
+	validationRulesMetadata(func(s Service) Metadata { return s.Metadata }),
+	govy.For(func(s Service) ServiceSpec { return s.Spec }).
+		WithName("spec").
+		Include(govy.New(
+			govy.For(func(spec ServiceSpec) string { return spec.Description }).
+				WithName("description").
+				Rules(rules.StringMaxLength(1050)),
+		)),
+).WithNameFunc(internal.ObjectNameFunc[Service])
