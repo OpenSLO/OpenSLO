@@ -32,8 +32,9 @@ func ExampleSLO() {
       - displayName: Good
         target: 0.995
         timeSliceTarget: 0.95
+        value: 1
         ratioMetrics:
-          counter: true
+          incremental: true
           good:
             source: datadog
             queryType: query
@@ -69,6 +70,7 @@ func ExampleSLO() {
 					DisplayName:     "Good",
 					BudgetTarget:    ptr(0.995),
 					TimeSliceTarget: ptr(0.95),
+					Value:           ptr(1.0),
 					RatioMetrics: &v1alpha.SLORatioMetrics{
 						Incremental: true,
 						Good: v1alpha.SLOMetricSourceSpec{
@@ -117,18 +119,18 @@ func ExampleSLO() {
 	//     objectives:
 	//     - displayName: Good
 	//       ratioMetrics:
-	//         counter: true
 	//         good:
 	//           query: sum:requests{service:web,status:2xx}
 	//           queryType: query
 	//           source: datadog
+	//         incremental: true
 	//         total:
 	//           query: sum:requests{service:web}
 	//           queryType: query
 	//           source: datadog
 	//       target: 0.995
 	//       timeSliceTarget: 0.95
-	//       value: 0
+	//       value: 1
 	//     service: web
 	//     timeWindows:
 	//     - calendar:
