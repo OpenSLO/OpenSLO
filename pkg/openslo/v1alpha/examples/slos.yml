@@ -1,0 +1,43 @@
+- apiVersion: openslo/v1alpha
+  kind: SLO
+  metadata:
+    name: web-availability
+    displayName: SLO for web availability
+    labels:
+      env:
+        - prod
+      team:
+        - team-a
+        - team-b
+  spec:
+    description: X% of search requests are successful
+    service: web
+    indicator:
+      metadata:
+        name: web-successful-requests-ratio
+      spec:
+        counter: true
+        ratioMetric:
+          good:
+            metricSource:
+              type: Prometheus
+              spec:
+                query: sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})
+          total:
+            metricSource:
+              type: Prometheus
+              spec:
+                query: sum(http_requests{k8s_cluster="prod",component="web"})
+    timeWindow:
+      - duration: 1w
+        isRolling: false
+        calendar:
+          startTime: 2022-01-01 12:00:00
+          timeZone: America/New_York
+    budgetingMethod: Timeslices
+    objectives:
+      - displayName: Good
+        op: gt
+        target: 0.995
+        timeSliceTarget: 0.95
+        timeSliceWindow: 1m
