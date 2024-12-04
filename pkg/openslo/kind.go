@@ -16,6 +16,7 @@ const (
 	KindAlertPolicy             Kind = "AlertPolicy"
 	KindAlertCondition          Kind = "AlertCondition"
 	KindAlertNotificationTarget Kind = "AlertNotificationTarget"
+	KindBudgetAdjustment        Kind = "BudgetAdjustment"
 )
 
 func (k Kind) String() string {
@@ -30,7 +31,8 @@ func (k Kind) Validate() error {
 		KindService,
 		KindAlertPolicy,
 		KindAlertCondition,
-		KindAlertNotificationTarget:
+		KindAlertNotificationTarget,
+		KindBudgetAdjustment:
 		return nil
 	default:
 		return fmt.Errorf("unsupported %[1]T: %[1]s", k)
