@@ -215,3 +215,21 @@ func getTheLongestLabelKeyPrefix() string {
 	prefix = prefix[:len(prefix)-1]
 	return prefix
 }
+
+func runOperatorTests[T openslo.Object](t *testing.T, path string, objectGetter func(o Operator) T) {
+	t.Run("valid operator values", func(t *testing.T) {
+		for _, op := range validOperators {
+			object := objectGetter(op)
+			err := object.Validate()
+			govytest.AssertNoError(t, err)
+		}
+	})
+	t.Run("invalid operator value", func(t *testing.T) {
+		object := objectGetter("lessThan")
+		err := object.Validate()
+		govytest.AssertError(t, err, govytest.ExpectedRuleError{
+			PropertyName: path,
+			Code:         rules.ErrorCodeOneOf,
+		})
+	})
+}

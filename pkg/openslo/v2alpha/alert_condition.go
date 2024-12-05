@@ -1,8 +1,23 @@
 package v2alpha
 
-import "github.com/OpenSLO/OpenSLO/pkg/openslo"
+import (
+	"github.com/nobl9/govy/pkg/govy"
+	"github.com/nobl9/govy/pkg/rules"
+
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
+)
 
 var _ = openslo.Object(AlertCondition{})
+
+func NewAlertCondition(metadata Metadata, spec AlertConditionSpec) AlertCondition {
+	return AlertCondition{
+		APIVersion: APIVersion,
+		Kind:       openslo.KindAlertCondition,
+		Metadata:   metadata,
+		Spec:       spec,
+	}
+}
 
 type AlertCondition struct {
 	APIVersion openslo.Version    `json:"apiVersion"`
@@ -24,7 +39,7 @@ func (a AlertCondition) GetName() string {
 }
 
 func (a AlertCondition) Validate() error {
-	return nil
+	return alertConditionValidation.Validate(a)
 }
 
 type AlertConditionSpec struct {
@@ -34,8 +49,66 @@ type AlertConditionSpec struct {
 }
 
 type AlertConditionType struct {
-	Kind           string  `json:"kind"`
-	Threshold      float64 `json:"threshold"`
-	LookbackWindow string  `json:"lookbackWindow"`
-	AlertAfter     string  `json:"alertAfter"`
+	Kind           AlertConditionKind `json:"kind"`
+	Operator       Operator           `json:"op"`
+	Threshold      *float64           `json:"threshold"`
+	LookbackWindow DurationShorthand  `json:"lookbackWindow"`
+	AlertAfter     DurationShorthand  `json:"alertAfter"`
 }
+
+type AlertConditionKind string
+
+const (
+	AlertConditionKindBurnRate AlertConditionKind = "burnrate"
+)
+
+var alertConditionValidation = govy.New(
+	validationRulesAPIVersion(func(a AlertCondition) openslo.Version { return a.APIVersion }),
+	validationRulesKind(func(a AlertCondition) openslo.Kind { return a.Kind }, openslo.KindAlertCondition),
+	validationRulesMetadata(func(a AlertCondition) Metadata { return a.Metadata }),
+	govy.For(func(a AlertCondition) AlertConditionSpec { return a.Spec }).
+		WithName("spec").
+		Include(alertConditionSpecValidation),
+).WithNameFunc(internal.ObjectNameFunc[AlertCondition])
+
+var alertConditionSpecValidation = govy.New(
+	govy.For(func(spec AlertConditionSpec) string { return spec.Description }).
+		WithName("description").
+		Rules(rules.StringMaxLength(1050)),
+	govy.For(func(spec AlertConditionSpec) string { return spec.Severity }).
+		WithName("severity").
+		Required(),
+	govy.For(func(spec AlertConditionSpec) AlertConditionType { return spec.Condition }).
+		WithName("condition").
+		Required().
+		Include(
+			alertConditionTypeValidation,
+			alertConditionBurnRateValidation,
+		),
+)
+
+var alertConditionTypeValidation = govy.New(
+	govy.For(func(a AlertConditionType) AlertConditionKind { return a.Kind }).
+		WithName("kind").
+		Required().
+		Rules(rules.OneOf(AlertConditionKindBurnRate)),
+)
+
+var alertConditionBurnRateValidation = govy.New(
+	govy.For(func(a AlertConditionType) Operator { return a.Operator }).
+		WithName("op").
+		Required().
+		Include(operatorValidation),
+	govy.ForPointer(func(a AlertConditionType) *float64 { return a.Threshold }).
+		WithName("threshold").
+		Required(),
+	govy.For(func(a AlertConditionType) DurationShorthand { return a.LookbackWindow }).
+		WithName("lookbackWindow").
+		Required().
+		Include(durationShortHandValidation),
+	govy.For(func(a AlertConditionType) DurationShorthand { return a.AlertAfter }).
+		WithName("alertAfter").
+		Required().
+		Include(durationShortHandValidation),
+).
+	When(func(a AlertConditionType) bool { return a.Kind == AlertConditionKindBurnRate })
