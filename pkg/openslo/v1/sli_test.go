@@ -285,7 +285,7 @@ func validGoodOverTotalSLI() SLI {
 		Metadata{
 			Name:        "search-availability",
 			DisplayName: "Searching availability",
-			Labels: map[string]Label{
+			Labels: Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},
@@ -338,7 +338,7 @@ func validRawSLI() SLI {
 		Metadata{
 			Name:        "wifi-client-satisfaction",
 			DisplayName: "WiFi client satisfaction",
-			Labels: map[string]Label{
+			Labels: Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},
@@ -371,7 +371,7 @@ func validThresholdSLI() SLI {
 		Metadata{
 			Name:        "annotator-throughput",
 			DisplayName: "Annotator service throughput",
-			Labels: map[string]Label{
+			Labels: Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},

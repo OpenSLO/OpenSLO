@@ -38,7 +38,7 @@ func ExampleAlertCondition() {
 		v1.Metadata{
 			Name:        "cpu-usage-breach",
 			DisplayName: "CPU usage breach",
-			Labels: map[string]v1.Label{
+			Labels: v1.Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},

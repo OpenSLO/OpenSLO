@@ -45,7 +45,7 @@ func ExampleSLI() {
 		v1.Metadata{
 			Name:        "search-availability",
 			DisplayName: "Searching availability",
-			Labels: map[string]v1.Label{
+			Labels: v1.Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},

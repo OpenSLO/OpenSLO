@@ -276,7 +276,7 @@ func validAlertPolicy() AlertPolicy {
 		Metadata{
 			Name:        "low-priority",
 			DisplayName: "Low Priority",
-			Labels: map[string]Label{
+			Labels: Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},

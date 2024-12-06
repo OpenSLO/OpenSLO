@@ -31,7 +31,7 @@ func ExampleDataSource() {
 	dataSource := v1.NewDataSource(
 		v1.Metadata{
 			Name: "prometheus",
-			Labels: map[string]v1.Label{
+			Labels: v1.Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},

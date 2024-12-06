@@ -12,7 +12,7 @@ import (
 func ExampleAlertCondition() {
 	// Raw AlertCondition object in YAML format.
 	const alertConditionYAML = `
-- apiVersion: openslo/v1
+- apiVersion: openslo.com/v2alpha
   kind: AlertCondition
   metadata:
     name: cpu-usage-breach
@@ -69,7 +69,7 @@ func ExampleAlertCondition() {
 	}
 
 	// Output:
-	// - apiVersion: openslo/v1
+	// - apiVersion: openslo.com/v2alpha
 	//   kind: AlertCondition
 	//   metadata:
 	//     labels:
