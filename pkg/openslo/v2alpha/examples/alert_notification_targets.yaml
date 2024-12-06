@@ -1,0 +1,22 @@
+- apiVersion: openslo.com/v2alpha
+  kind: AlertNotificationTarget
+  metadata:
+    labels:
+      env: dev
+      team: developers
+    name: devs-email-notification
+  spec:
+    description: Notifies developers' mailing group
+    target: email
+- apiVersion: openslo.com/v2alpha
+  kind: AlertNotificationTarget
+  metadata:
+    annotations:
+      openslo.com/service-folder: ./my/directory
+    labels:
+      env: prod
+      team: on-call
+    name: pd-on-call-notification
+  spec:
+    description: Sends PagerDuty alert to the current on-call
+    target: pagerduty
