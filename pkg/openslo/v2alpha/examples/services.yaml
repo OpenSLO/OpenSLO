@@ -1,0 +1,20 @@
+- apiVersion: openslo.com/v2alpha
+  kind: Service
+  metadata:
+    labels:
+      env: prod
+      team: team-b
+    name: example-service
+  spec:
+    description: Example service description
+- apiVersion: openslo.com/v2alpha
+  kind: Service
+  metadata:
+    annotations:
+      openslo.com/service-folder: ./my/directory
+    labels:
+      env: dev
+      team: team-a
+    name: example-service
+  spec:
+    description: Example service description
