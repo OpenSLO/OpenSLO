@@ -2,7 +2,6 @@
   kind: AlertPolicy
   metadata:
     name: low-priority
-    displayName: Low Priority
     labels:
       env: prod
       team: team-a
@@ -44,7 +43,6 @@
   kind: AlertPolicy
   metadata:
     name: medium-priority
-    displayName: Medium Priority
     labels:
       env: prod
       team: team-a
