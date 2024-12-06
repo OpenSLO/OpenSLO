@@ -20,6 +20,7 @@ func ExampleDataSource() {
       team: team-a
     name: prometheus
   spec:
+    description: Production Prometheus
     connectionDetails:
     - url: http://prometheus.example.com
     type: Prometheus
@@ -34,6 +35,7 @@ func ExampleDataSource() {
 			},
 		},
 		v2alpha.DataSourceSpec{
+			Description:       "Production Prometheus",
 			Type:              "Prometheus",
 			ConnectionDetails: []byte(`[{"url":"http://prometheus.example.com"}]`),
 		},
@@ -67,5 +69,6 @@ func ExampleDataSource() {
 	//   spec:
 	//     connectionDetails:
 	//     - url: http://prometheus.example.com
+	//     description: Production Prometheus
 	//     type: Prometheus
 }

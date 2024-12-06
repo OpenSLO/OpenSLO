@@ -6,6 +6,7 @@
       team: team-a
     name: prometheus
   spec:
+    description: Production Prometheus
     type: Prometheus
     connectionDetails:
     - url: http://prometheus.example.com
