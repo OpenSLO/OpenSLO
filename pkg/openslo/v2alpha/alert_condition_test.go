@@ -180,7 +180,7 @@ func runAlertConditionTypeTests[T openslo.Object](
 func validAlertCondition() AlertCondition {
 	return NewAlertCondition(
 		Metadata{
-			Name:        "cpu-usage-breach",
+			Name: "cpu-usage-breach",
 			Labels: Labels{
 				"team": "team-a",
 				"env":  "prod",
