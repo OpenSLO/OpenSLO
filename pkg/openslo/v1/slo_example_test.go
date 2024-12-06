@@ -61,7 +61,7 @@ func ExampleSLO() {
 		v1.Metadata{
 			Name:        "web-availability",
 			DisplayName: "SLO for web availability",
-			Labels: map[string]v1.Label{
+			Labels: v1.Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},

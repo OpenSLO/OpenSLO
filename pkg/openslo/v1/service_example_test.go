@@ -29,7 +29,7 @@ func ExampleService() {
 	service := v1.NewService(
 		v1.Metadata{
 			Name: "example-service",
-			Labels: map[string]v1.Label{
+			Labels: v1.Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},

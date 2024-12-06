@@ -29,7 +29,7 @@ func ExampleAlertNotificationTarget() {
 	target := v1.NewAlertNotificationTarget(
 		v1.Metadata{
 			Name: "pd-on-call-notification",
-			Labels: map[string]v1.Label{
+			Labels: v1.Labels{
 				"team": {"on-call"},
 				"env":  {"prod"},
 			},

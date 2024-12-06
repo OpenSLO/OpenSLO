@@ -529,7 +529,7 @@ func validSLO() SLO {
 		Metadata{
 			Name:        "web-availability",
 			DisplayName: "SLO for web availability",
-			Labels: map[string]Label{
+			Labels: Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},

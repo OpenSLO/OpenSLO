@@ -36,7 +36,7 @@ func ExampleAlertPolicy() {
 		v1.Metadata{
 			Name:        "low-priority",
 			DisplayName: "Low Priority",
-			Labels: map[string]v1.Label{
+			Labels: v1.Labels{
 				"team": {"team-a", "team-b"},
 				"env":  {"prod"},
 			},
