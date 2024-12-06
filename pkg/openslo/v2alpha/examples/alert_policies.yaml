@@ -1,0 +1,60 @@
+- apiVersion: openslo.com/v2alpha
+  kind: AlertPolicy
+  metadata:
+    name: low-priority
+    labels:
+      env: prod
+      team: team-a
+  spec:
+    description: Alert policy for low priority notifications, notifies on-call via email
+    alertWhenBreaching: true
+    conditions:
+      - conditionRef: cpu-usage-breach
+    notificationTargets:
+      - targetRef: on-call-mail-notification
+- apiVersion: openslo.com/v2alpha
+  kind: AlertPolicy
+  metadata:
+    name: high-priority
+    annotations:
+      openslo.com/service-folder: ./my/directory
+    labels:
+      env: prod
+      team: team-a
+  spec:
+    description: Alert policy for high priority notifications, notifies on-call via pager
+    alertWhenBreaching: true
+    conditions:
+      - kind: AlertCondition
+        metadata:
+          name: memory-usage-breach
+        spec:
+          description: SLO burn rate for memory-usage-breach exceeds 2
+          severity: page
+          condition:
+            kind: burnrate
+            op: gt
+            threshold: 2
+            lookbackWindow: 1h
+            alertAfter: 5m
+    notificationTargets:
+      - targetRef: on-call-pd-notification
+- apiVersion: openslo.com/v2alpha
+  kind: AlertPolicy
+  metadata:
+    name: medium-priority
+    labels:
+      env: prod
+      team: team-a
+  spec:
+    description: Alert policy for medium priority notifications, notifies on-call via slack
+    alertWhenBreaching: true
+    conditions:
+      - conditionRef: cpu-usage-breach
+    notificationTargets:
+      - kind: AlertNotificationTarget
+        metadata:
+          name: on-call-slack-notification
+        spec:
+          description: Sends Slack alert to the current on-call
+          target: slack
