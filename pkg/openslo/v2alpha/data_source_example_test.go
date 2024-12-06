@@ -1,26 +1,23 @@
-package v1_test
+package v2alpha_test
 
 import (
 	"bytes"
 	"os"
 	"reflect"
 
-	v1 "github.com/OpenSLO/OpenSLO/pkg/openslo/v1"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo/v2alpha"
 	"github.com/OpenSLO/OpenSLO/pkg/openslosdk"
 )
 
 func ExampleDataSource() {
 	// Raw DataSource object in YAML format.
 	const dataSourceYAML = `
-- apiVersion: openslo/v1
+- apiVersion: openslo.com/v2alpha
   kind: DataSource
   metadata:
     labels:
-      env:
-      - prod
-      team:
-      - team-a
-      - team-b
+      env: prod
+      team: team-a
     name: prometheus
   spec:
     description: Production Prometheus
@@ -29,15 +26,15 @@ func ExampleDataSource() {
     type: Prometheus
 `
 	// Define DataSource programmatically.
-	dataSource := v1.NewDataSource(
-		v1.Metadata{
+	dataSource := v2alpha.NewDataSource(
+		v2alpha.Metadata{
 			Name: "prometheus",
-			Labels: v1.Labels{
-				"team": {"team-a", "team-b"},
-				"env":  {"prod"},
+			Labels: v2alpha.Labels{
+				"team": "team-a",
+				"env":  "prod",
 			},
 		},
-		v1.DataSourceSpec{
+		v2alpha.DataSourceSpec{
 			Description:       "Production Prometheus",
 			Type:              "Prometheus",
 			ConnectionDetails: []byte(`[{"url":"http://prometheus.example.com"}]`),
@@ -62,15 +59,12 @@ func ExampleDataSource() {
 	}
 
 	// Output:
-	// - apiVersion: openslo/v1
+	// - apiVersion: openslo.com/v2alpha
 	//   kind: DataSource
 	//   metadata:
 	//     labels:
-	//       env:
-	//       - prod
-	//       team:
-	//       - team-a
-	//       - team-b
+	//       env: prod
+	//       team: team-a
 	//     name: prometheus
 	//   spec:
 	//     connectionDetails:
