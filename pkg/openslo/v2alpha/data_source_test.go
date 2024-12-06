@@ -1,4 +1,4 @@
-package v1
+package v2alpha
 
 import (
 	"strings"
@@ -82,11 +82,10 @@ func TestDataSource_Validate_Spec(t *testing.T) {
 func validDataSource() DataSource {
 	return NewDataSource(
 		Metadata{
-			Name:        "prometheus",
-			DisplayName: "My Prometheus",
+			Name: "prometheus",
 			Labels: Labels{
-				"team": {"team-a", "team-b"},
-				"env":  {"prod"},
+				"team": "team-a",
+				"env":  "prod",
 			},
 			Annotations: Annotations{
 				"key": "value",

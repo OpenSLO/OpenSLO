@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/nobl9/govy/pkg/govy"
+	"github.com/nobl9/govy/pkg/rules"
 
 	"github.com/OpenSLO/OpenSLO/internal"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
@@ -44,6 +45,7 @@ func (d DataSource) Validate() error {
 }
 
 type DataSourceSpec struct {
+	Description       string          `json:"description,omitempty"`
 	Type              string          `json:"type"`
 	ConnectionDetails json.RawMessage `json:"connectionDetails"`
 }
@@ -55,6 +57,9 @@ var dataSourceValidation = govy.New(
 	govy.For(func(d DataSource) DataSourceSpec { return d.Spec }).
 		WithName("spec").
 		Include(govy.New(
+			govy.For(func(spec DataSourceSpec) string { return spec.Description }).
+				WithName("description").
+				Rules(rules.StringMaxLength(1050)),
 			govy.For(func(spec DataSourceSpec) string { return spec.Type }).
 				WithName("type").
 				Required(),
