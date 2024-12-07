@@ -72,3 +72,20 @@
       dataSourceRef: my-prometheus
       spec:
         query: sum(min_over_time(kafka_consumergroup_lag{k8s_cluster="prod", consumergroup="annotator", topic="annotator-in"}[2m]))
+- apiVersion: openslo.com/v2alpha
+  kind: SLI
+  metadata:
+    name: annotator-throughput-with-data-source-spec
+    annotations:
+      openslo.com/service-folder: ./my/directory
+    labels:
+      env: dev
+      team: team-a
+  spec:
+    description: X% of time messages are processed without delay by the processing pipeline (expected value ~100%)
+    thresholdMetric:
+      dataSourceSpec:
+        connectionDetails:
+          accessToken: secretToken
+      spec:
+        query: sum(min_over_time(kafka_consumergroup_lag{k8s_cluster="prod", consumergroup="annotator", topic="annotator-in"}[2m]))
