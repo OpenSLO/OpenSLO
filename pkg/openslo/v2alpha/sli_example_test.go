@@ -24,17 +24,13 @@ func ExampleSLI() {
     ratioMetric:
       counter: true
       good:
-        metricSource:
-          metricSourceRef: my-datadog
-          spec:
-            query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
-          type: Datadog
+        dataSourceRef: my-datadog
+        spec:
+          query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
       total:
-        metricSource:
-          metricSourceRef: my-datadog
-          spec:
-            query: sum:trace.http.request.hits.by_http_status{*}.as_count()
-          type: Datadog
+        dataSourceRef: my-datadog
+        spec:
+          query: sum:trace.http.request.hits.by_http_status{*}.as_count()
 `
 	// Define SLI programmatically.
 	sli := v2alpha.NewSLI(
@@ -50,21 +46,15 @@ func ExampleSLI() {
 			RatioMetric: &v2alpha.SLIRatioMetric{
 				Counter: true,
 				Good: &v2alpha.SLIMetricSpec{
-					MetricSource: v2alpha.SLIMetricSource{
-						MetricSourceRef: "my-datadog",
-						Type:            "Datadog",
-						Spec: map[string]interface{}{
-							"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
-						},
+					DataSourceRef: "my-datadog",
+					Spec: map[string]interface{}{
+						"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
 					},
 				},
 				Total: &v2alpha.SLIMetricSpec{
-					MetricSource: v2alpha.SLIMetricSource{
-						MetricSourceRef: "my-datadog",
-						Type:            "Datadog",
-						Spec: map[string]interface{}{
-							"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
-						},
+					DataSourceRef: "my-datadog",
+					Spec: map[string]interface{}{
+						"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
 					},
 				},
 			},
@@ -101,15 +91,11 @@ func ExampleSLI() {
 	//     ratioMetric:
 	//       counter: true
 	//       good:
-	//         metricSource:
-	//           metricSourceRef: my-datadog
-	//           spec:
-	//             query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
-	//           type: Datadog
+	//         dataSourceRef: my-datadog
+	//         spec:
+	//           query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
 	//       total:
-	//         metricSource:
-	//           metricSourceRef: my-datadog
-	//           spec:
-	//             query: sum:trace.http.request.hits.by_http_status{*}.as_count()
-	//           type: Datadog
+	//         dataSourceRef: my-datadog
+	//         spec:
+	//           query: sum:trace.http.request.hits.by_http_status{*}.as_count()
 }

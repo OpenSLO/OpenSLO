@@ -56,15 +56,17 @@ var dataSourceValidation = govy.New(
 	validationRulesMetadata(func(d DataSource) Metadata { return d.Metadata }),
 	govy.For(func(d DataSource) DataSourceSpec { return d.Spec }).
 		WithName("spec").
-		Include(govy.New(
-			govy.For(func(spec DataSourceSpec) string { return spec.Description }).
-				WithName("description").
-				Rules(rules.StringMaxLength(1050)),
-			govy.For(func(spec DataSourceSpec) string { return spec.Type }).
-				WithName("type").
-				Required(),
-			govy.For(func(spec DataSourceSpec) json.RawMessage { return spec.ConnectionDetails }).
-				WithName("connectionDetails").
-				Required(),
-		)),
+		Include(dataSourceSpecValidation),
 ).WithNameFunc(internal.ObjectNameFunc[DataSource])
+
+var dataSourceSpecValidation = govy.New(
+	govy.For(func(spec DataSourceSpec) string { return spec.Description }).
+		WithName("description").
+		Rules(rules.StringMaxLength(1050)),
+	govy.For(func(spec DataSourceSpec) string { return spec.Type }).
+		WithName("type").
+		Required(),
+	govy.For(func(spec DataSourceSpec) json.RawMessage { return spec.ConnectionDetails }).
+		WithName("connectionDetails").
+		Required(),
+)

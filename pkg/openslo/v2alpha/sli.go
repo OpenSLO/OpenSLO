@@ -1,10 +1,11 @@
 package v2alpha
 
 import (
-	"github.com/OpenSLO/OpenSLO/internal"
-	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
+
+	"github.com/OpenSLO/OpenSLO/internal"
+	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
 
 var _ = openslo.Object(SLI{})
@@ -152,16 +153,16 @@ var sliRawMetricSpecValidation = govy.New(
 	When(func(m SLIRatioMetric) bool { return m.Raw != nil })
 
 var sliMetricSpecValidation = govy.New(
-	govy.For(func(spec SLIMetricSpec) SLIMetricSource { return spec.MetricSource }).
-		WithName("metricSource").
-		Include(govy.New(
-			govy.For(func(source SLIMetricSource) string { return source.MetricSourceRef }).
-				WithName("metricSourceRef").
-				OmitEmpty().
-				Rules(rules.StringDNSLabel()),
-			govy.For(func(source SLIMetricSource) map[string]any { return source.Spec }).
-				WithName("spec").
-				Required().
-				Rules(rules.MapMinLength[map[string]any](1)),
-		)),
+	govy.For(govy.GetSelf[SLIMetricSpec]()).
+		Rules(rules.MutuallyExclusive(true, map[string]func(s SLIMetricSpec) any{
+			"dataSourceRef":  func(s SLIMetricSpec) any { return s.DataSourceRef },
+			"dataSourceSpec": func(s SLIMetricSpec) any { return s.DataSourceSpec },
+		})),
+	govy.For(func(spec SLIMetricSpec) string { return spec.DataSourceRef }).
+		WithName("dataSourceRef").
+		OmitEmpty().
+		Rules(rules.StringDNSLabel()),
+	govy.ForPointer(func(spec SLIMetricSpec) *DataSourceSpec { return spec.DataSourceSpec }).
+		WithName("dataSourceSpec").
+		Include(dataSourceSpecValidation),
 )

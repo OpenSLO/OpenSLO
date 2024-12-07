@@ -10,17 +10,13 @@
     ratioMetric:
       counter: true
       good:
-        metricSource:
-          metricSourceRef: my-datadog
-          type: Datadog
-          spec:
-            query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
+        dataSourceRef: my-datadog
+        spec:
+          query: sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()
       total:
-        metricSource:
-          metricSourceRef: my-datadog
-          type: Datadog
-          spec:
-            query: sum:trace.http.request.hits.by_http_status{*}.as_count()
+        dataSourceRef: my-datadog
+        spec:
+          query: sum:trace.http.request.hits.by_http_status{*}.as_count()
 - apiVersion: openslo.com/v2alpha
   kind: SLI
   metadata:
@@ -32,19 +28,15 @@
     ratioMetric:
       counter: false
       bad:
-        metricSource:
-          metricSourceRef: appdynamics
-          type: AppDynamics
-          spec:
-            applicationName: my-app
-            metricPath: End User Experience|App|Slow Requests
+        dataSourceRef: appdynamics
+        spec:
+          applicationName: my-app
+          metricPath: End User Experience|App|Slow Requests
       total:
-        metricSource:
-          metricSourceRef: appdynamics
-          type: AppDynamics
-          spec:
-            applicationName: my-app
-            metricPath: End User Experience|App|Normal Requests
+        dataSourceRef: appdynamics
+        spec:
+          applicationName: my-app
+          metricPath: End User Experience|App|Normal Requests
 - apiVersion: openslo.com/v2alpha
   kind: SLI
   metadata:
@@ -57,16 +49,14 @@
       description: Monitors that we have an average wifi connection satisfaction
       rawType: success
       raw:
-        metricSource:
-          metricSourceRef: prometheus
-          type: Prometheus
-          spec:
-            query: |
-              1 - (
-                sum(sum_over_time(poller_client_satisfaction_ratio[{{.window}}]))
-                /
-                sum(count_over_time(poller_client_satisfaction_ratio[{{.window}}]))
-              )
+        dataSourceRef: prometheus
+        spec:
+          query: |
+            1 - (
+              sum(sum_over_time(poller_client_satisfaction_ratio[{{.window}}]))
+              /
+              sum(count_over_time(poller_client_satisfaction_ratio[{{.window}}]))
+            )
 - apiVersion: openslo.com/v2alpha
   kind: SLI
   metadata:
@@ -79,8 +69,6 @@
   spec:
     description: X% of time messages are processed without delay by the processing pipeline (expected value ~100%)
     thresholdMetric:
-      metricSource:
-        metricSourceRef: my-prometheus
-        type: Prometheus
-        spec:
-          query: sum(min_over_time(kafka_consumergroup_lag{k8s_cluster="prod", consumergroup="annotator", topic="annotator-in"}[2m]))
+      dataSourceRef: my-prometheus
+      spec:
+        query: sum(min_over_time(kafka_consumergroup_lag{k8s_cluster="prod", consumergroup="annotator", topic="annotator-in"}[2m]))

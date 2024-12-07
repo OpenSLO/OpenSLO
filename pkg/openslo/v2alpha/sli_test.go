@@ -1,6 +1,7 @@
 package v2alpha
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"testing"
@@ -245,33 +246,42 @@ func runSLIMetricSpecTests[T openslo.Object](t *testing.T, path string, objectGe
 		object := objectGetter(SLIMetricSpec{})
 		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: path + ".metricSource.spec",
-			Code:         rules.ErrorCodeRequired,
+			PropertyName: path,
+			Message:      "one of [dataSourceRef, dataSourceSpec] properties must be set, none was provided",
+			Code:         rules.ErrorCodeMutuallyExclusive,
 		})
 	})
-	t.Run("empty metricSource.spec", func(t *testing.T) {
+	t.Run("both dataSourceRef and dataSourceSpec are set", func(t *testing.T) {
 		object := objectGetter(SLIMetricSpec{
-			MetricSource: SLIMetricSource{
-				Spec: map[string]any{},
+			DataSourceRef: "my-datadog",
+			DataSourceSpec: &DataSourceSpec{
+				Type:              "Datadog",
+				ConnectionDetails: json.RawMessage(`{"secretKey":"secret"}`),
 			},
 		})
 		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: path + ".metricSource.spec",
-			Code:         rules.ErrorCodeMapMinLength,
+			PropertyName: path,
+			Message:      "[dataSourceRef, dataSourceSpec] properties are mutually exclusive, provide only one of them",
+			Code:         rules.ErrorCodeMutuallyExclusive,
 		})
 	})
-	t.Run("invalid metricSourceRef", func(t *testing.T) {
+	t.Run("invalid dataSourceRef", func(t *testing.T) {
 		object := objectGetter(SLIMetricSpec{
-			MetricSource: SLIMetricSource{
-				MetricSourceRef: "my datadog",
-				Spec:            map[string]any{"query": "query"},
-			},
+			DataSourceRef: "my datadog",
+			Spec:          map[string]any{"query": "query"},
 		})
 		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: path + ".metricSource.metricSourceRef",
+			PropertyName: path + ".dataSourceRef",
 			Code:         rules.ErrorCodeStringDNSLabel,
+		})
+	})
+	t.Run("dataSourceSpec", func(t *testing.T) {
+		runDataSourceSpecTests(t, path+".dataSourceSpec", func(spec DataSourceSpec) T {
+			return objectGetter(SLIMetricSpec{
+				DataSourceSpec: &spec,
+			})
 		})
 	})
 }
@@ -283,11 +293,10 @@ func validSLI() SLI {
 func validGoodOverTotalSLI() SLI {
 	return NewSLI(
 		Metadata{
-			Name:        "search-availability",
-			DisplayName: "Searching availability",
+			Name: "search-availability",
 			Labels: Labels{
-				"team": {"team-a", "team-b"},
-				"env":  {"prod"},
+				"team": "team-a",
+				"env":  "prod",
 			},
 		},
 		SLISpec{
@@ -295,21 +304,15 @@ func validGoodOverTotalSLI() SLI {
 			RatioMetric: &SLIRatioMetric{
 				Counter: true,
 				Good: &SLIMetricSpec{
-					MetricSource: SLIMetricSource{
-						MetricSourceRef: "my-datadog",
-						Type:            "Datadog",
-						Spec: map[string]interface{}{
-							"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
-						},
+					DataSourceRef: "my-datadog",
+					Spec: map[string]interface{}{
+						"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
 					},
 				},
 				Total: &SLIMetricSpec{
-					MetricSource: SLIMetricSource{
-						MetricSourceRef: "my-datadog",
-						Type:            "Datadog",
-						Spec: map[string]interface{}{
-							"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
-						},
+					DataSourceRef: "my-datadog",
+					Spec: map[string]interface{}{
+						"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
 					},
 				},
 			},
@@ -322,12 +325,9 @@ func validBadOverTotalSLI() SLI {
 	sli.Spec.RatioMetric.Good = nil
 	sli.Spec.Description = "X% of search requests are unsuccessful"
 	sli.Spec.RatioMetric.Bad = &SLIMetricSpec{
-		MetricSource: SLIMetricSource{
-			MetricSourceRef: "my-datadog",
-			Type:            "Datadog",
-			Spec: map[string]interface{}{
-				"query": "sum:trace.http.request.hits.by_http_status{!http.status_code:200}.as_count()",
-			},
+		DataSourceRef: "my-datadog",
+		Spec: map[string]interface{}{
+			"query": "sum:trace.http.request.hits.by_http_status{!http.status_code:200}.as_count()",
 		},
 	}
 	return sli
@@ -336,11 +336,10 @@ func validBadOverTotalSLI() SLI {
 func validRawSLI() SLI {
 	return NewSLI(
 		Metadata{
-			Name:        "wifi-client-satisfaction",
-			DisplayName: "WiFi client satisfaction",
+			Name: "wifi-client-satisfaction",
 			Labels: Labels{
-				"team": {"team-a", "team-b"},
-				"env":  {"prod"},
+				"team": "team-a",
+				"env":  "prod",
 			},
 		},
 		SLISpec{
@@ -348,17 +347,14 @@ func validRawSLI() SLI {
 			RatioMetric: &SLIRatioMetric{
 				RawType: SLIRawMetricTypeSuccess,
 				Raw: &SLIMetricSpec{
-					MetricSource: SLIMetricSource{
-						MetricSourceRef: "my-prometheus",
-						Type:            "Prometheus",
-						Spec: map[string]interface{}{
-							"query": `
+					DataSourceRef: "my-prometheus",
+					Spec: map[string]interface{}{
+						"query": `
 1 - (
   sum(sum_over_time(poller_client_satisfaction_ratio[{{.window}}]))
   /
   sum(count_over_time(poller_client_satisfaction_ratio[{{.window}}]))
 )`,
-						},
 					},
 				},
 			},
@@ -369,23 +365,19 @@ func validRawSLI() SLI {
 func validThresholdSLI() SLI {
 	return NewSLI(
 		Metadata{
-			Name:        "annotator-throughput",
-			DisplayName: "Annotator service throughput",
+			Name: "annotator-throughput",
 			Labels: Labels{
-				"team": {"team-a", "team-b"},
-				"env":  {"prod"},
+				"team": "team-a",
+				"env":  "prod",
 			},
 		},
 		SLISpec{
 			Description: "X% of time messages are processed without delay by the processing pipeline (expected value ~100%)",
 			ThresholdMetric: &SLIMetricSpec{
-				MetricSource: SLIMetricSource{
-					MetricSourceRef: "my-prometheus",
-					Type:            "Prometheus",
-					Spec: map[string]interface{}{
-						// nolint: lll
-						"query": `sum(min_over_time(kafka_consumergroup_lag{k8s_cluster="prod", consumergroup="annotator", topic="annotator-in"}[2m]))`,
-					},
+				DataSourceRef: "my-prometheus",
+				Spec: map[string]interface{}{
+					// nolint: lll
+					"query": `sum(min_over_time(kafka_consumergroup_lag{k8s_cluster="prod", consumergroup="annotator", topic="annotator-in"}[2m]))`,
 				},
 			},
 		},
