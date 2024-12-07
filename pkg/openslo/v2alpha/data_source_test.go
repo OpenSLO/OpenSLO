@@ -46,18 +46,34 @@ func TestDataSource_Validate_Metadata(t *testing.T) {
 }
 
 func TestDataSource_Validate_Spec(t *testing.T) {
+	runDataSourceSpecTests(t, "spec", func(d DataSourceSpec) DataSource {
+		dataSource := validDataSource()
+		dataSource.Spec = d
+		return dataSource
+	})
+}
+
+func runDataSourceSpecTests[T openslo.Object](
+	t *testing.T,
+	path string,
+	objectGetter func(d DataSourceSpec) T,
+) {
+	t.Helper()
+
 	t.Run("description ok", func(t *testing.T) {
 		dataSource := validDataSource()
 		dataSource.Spec.Description = strings.Repeat("A", 1050)
-		err := dataSource.Validate()
+		object := objectGetter(dataSource.Spec)
+		err := object.Validate()
 		govytest.AssertNoError(t, err)
 	})
 	t.Run("description too long", func(t *testing.T) {
 		dataSource := validDataSource()
 		dataSource.Spec.Description = strings.Repeat("A", 1051)
-		err := dataSource.Validate()
+		object := objectGetter(dataSource.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: "spec.description",
+			PropertyName: path + ".description",
 			Code:         rules.ErrorCodeStringMaxLength,
 		})
 	})
@@ -65,14 +81,15 @@ func TestDataSource_Validate_Spec(t *testing.T) {
 		dataSource := validDataSource()
 		dataSource.Spec.Type = ""
 		dataSource.Spec.ConnectionDetails = nil
-		err := dataSource.Validate()
+		object := objectGetter(dataSource.Spec)
+		err := object.Validate()
 		govytest.AssertError(t, err,
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.type",
+				PropertyName: path + ".type",
 				Code:         rules.ErrorCodeRequired,
 			},
 			govytest.ExpectedRuleError{
-				PropertyName: "spec.connectionDetails",
+				PropertyName: path + ".connectionDetails",
 				Code:         rules.ErrorCodeRequired,
 			},
 		)
