@@ -101,7 +101,6 @@ type SLOObjective struct {
 	TargetPercent   *float64           `json:"targetPercent,omitempty"`
 	TimeSliceTarget *float64           `json:"timeSliceTarget,omitempty"`
 	TimeSliceWindow *DurationShorthand `json:"timeSliceWindow,omitempty"`
-	IndicatorRef    *string            `json:"indicatorRef,omitempty"`
 	CompositeWeight *float64           `json:"compositeWeight,omitempty"`
 }
 

@@ -250,7 +250,7 @@ func TestDecode(t *testing.T) {
 								},
 							},
 						},
-						Objectives: []v2alpha.Objective{
+						Objectives: []v2alpha.SLOObjective{
 							{
 								DisplayName: "Foo Total Errors",
 								Target:      ptr(0.98),
