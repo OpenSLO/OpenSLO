@@ -62,25 +62,23 @@ func ExampleSLO() {
 		v2alpha.SLOSpec{
 			Description: "X% of search requests are successful",
 			Service:     "web",
-			SLOSLI: &v2alpha.SLOSLI{
-				SLOSLIInline: &v2alpha.SLOSLIInline{
-					Metadata: v2alpha.Metadata{
-						Name: "web-successful-requests-ratio",
-					},
-					Spec: v2alpha.SLISpec{
-						RatioMetric: &v2alpha.SLIRatioMetric{
-							Counter: true,
-							Good: &v2alpha.SLIMetricSpec{
-								DataSourceRef: "my-prometheus",
-								Spec: map[string]any{
-									"query": `sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})`,
-								},
+			SLI: &v2alpha.SLOSLIInline{
+				Metadata: v2alpha.Metadata{
+					Name: "web-successful-requests-ratio",
+				},
+				Spec: v2alpha.SLISpec{
+					RatioMetric: &v2alpha.SLIRatioMetric{
+						Counter: true,
+						Good: &v2alpha.SLIMetricSpec{
+							DataSourceRef: "my-prometheus",
+							Spec: map[string]any{
+								"query": `sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})`,
 							},
-							Total: &v2alpha.SLIMetricSpec{
-								DataSourceRef: "my-prometheus",
-								Spec: map[string]any{
-									"query": `sum(http_requests{k8s_cluster="prod",component="web"})`,
-								},
+						},
+						Total: &v2alpha.SLIMetricSpec{
+							DataSourceRef: "my-prometheus",
+							Spec: map[string]any{
+								"query": `sum(http_requests{k8s_cluster="prod",component="web"})`,
 							},
 						},
 					},

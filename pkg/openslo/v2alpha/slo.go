@@ -50,9 +50,10 @@ func (s SLO) IsComposite() bool {
 }
 
 type SLOSpec struct {
-	*SLOSLI
 	Description     string             `json:"description,omitempty"`
 	Service         string             `json:"service"`
+	SLI             *SLOSLIInline      `json:"sli,omitempty"`
+	SLIRef          *string            `json:"sliRef,omitempty"`
 	BudgetingMethod SLOBudgetingMethod `json:"budgetingMethod"`
 	TimeWindow      []SLOTimeWindow    `json:"timeWindow,omitempty"`
 	Objectives      []SLOObjective     `json:"objectives"`
@@ -61,7 +62,7 @@ type SLOSpec struct {
 
 func (s SLOSpec) HasCompositeObjectives() bool {
 	for i := range s.Objectives {
-		if s.Objectives[i].SLOSLI != nil {
+		if s.Objectives[i].SLI != nil || s.Objectives[i].SLIRef != nil {
 			return true
 		}
 	}
@@ -82,18 +83,12 @@ var validSLOBudgetingMethods = []SLOBudgetingMethod{
 	SLOBudgetingMethodRatioTimeslices,
 }
 
-type SLOSLI struct {
-	SLIRef        *string `json:"sliRef,omitempty"`
-	*SLOSLIInline `json:"sli,omitempty"`
-}
-
 type SLOSLIInline struct {
 	Metadata Metadata `json:"metadata"`
 	Spec     SLISpec  `json:"spec"`
 }
 
 type SLOObjective struct {
-	*SLOSLI
 	DisplayName     string             `json:"displayName,omitempty"`
 	Operator        Operator           `json:"op,omitempty"`
 	Value           float64            `json:"value,omitempty"`
@@ -101,6 +96,8 @@ type SLOObjective struct {
 	TargetPercent   *float64           `json:"targetPercent,omitempty"`
 	TimeSliceTarget *float64           `json:"timeSliceTarget,omitempty"`
 	TimeSliceWindow *DurationShorthand `json:"timeSliceWindow,omitempty"`
+	SLI             *SLOSLIInline      `json:"sli,omitempty"`
+	SLIRef          *string            `json:"sliRef,omitempty"`
 	CompositeWeight *float64           `json:"compositeWeight,omitempty"`
 }
 
@@ -143,6 +140,10 @@ var sloSpecValidation = govy.New(
 	govy.For(govy.GetSelf[SLOSpec]()).
 		Rules(validationRuleForSLOSLI()).
 		Include(
+			getSLOSLIValidation(
+				func(s SLOSpec) *SLOSLIInline { return s.SLI },
+				func(s SLOSpec) *string { return s.SLIRef },
+			),
 			sloTimeSlicesObjectiveValidation,
 			sloRatioTimeSlicesObjectiveValidation,
 		),
@@ -152,8 +153,6 @@ var sloSpecValidation = govy.New(
 	govy.For(func(spec SLOSpec) string { return spec.Service }).
 		WithName("service").
 		Required(),
-	govy.ForPointer(func(spec SLOSpec) *SLOSLI { return spec.SLOSLI }).
-		Include(sloSLIValidation),
 	govy.For(func(spec SLOSpec) SLOBudgetingMethod { return spec.BudgetingMethod }).
 		WithName("budgetingMethod").
 		Required().
@@ -174,27 +173,34 @@ var sloSpecValidation = govy.New(
 		IncludeForEach(sloCompositeObjectiveValidation),
 )
 
-var sloSLIValidation = govy.New(
-	govy.For(govy.GetSelf[SLOSLI]()).
-		Rules(rules.MutuallyExclusive(true, map[string]func(i SLOSLI) any{
-			"sliRef": func(i SLOSLI) any { return i.SLIRef },
-			"sli":    func(i SLOSLI) any { return i.SLOSLIInline },
-		})),
-	govy.For(govy.GetSelf[SLOSLI]()).
-		WithName("sli").
-		When(func(s SLOSLI) bool { return s.SLOSLIInline != nil }).
-		Cascade(govy.CascadeModeContinue).
-		Include(govy.New(
-			validationRulesMetadata(func(i SLOSLI) Metadata { return i.Metadata }),
-			govy.For(func(i SLOSLI) SLISpec { return i.Spec }).
-				WithName("spec").
-				Include(sliSpecValidation),
-		)),
-	govy.ForPointer(func(i SLOSLI) *string { return i.SLIRef }).
-		WithName("sliRef").
-		Rules(rules.StringDNSLabel()),
-).
-	Cascade(govy.CascadeModeStop)
+func getSLOSLIValidation[T any](
+	sliGetter func(T) *SLOSLIInline,
+	sliRefGetter func(T) *string,
+) govy.Validator[T] {
+	return govy.New(
+		govy.For(govy.GetSelf[T]()).
+			Rules(rules.MutuallyExclusive(true, map[string]func(t T) any{
+				"sli":    func(t T) any { return sliGetter(t) },
+				"sliRef": func(t T) any { return sliRefGetter(t) },
+			})),
+		govy.ForPointer(sliGetter).
+			WithName("sli").
+			Cascade(govy.CascadeModeContinue).
+			Include(govy.New(
+				validationRulesMetadata(func(s SLOSLIInline) Metadata { return s.Metadata }),
+				govy.For(func(s SLOSLIInline) SLISpec { return s.Spec }).
+					WithName("spec").
+					Include(sliSpecValidation),
+			)),
+		govy.ForPointer(sliRefGetter).
+			WithName("sliRef").
+			Rules(rules.StringDNSLabel()),
+	).
+		// Another validation rule on 'spec' level already checks a scenario
+		// in which neither 'sli' nor 'sliRef' are provided.
+		When(func(t T) bool { return sliGetter(t) != nil || sliRefGetter(t) != nil }).
+		Cascade(govy.CascadeModeStop)
+}
 
 var sloTimeWindowValidation = govy.New(
 	govy.For(govy.GetSelf[SLOTimeWindow]()).
@@ -278,8 +284,13 @@ var sloObjectiveValidation = govy.New(
 )
 
 var sloCompositeObjectiveValidation = govy.New(
-	govy.ForPointer(func(s SLOObjective) *SLOSLI { return s.SLOSLI }).
-		Include(sloSLIValidation),
+	govy.For(govy.GetSelf[SLOObjective]()).
+		Include(
+			getSLOSLIValidation(
+				func(s SLOObjective) *SLOSLIInline { return s.SLI },
+				func(s SLOObjective) *string { return s.SLIRef },
+			),
+		),
 	govy.ForPointer(func(s SLOObjective) *float64 { return s.CompositeWeight }).
 		WithName("compositeWeight").
 		Rules(rules.GT(0.0)),
@@ -316,12 +327,15 @@ func validationRulesForTimeSliceWindow() govy.PropertyRules[DurationShorthand, S
 
 func validationRuleForSLOSLI() govy.Rule[SLOSpec] {
 	msg := "'sli' or 'sliRef' fields must either be defined on the 'spec' level (standard SLOs)" +
-		" or on the 'spec.objectives[*]' level (composite SLOs), but not both"
+		" or on the 'spec.objectives[*]' level (composite SLOs)"
 	return govy.NewRule(func(s SLOSpec) error {
 		hasComposites := s.HasCompositeObjectives()
-		hasSLI := s.SLOSLI != nil
-		if hasComposites == hasSLI {
-			return errors.New(msg)
+		hasSLI := s.SLI != nil || s.SLIRef != nil
+		if !hasComposites && !hasSLI {
+			return errors.New(msg + ", but none were provided")
+		}
+		if hasComposites && hasSLI {
+			return errors.New(msg + ", but not both")
 		}
 		return nil
 	}).

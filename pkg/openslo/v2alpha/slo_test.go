@@ -98,18 +98,19 @@ func TestSLO_Validate_Spec(t *testing.T) {
 	})
 	t.Run("missing both sli definition in spec and objectives", func(t *testing.T) {
 		slo := validSLO()
-		slo.Spec.SLOSLI = nil
+		slo.Spec.SLI = nil
+		slo.Spec.SLIRef = nil
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
 			PropertyName: "spec",
 			Message: "'sli' or 'sliRef' fields must either be defined on the 'spec' level (standard SLOs)" +
-				" or on the 'spec.objectives[*]' level (composite SLOs), but not both",
+				" or on the 'spec.objectives[*]' level (composite SLOs), but none were provided",
 			Code: rules.ErrorCodeMutuallyExclusive,
 		})
 	})
 	t.Run("sli definition both in spec and objectives", func(t *testing.T) {
 		slo := validCompositeSLOWithSLIRef()
-		slo.Spec.SLOSLI = slo.Spec.Objectives[0].SLOSLI
+		slo.Spec.SLIRef = slo.Spec.Objectives[0].SLIRef
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
 			PropertyName: "spec",
@@ -121,9 +122,10 @@ func TestSLO_Validate_Spec(t *testing.T) {
 }
 
 func TestSLO_Validate_Spec_SLI(t *testing.T) {
-	runSLOSLITests(t, "spec", func(s SLOSLI) SLO {
+	runSLOSLITests(t, "spec", func(sli *SLOSLIInline, ref *string) SLO {
 		slo := validSLO()
-		slo.Spec.SLOSLI = &s
+		slo.Spec.SLI = sli
+		slo.Spec.SLIRef = ref
 		return slo
 	})
 }
@@ -286,10 +288,11 @@ func TestSLO_Validate_Spec_Objectives(t *testing.T) {
 
 func TestSLO_Validate_Spec_CompositeObjectives(t *testing.T) {
 	t.Run("sli", func(t *testing.T) {
-		runSLOSLITests(t, "spec.objectives[0]", func(s SLOSLI) SLO {
+		runSLOSLITests(t, "spec.objectives[0]", func(sli *SLOSLIInline, ref *string) SLO {
 			slo := validSLO()
-			slo.Spec.SLOSLI = nil
-			slo.Spec.Objectives[0].SLOSLI = &s
+			slo.Spec.SLI = nil
+			slo.Spec.Objectives[0].SLI = sli
+			slo.Spec.Objectives[0].SLIRef = ref
 			return slo
 		})
 	})
@@ -451,23 +454,11 @@ func TestSLO_Validate_Spec_AlertPolicies(t *testing.T) {
 	})
 }
 
-func runSLOSLITests(t *testing.T, path string, sloGetter func(SLOSLI) SLO) {
+func runSLOSLITests(t *testing.T, path string, sloGetter func(*SLOSLIInline, *string) SLO) {
 	t.Helper()
 
-	t.Run("missing both sli and sliRef", func(t *testing.T) {
-		slo := sloGetter(SLOSLI{})
-		err := slo.Validate()
-		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: path,
-			Message:      "one of [sli, sliRef] properties must be set, none was provided",
-			Code:         rules.ErrorCodeMutuallyExclusive,
-		})
-	})
 	t.Run("both sli and sliRef are provided", func(t *testing.T) {
-		slo := sloGetter(SLOSLI{
-			SLIRef:       new(string),
-			SLOSLIInline: &SLOSLIInline{},
-		})
+		slo := sloGetter(&SLOSLIInline{}, new(string))
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
 			PropertyName: path,
@@ -476,12 +467,12 @@ func runSLOSLITests(t *testing.T, path string, sloGetter func(SLOSLI) SLO) {
 		})
 	})
 	t.Run("valid sliRef", func(t *testing.T) {
-		slo := sloGetter(SLOSLI{SLIRef: ptr("my-sli")})
+		slo := sloGetter(nil, ptr("my-sli"))
 		err := slo.Validate()
 		govytest.AssertNoError(t, err)
 	})
 	t.Run("invalid sliRef", func(t *testing.T) {
-		slo := sloGetter(SLOSLI{SLIRef: ptr("my sli")})
+		slo := sloGetter(nil, ptr("my sli"))
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
 			PropertyName: path + ".sliRef",
@@ -490,22 +481,18 @@ func runSLOSLITests(t *testing.T, path string, sloGetter func(SLOSLI) SLO) {
 	})
 	t.Run("sli.metadata", func(t *testing.T) {
 		runMetadataTests(t, path+".sli.metadata", func(m Metadata) SLO {
-			return sloGetter(SLOSLI{
-				SLOSLIInline: &SLOSLIInline{
-					Metadata: m,
-					Spec:     validSLI().Spec,
-				},
-			})
+			return sloGetter(&SLOSLIInline{
+				Metadata: m,
+				Spec:     validSLI().Spec,
+			}, nil)
 		})
 	})
 	t.Run("sli.spec", func(t *testing.T) {
 		runSLISpecTests(t, path+".sli.spec", func(spec SLISpec) SLO {
-			return sloGetter(SLOSLI{
-				SLOSLIInline: &SLOSLIInline{
-					Metadata: validSLI().Metadata,
-					Spec:     spec,
-				},
-			})
+			return sloGetter(&SLOSLIInline{
+				Metadata: validSLI().Metadata,
+				Spec:     spec,
+			}, nil)
 		})
 	})
 }
@@ -519,7 +506,7 @@ func TestSLO_IsComposite(t *testing.T) {
 
 	t.Run("at least one objective is composite", func(t *testing.T) {
 		slo.Spec.Objectives = append(slo.Spec.Objectives, slo.Spec.Objectives[0])
-		slo.Spec.Objectives[0].SLOSLI = nil
+		slo.Spec.Objectives[0].SLI = nil
 		assert.True(t, slo.IsComposite())
 	})
 }
@@ -536,25 +523,23 @@ func validSLO() SLO {
 		SLOSpec{
 			Description: "X% of search requests are successful",
 			Service:     "web",
-			SLOSLI: &SLOSLI{
-				SLOSLIInline: &SLOSLIInline{
-					Metadata: Metadata{
-						Name: "web-successful-requests-ratio",
-					},
-					Spec: SLISpec{
-						RatioMetric: &SLIRatioMetric{
-							Counter: true,
-							Good: &SLIMetricSpec{
-								DataSourceRef: "my-prometheus",
-								Spec: map[string]any{
-									"query": `sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})`,
-								},
+			SLI: &SLOSLIInline{
+				Metadata: Metadata{
+					Name: "web-successful-requests-ratio",
+				},
+				Spec: SLISpec{
+					RatioMetric: &SLIRatioMetric{
+						Counter: true,
+						Good: &SLIMetricSpec{
+							DataSourceRef: "my-prometheus",
+							Spec: map[string]any{
+								"query": `sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})`,
 							},
-							Total: &SLIMetricSpec{
-								DataSourceRef: "my-prometheus",
-								Spec: map[string]any{
-									"query": `sum(http_requests{k8s_cluster="prod",component="web"})`,
-								},
+						},
+						Total: &SLIMetricSpec{
+							DataSourceRef: "my-prometheus",
+							Spec: map[string]any{
+								"query": `sum(http_requests{k8s_cluster="prod",component="web"})`,
 							},
 						},
 					},
@@ -602,10 +587,10 @@ func validSLOWithInlinedAlertPolicy() SLO {
 
 func validCompositeSLOWithSLIRef() SLO {
 	slo := validSLO()
-	slo.Spec.SLOSLI = nil
-	slo.Spec.Objectives[0].SLOSLI = &SLOSLI{
-		SLIRef: ptr("my-sli"),
-	}
+	slo.Spec.SLI = nil
+	slo.Spec.SLIRef = nil
+	slo.Spec.Objectives[0].SLI = nil
+	slo.Spec.Objectives[0].SLIRef = ptr("my-sli")
 	slo.Spec.Objectives[0].CompositeWeight = ptr(1.0)
 	return slo
 }
@@ -613,12 +598,12 @@ func validCompositeSLOWithSLIRef() SLO {
 func validCompositeSLOWithInlinedSLI() SLO {
 	slo := validSLO()
 	sli := validSLI()
-	slo.Spec.SLOSLI = nil
-	slo.Spec.Objectives[0].SLOSLI = &SLOSLI{
-		SLOSLIInline: &SLOSLIInline{
-			Metadata: sli.Metadata,
-			Spec:     sli.Spec,
-		},
+	slo.Spec.SLI = nil
+	slo.Spec.SLIRef = nil
+	slo.Spec.Objectives[0].SLIRef = nil
+	slo.Spec.Objectives[0].SLI = &SLOSLIInline{
+		Metadata: sli.Metadata,
+		Spec:     sli.Spec,
 	}
 	slo.Spec.Objectives[0].CompositeWeight = ptr(1.0)
 	return slo

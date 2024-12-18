@@ -150,37 +150,35 @@ func TestDecode(t *testing.T) {
 					Spec: v1.SLOSpec{
 						BudgetingMethod: "Occurrences",
 						Service:         "foo",
-						SLOIndicator: &v1.SLOIndicator{
-							SLOIndicatorInline: &v1.SLOIndicatorInline{
-								Metadata: v1.Metadata{
-									Name: "good",
-								},
-								Spec: v1.SLISpec{
-									RatioMetric: &v1.SLIRatioMetric{
-										Counter: true,
-										Good: &v1.SLIMetricSpec{
-											MetricSource: v1.SLIMetricSource{
-												MetricSourceRef: "thanos",
-												Type:            "Prometheus",
-												Spec: map[string]any{
-													"query": `http_requests_total{status_code="200"}`,
-													"dimensions": []any{
-														"following",
-														"another",
-													},
+						Indicator: &v1.SLOIndicatorInline{
+							Metadata: v1.Metadata{
+								Name: "good",
+							},
+							Spec: v1.SLISpec{
+								RatioMetric: &v1.SLIRatioMetric{
+									Counter: true,
+									Good: &v1.SLIMetricSpec{
+										MetricSource: v1.SLIMetricSource{
+											MetricSourceRef: "thanos",
+											Type:            "Prometheus",
+											Spec: map[string]any{
+												"query": `http_requests_total{status_code="200"}`,
+												"dimensions": []any{
+													"following",
+													"another",
 												},
 											},
 										},
-										Total: &v1.SLIMetricSpec{
-											MetricSource: v1.SLIMetricSource{
-												MetricSourceRef: "thanos",
-												Type:            "Prometheus",
-												Spec: map[string]any{
-													"query": `http_requests_total{}`,
-													"dimensions": []any{
-														"following",
-														"another",
-													},
+									},
+									Total: &v1.SLIMetricSpec{
+										MetricSource: v1.SLIMetricSource{
+											MetricSourceRef: "thanos",
+											Type:            "Prometheus",
+											Spec: map[string]any{
+												"query": `http_requests_total{}`,
+												"dimensions": []any{
+													"following",
+													"another",
 												},
 											},
 										},
@@ -228,7 +226,7 @@ func TestDecode(t *testing.T) {
 					},
 					Spec: v2alpha.SLOSpec{
 						Service: "foo",
-						SLI: &v2alpha.SLOEmbeddedSLI{
+						SLI: &v2alpha.SLOSLIInline{
 							Metadata: v2alpha.Metadata{
 								Name: "foo-error",
 							},
@@ -266,7 +264,7 @@ func TestDecode(t *testing.T) {
 					},
 					Spec: v2alpha.SLOSpec{
 						Service: "bar",
-						SLI: &v2alpha.SLOEmbeddedSLI{
+						SLI: &v2alpha.SLOSLIInline{
 							Metadata: v2alpha.Metadata{
 								Name: "bar-error",
 							},
@@ -316,37 +314,35 @@ func TestEncode(t *testing.T) {
 		Spec: v1.SLOSpec{
 			BudgetingMethod: "Occurrences",
 			Service:         "foo",
-			SLOIndicator: &v1.SLOIndicator{
-				SLOIndicatorInline: &v1.SLOIndicatorInline{
-					Metadata: v1.Metadata{
-						Name: "good",
-					},
-					Spec: v1.SLISpec{
-						RatioMetric: &v1.SLIRatioMetric{
-							Counter: true,
-							Good: &v1.SLIMetricSpec{
-								MetricSource: v1.SLIMetricSource{
-									MetricSourceRef: "thanos",
-									Type:            "Prometheus",
-									Spec: map[string]any{
-										"query": `http_requests_total{status_code="200"}`,
-										"dimensions": []any{
-											"following",
-											"another",
-										},
+			Indicator: &v1.SLOIndicatorInline{
+				Metadata: v1.Metadata{
+					Name: "good",
+				},
+				Spec: v1.SLISpec{
+					RatioMetric: &v1.SLIRatioMetric{
+						Counter: true,
+						Good: &v1.SLIMetricSpec{
+							MetricSource: v1.SLIMetricSource{
+								MetricSourceRef: "thanos",
+								Type:            "Prometheus",
+								Spec: map[string]any{
+									"query": `http_requests_total{status_code="200"}`,
+									"dimensions": []any{
+										"following",
+										"another",
 									},
 								},
 							},
-							Total: &v1.SLIMetricSpec{
-								MetricSource: v1.SLIMetricSource{
-									MetricSourceRef: "thanos",
-									Type:            "Prometheus",
-									Spec: map[string]any{
-										"query": `http_requests_total{}`,
-										"dimensions": []any{
-											"following",
-											"another",
-										},
+						},
+						Total: &v1.SLIMetricSpec{
+							MetricSource: v1.SLIMetricSource{
+								MetricSourceRef: "thanos",
+								Type:            "Prometheus",
+								Spec: map[string]any{
+									"query": `http_requests_total{}`,
+									"dimensions": []any{
+										"following",
+										"another",
 									},
 								},
 							},
