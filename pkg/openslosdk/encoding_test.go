@@ -396,9 +396,7 @@ func TestExamples(t *testing.T) {
 
 func findObjectsExamples(t *testing.T, root string) []openslo.Object {
 	objects := make([]openslo.Object, 0)
-	var currentPath string
 	err := filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
-		currentPath = path
 		if err != nil {
 			return err
 		}
@@ -408,9 +406,6 @@ func findObjectsExamples(t *testing.T, root string) []openslo.Object {
 		if !strings.Contains(path, "/examples/") ||
 			!slices.Contains([]string{".json", ".yaml", ".yml"}, filepath.Ext(path)) {
 			return nil
-		}
-		if strings.Contains(path, "v1alpha") {
-			t.Log(path)
 		}
 		f, err := os.Open(path)
 		if err != nil {
@@ -424,7 +419,6 @@ func findObjectsExamples(t *testing.T, root string) []openslo.Object {
 		objects = append(objects, objectsInFile...)
 		return nil
 	})
-	t.Log(currentPath)
 	assert.Require(t, assert.NoError(t, err))
 	assert.Require(t, assert.NotEmpty(t, objects))
 	return objects
