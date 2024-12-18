@@ -65,8 +65,8 @@
         - team-a
         - team-b
   spec:
+    description: Monitors that we have an average wifi connection satisfaction
     ratioMetric:
-      description: Monitors that we have an average wifi connection satisfaction
       rawType: success
       raw:
         metricSource:

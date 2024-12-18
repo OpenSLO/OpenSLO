@@ -31,7 +31,7 @@ linters-settings:
     local-prefixes: github.com/OpenSLO/OpenSLO
   govet:
     # False positives and reporting on error shadowing (which is intended).
-    # Quoting Robi Pike:
+    # Quoting Rob Pike:
     #   The shadow code is marked experimental.
     #   It has too many false positives to be enabled by default, so this is not entirely unexpected,
     #   but don't expect a fix soon. The right way to detect shadowing without flow analysis is elusive.
@@ -59,7 +59,7 @@ linters-settings:
 linters:
   disable-all: true
   enable:
-    # All linters from list https://golangci-lint.run/usage/linters/ are speciefed here and explicit enable/disable.
+    # All linters from list https://golangci-lint.run/usage/linters/ are specified here and explicit enable/disable.
     - asciicheck
     - bodyclose
     - dogsled

@@ -1,33 +1,27 @@
-- apiVersion: openslo/v1
+- apiVersion: openslo.com/v2alpha
   kind: SLO
   metadata:
     name: web-availability
-    displayName: SLO for web availability
     labels:
-      env:
-        - prod
-      team:
-        - team-a
-        - team-b
+      env: prod
+      team: team-a
   spec:
     description: X% of search requests are successful
     service: web
-    indicator:
+    sli:
       metadata:
         name: web-successful-requests-ratio
       spec:
-        counter: true
         ratioMetric:
+          counter: true
           good:
-            metricSource:
-              type: Prometheus
-              spec:
-                query: sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})
+            dataSourceRef: my-prometheus
+            spec:
+              query: sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})
           total:
-            metricSource:
-              type: Prometheus
-              spec:
-                query: sum(http_requests{k8s_cluster="prod",component="web"})
+            dataSourceRef: my-prometheus
+            spec:
+              query: sum(http_requests{k8s_cluster="prod",component="web"})
     timeWindow:
       - duration: 1w
         isRolling: false

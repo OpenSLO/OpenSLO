@@ -50,18 +50,19 @@ func (s SLO) IsComposite() bool {
 }
 
 type SLOSpec struct {
-	*SLOIndicator
-	Description     string             `json:"description,omitempty"`
-	Service         string             `json:"service"`
-	BudgetingMethod SLOBudgetingMethod `json:"budgetingMethod"`
-	TimeWindow      []SLOTimeWindow    `json:"timeWindow,omitempty"`
-	Objectives      []SLOObjective     `json:"objectives"`
-	AlertPolicies   []SLOAlertPolicy   `json:"alertPolicies,omitempty"`
+	Description     string              `json:"description,omitempty"`
+	Service         string              `json:"service"`
+	Indicator       *SLOIndicatorInline `json:"indicator,omitempty"`
+	IndicatorRef    *string             `json:"indicatorRef,omitempty"`
+	BudgetingMethod SLOBudgetingMethod  `json:"budgetingMethod"`
+	TimeWindow      []SLOTimeWindow     `json:"timeWindow,omitempty"`
+	Objectives      []SLOObjective      `json:"objectives"`
+	AlertPolicies   []SLOAlertPolicy    `json:"alertPolicies,omitempty"`
 }
 
 func (s SLOSpec) HasCompositeObjectives() bool {
 	for i := range s.Objectives {
-		if s.Objectives[i].SLOIndicator != nil {
+		if s.Objectives[i].Indicator != nil || s.Objectives[i].IndicatorRef != nil {
 			return true
 		}
 	}
@@ -82,27 +83,22 @@ var validSLOBudgetingMethods = []SLOBudgetingMethod{
 	SLOBudgetingMethodRatioTimeslices,
 }
 
-type SLOIndicator struct {
-	IndicatorRef        *string `json:"indicatorRef,omitempty"`
-	*SLOIndicatorInline `json:"indicator,omitempty"`
-}
-
 type SLOIndicatorInline struct {
 	Metadata Metadata `json:"metadata"`
 	Spec     SLISpec  `json:"spec"`
 }
 
 type SLOObjective struct {
-	*SLOIndicator
-	DisplayName     string             `json:"displayName,omitempty"`
-	Operator        Operator           `json:"op,omitempty"`
-	Value           float64            `json:"value,omitempty"`
-	Target          *float64           `json:"target,omitempty"`
-	TargetPercent   *float64           `json:"targetPercent,omitempty"`
-	TimeSliceTarget *float64           `json:"timeSliceTarget,omitempty"`
-	TimeSliceWindow *DurationShorthand `json:"timeSliceWindow,omitempty"`
-	IndicatorRef    *string            `json:"indicatorRef,omitempty"`
-	CompositeWeight *float64           `json:"compositeWeight,omitempty"`
+	DisplayName     string              `json:"displayName,omitempty"`
+	Operator        Operator            `json:"op,omitempty"`
+	Value           float64             `json:"value,omitempty"`
+	Target          *float64            `json:"target,omitempty"`
+	TargetPercent   *float64            `json:"targetPercent,omitempty"`
+	TimeSliceTarget *float64            `json:"timeSliceTarget,omitempty"`
+	TimeSliceWindow *DurationShorthand  `json:"timeSliceWindow,omitempty"`
+	Indicator       *SLOIndicatorInline `json:"indicator,omitempty"`
+	IndicatorRef    *string             `json:"indicatorRef,omitempty"`
+	CompositeWeight *float64            `json:"compositeWeight,omitempty"`
 }
 
 type SLOTimeWindow struct {
@@ -144,6 +140,10 @@ var sloSpecValidation = govy.New(
 	govy.For(govy.GetSelf[SLOSpec]()).
 		Rules(validationRuleForIndicator()).
 		Include(
+			getSLOIndicatorValidation(
+				func(s SLOSpec) *SLOIndicatorInline { return s.Indicator },
+				func(s SLOSpec) *string { return s.IndicatorRef },
+			),
 			sloTimeSlicesObjectiveValidation,
 			sloRatioTimeSlicesObjectiveValidation,
 		),
@@ -153,8 +153,6 @@ var sloSpecValidation = govy.New(
 	govy.For(func(spec SLOSpec) string { return spec.Service }).
 		WithName("service").
 		Required(),
-	govy.ForPointer(func(spec SLOSpec) *SLOIndicator { return spec.SLOIndicator }).
-		Include(sloIndicatorValidation),
 	govy.For(func(spec SLOSpec) SLOBudgetingMethod { return spec.BudgetingMethod }).
 		WithName("budgetingMethod").
 		Required().
@@ -175,27 +173,34 @@ var sloSpecValidation = govy.New(
 		IncludeForEach(sloCompositeObjectiveValidation),
 )
 
-var sloIndicatorValidation = govy.New(
-	govy.For(govy.GetSelf[SLOIndicator]()).
-		Rules(rules.MutuallyExclusive(true, map[string]func(i SLOIndicator) any{
-			"indicatorRef": func(i SLOIndicator) any { return i.IndicatorRef },
-			"indicator":    func(i SLOIndicator) any { return i.SLOIndicatorInline },
-		})),
-	govy.For(govy.GetSelf[SLOIndicator]()).
-		WithName("indicator").
-		When(func(s SLOIndicator) bool { return s.SLOIndicatorInline != nil }).
-		Cascade(govy.CascadeModeContinue).
-		Include(govy.New(
-			validationRulesMetadata(func(i SLOIndicator) Metadata { return i.Metadata }),
-			govy.For(func(i SLOIndicator) SLISpec { return i.Spec }).
-				WithName("spec").
-				Include(sliSpecValidation),
-		)),
-	govy.ForPointer(func(i SLOIndicator) *string { return i.IndicatorRef }).
-		WithName("indicatorRef").
-		Rules(rules.StringDNSLabel()),
-).
-	Cascade(govy.CascadeModeStop)
+func getSLOIndicatorValidation[T any](
+	indicatorGetter func(T) *SLOIndicatorInline,
+	indicatorRefGetter func(T) *string,
+) govy.Validator[T] {
+	return govy.New(
+		govy.For(govy.GetSelf[T]()).
+			Rules(rules.MutuallyExclusive(true, map[string]func(t T) any{
+				"indicator":    func(t T) any { return indicatorGetter(t) },
+				"indicatorRef": func(t T) any { return indicatorRefGetter(t) },
+			})),
+		govy.ForPointer(indicatorGetter).
+			WithName("indicator").
+			Cascade(govy.CascadeModeContinue).
+			Include(govy.New(
+				validationRulesMetadata(func(s SLOIndicatorInline) Metadata { return s.Metadata }),
+				govy.For(func(s SLOIndicatorInline) SLISpec { return s.Spec }).
+					WithName("spec").
+					Include(sliSpecValidation),
+			)),
+		govy.ForPointer(indicatorRefGetter).
+			WithName("indicatorRef").
+			Rules(rules.StringDNSLabel()),
+	).
+		// Another validation rule on 'spec' level already checks a scenario
+		// in which neither 'indicator' nor 'indicatorRef' are provided.
+		When(func(t T) bool { return indicatorGetter(t) != nil || indicatorRefGetter(t) != nil }).
+		Cascade(govy.CascadeModeStop)
+}
 
 var sloTimeWindowValidation = govy.New(
 	govy.For(govy.GetSelf[SLOTimeWindow]()).
@@ -279,8 +284,13 @@ var sloObjectiveValidation = govy.New(
 )
 
 var sloCompositeObjectiveValidation = govy.New(
-	govy.ForPointer(func(s SLOObjective) *SLOIndicator { return s.SLOIndicator }).
-		Include(sloIndicatorValidation),
+	govy.For(govy.GetSelf[SLOObjective]()).
+		Include(
+			getSLOIndicatorValidation(
+				func(s SLOObjective) *SLOIndicatorInline { return s.Indicator },
+				func(s SLOObjective) *string { return s.IndicatorRef },
+			),
+		),
 	govy.ForPointer(func(s SLOObjective) *float64 { return s.CompositeWeight }).
 		WithName("compositeWeight").
 		Rules(rules.GT(0.0)),
@@ -317,12 +327,15 @@ func validationRulesForTimeSliceWindow() govy.PropertyRules[DurationShorthand, S
 
 func validationRuleForIndicator() govy.Rule[SLOSpec] {
 	msg := "'indicator' or 'indicatorRef' fields must either be defined on the 'spec' level (standard SLOs)" +
-		" or on the 'spec.objectives[*]' level (composite SLOs), but not both"
+		" or on the 'spec.objectives[*]' level (composite SLOs)"
 	return govy.NewRule(func(s SLOSpec) error {
 		hasComposites := s.HasCompositeObjectives()
-		hasIndicator := s.SLOIndicator != nil
-		if hasComposites == hasIndicator {
-			return errors.New(msg)
+		hasIndicator := s.Indicator != nil || s.IndicatorRef != nil
+		if !hasComposites && !hasIndicator {
+			return errors.New(msg + ", but none were provided")
+		}
+		if hasComposites && hasIndicator {
+			return errors.New(msg + ", but not both")
 		}
 		return nil
 	}).

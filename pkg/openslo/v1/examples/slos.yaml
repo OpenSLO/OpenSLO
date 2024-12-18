@@ -1,4 +1,4 @@
-- apiVersion: openslo/v1alpha
+- apiVersion: openslo/v1
   kind: SLO
   metadata:
     name: web-availability
@@ -16,8 +16,8 @@
       metadata:
         name: web-successful-requests-ratio
       spec:
-        counter: true
         ratioMetric:
+          counter: true
           good:
             metricSource:
               type: Prometheus

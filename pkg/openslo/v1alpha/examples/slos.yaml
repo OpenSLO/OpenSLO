@@ -1,0 +1,57 @@
+- apiVersion: openslo/v1alpha
+  kind: SLO
+  metadata:
+    name: web-latency-threshold
+    displayName: Threshold SLO for web latency
+  spec:
+    description: X% of search requests are successful
+    service: web
+    indicator:
+      thresholdMetric:
+        source: Prometheus
+        queryType: query
+        query: api_server_requestMsec{host="*",job="nginx"}
+    timeWindows:
+      - unit: Week
+        count: 1
+        isRolling: false
+        calendar:
+          startTime: 2022-01-01 12:00:00
+          timeZone: America/New_York
+    budgetingMethod: Occurrences
+    objectives:
+      - displayName: Good
+        value: 200.0
+        op: gt
+        target: 0.98
+- apiVersion: openslo/v1alpha
+  kind: SLO
+  metadata:
+    name: web-availability-ratio
+    displayName: Ratio SLO for web availability
+  spec:
+    description: X% of search requests are successful
+    service: web
+    timeWindows:
+      - unit: Week
+        count: 1
+        isRolling: false
+        calendar:
+          startTime: 2022-01-01 12:00:00
+          timeZone: America/New_York
+    budgetingMethod: Timeslices
+    objectives:
+      - displayName: Good
+        target: 0.995
+        timeSliceTarget: 0.95
+        value: 1
+        ratioMetrics:
+          incremental: true
+          good:
+            source: datadog
+            queryType: query
+            query: sum:requests{service:web,status:2xx}
+          total:
+            source: datadog
+            queryType: query
+            query: sum:requests{service:web}

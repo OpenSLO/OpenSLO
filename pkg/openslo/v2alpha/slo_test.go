@@ -1,4 +1,4 @@
-package v1
+package v2alpha
 
 import (
 	"fmt"
@@ -96,35 +96,36 @@ func TestSLO_Validate_Spec(t *testing.T) {
 			Code:         rules.ErrorCodeRequired,
 		})
 	})
-	t.Run("missing both indicator definition in spec and objectives", func(t *testing.T) {
+	t.Run("missing both sli definition in spec and objectives", func(t *testing.T) {
 		slo := validSLO()
-		slo.Spec.Indicator = nil
+		slo.Spec.SLI = nil
+		slo.Spec.SLIRef = nil
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
 			PropertyName: "spec",
-			Message: "'indicator' or 'indicatorRef' fields must either be defined on the 'spec' level (standard SLOs)" +
+			Message: "'sli' or 'sliRef' fields must either be defined on the 'spec' level (standard SLOs)" +
 				" or on the 'spec.objectives[*]' level (composite SLOs), but none were provided",
 			Code: rules.ErrorCodeMutuallyExclusive,
 		})
 	})
-	t.Run("indicator definition both in spec and objectives", func(t *testing.T) {
-		slo := validCompositeSLOWithInlinedSLI()
-		slo.Spec.IndicatorRef = ptr("my-sli")
+	t.Run("sli definition both in spec and objectives", func(t *testing.T) {
+		slo := validCompositeSLOWithSLIRef()
+		slo.Spec.SLIRef = slo.Spec.Objectives[0].SLIRef
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
 			PropertyName: "spec",
-			Message: "'indicator' or 'indicatorRef' fields must either be defined on the 'spec' level (standard SLOs)" +
+			Message: "'sli' or 'sliRef' fields must either be defined on the 'spec' level (standard SLOs)" +
 				" or on the 'spec.objectives[*]' level (composite SLOs), but not both",
 			Code: rules.ErrorCodeMutuallyExclusive,
 		})
 	})
 }
 
-func TestSLO_Validate_Spec_Indicator(t *testing.T) {
-	runSLOIndicatorTests(t, "spec", func(indicator *SLOIndicatorInline, ref *string) SLO {
+func TestSLO_Validate_Spec_SLI(t *testing.T) {
+	runSLOSLITests(t, "spec", func(sli *SLOSLIInline, ref *string) SLO {
 		slo := validSLO()
-		slo.Spec.Indicator = indicator
-		slo.Spec.IndicatorRef = ref
+		slo.Spec.SLI = sli
+		slo.Spec.SLIRef = ref
 		return slo
 	})
 }
@@ -286,13 +287,12 @@ func TestSLO_Validate_Spec_Objectives(t *testing.T) {
 }
 
 func TestSLO_Validate_Spec_CompositeObjectives(t *testing.T) {
-	t.Run("indicator", func(t *testing.T) {
-		runSLOIndicatorTests(t, "spec.objectives[0]", func(indicator *SLOIndicatorInline, ref *string) SLO {
+	t.Run("sli", func(t *testing.T) {
+		runSLOSLITests(t, "spec.objectives[0]", func(sli *SLOSLIInline, ref *string) SLO {
 			slo := validSLO()
-			slo.Spec.Indicator = nil
-			slo.Spec.IndicatorRef = nil
-			slo.Spec.Objectives[0].Indicator = indicator
-			slo.Spec.Objectives[0].IndicatorRef = ref
+			slo.Spec.SLI = nil
+			slo.Spec.Objectives[0].SLI = sli
+			slo.Spec.Objectives[0].SLIRef = ref
 			return slo
 		})
 	})
@@ -454,42 +454,42 @@ func TestSLO_Validate_Spec_AlertPolicies(t *testing.T) {
 	})
 }
 
-func runSLOIndicatorTests(t *testing.T, path string, sloGetter func(*SLOIndicatorInline, *string) SLO) {
+func runSLOSLITests(t *testing.T, path string, sloGetter func(*SLOSLIInline, *string) SLO) {
 	t.Helper()
 
-	t.Run("both indicator and indicatorRef are provided", func(t *testing.T) {
-		slo := sloGetter(&SLOIndicatorInline{}, new(string))
+	t.Run("both sli and sliRef are provided", func(t *testing.T) {
+		slo := sloGetter(&SLOSLIInline{}, new(string))
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
 			PropertyName: path,
-			Message:      "[indicator, indicatorRef] properties are mutually exclusive, provide only one of them",
+			Message:      "[sli, sliRef] properties are mutually exclusive, provide only one of them",
 			Code:         rules.ErrorCodeMutuallyExclusive,
 		})
 	})
-	t.Run("valid indicatorRef", func(t *testing.T) {
+	t.Run("valid sliRef", func(t *testing.T) {
 		slo := sloGetter(nil, ptr("my-sli"))
 		err := slo.Validate()
 		govytest.AssertNoError(t, err)
 	})
-	t.Run("invalid indicatorRef", func(t *testing.T) {
+	t.Run("invalid sliRef", func(t *testing.T) {
 		slo := sloGetter(nil, ptr("my sli"))
 		err := slo.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
-			PropertyName: path + ".indicatorRef",
+			PropertyName: path + ".sliRef",
 			Code:         rules.ErrorCodeStringDNSLabel,
 		})
 	})
-	t.Run("indicator.metadata", func(t *testing.T) {
-		runMetadataTests(t, path+".indicator.metadata", func(m Metadata) SLO {
-			return sloGetter(&SLOIndicatorInline{
+	t.Run("sli.metadata", func(t *testing.T) {
+		runMetadataTests(t, path+".sli.metadata", func(m Metadata) SLO {
+			return sloGetter(&SLOSLIInline{
 				Metadata: m,
 				Spec:     validSLI().Spec,
 			}, nil)
 		})
 	})
-	t.Run("indicator.spec", func(t *testing.T) {
-		runSLISpecTests(t, path+".indicator.spec", func(spec SLISpec) SLO {
-			return sloGetter(&SLOIndicatorInline{
+	t.Run("sli.spec", func(t *testing.T) {
+		runSLISpecTests(t, path+".sli.spec", func(spec SLISpec) SLO {
+			return sloGetter(&SLOSLIInline{
 				Metadata: validSLI().Metadata,
 				Spec:     spec,
 			}, nil)
@@ -506,7 +506,7 @@ func TestSLO_IsComposite(t *testing.T) {
 
 	t.Run("at least one objective is composite", func(t *testing.T) {
 		slo.Spec.Objectives = append(slo.Spec.Objectives, slo.Spec.Objectives[0])
-		slo.Spec.Objectives[0].Indicator = nil
+		slo.Spec.Objectives[0].SLI = nil
 		assert.True(t, slo.IsComposite())
 	})
 }
@@ -514,17 +514,16 @@ func TestSLO_IsComposite(t *testing.T) {
 func validSLO() SLO {
 	return NewSLO(
 		Metadata{
-			Name:        "web-availability",
-			DisplayName: "SLO for web availability",
+			Name: "web-availability",
 			Labels: Labels{
-				"team": {"team-a", "team-b"},
-				"env":  {"prod"},
+				"team": "team-a",
+				"env":  "prod",
 			},
 		},
 		SLOSpec{
 			Description: "X% of search requests are successful",
 			Service:     "web",
-			Indicator: &SLOIndicatorInline{
+			SLI: &SLOSLIInline{
 				Metadata: Metadata{
 					Name: "web-successful-requests-ratio",
 				},
@@ -532,19 +531,15 @@ func validSLO() SLO {
 					RatioMetric: &SLIRatioMetric{
 						Counter: true,
 						Good: &SLIMetricSpec{
-							MetricSource: SLIMetricSource{
-								Type: "Prometheus",
-								Spec: map[string]any{
-									"query": `sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})`,
-								},
+							DataSourceRef: "my-prometheus",
+							Spec: map[string]any{
+								"query": `sum(http_requests{k8s_cluster="prod",component="web",code=~"2xx|4xx"})`,
 							},
 						},
 						Total: &SLIMetricSpec{
-							MetricSource: SLIMetricSource{
-								Type: "Prometheus",
-								Spec: map[string]any{
-									"query": `sum(http_requests{k8s_cluster="prod",component="web"})`,
-								},
+							DataSourceRef: "my-prometheus",
+							Spec: map[string]any{
+								"query": `sum(http_requests{k8s_cluster="prod",component="web"})`,
 							},
 						},
 					},
@@ -592,10 +587,10 @@ func validSLOWithInlinedAlertPolicy() SLO {
 
 func validCompositeSLOWithSLIRef() SLO {
 	slo := validSLO()
-	slo.Spec.Indicator = nil
-	slo.Spec.IndicatorRef = nil
-	slo.Spec.Objectives[0].Indicator = nil
-	slo.Spec.Objectives[0].IndicatorRef = ptr("my-sli")
+	slo.Spec.SLI = nil
+	slo.Spec.SLIRef = nil
+	slo.Spec.Objectives[0].SLI = nil
+	slo.Spec.Objectives[0].SLIRef = ptr("my-sli")
 	slo.Spec.Objectives[0].CompositeWeight = ptr(1.0)
 	return slo
 }
@@ -603,10 +598,10 @@ func validCompositeSLOWithSLIRef() SLO {
 func validCompositeSLOWithInlinedSLI() SLO {
 	slo := validSLO()
 	sli := validSLI()
-	slo.Spec.Indicator = nil
-	slo.Spec.IndicatorRef = nil
-	slo.Spec.Objectives[0].IndicatorRef = nil
-	slo.Spec.Objectives[0].Indicator = &SLOIndicatorInline{
+	slo.Spec.SLI = nil
+	slo.Spec.SLIRef = nil
+	slo.Spec.Objectives[0].SLIRef = nil
+	slo.Spec.Objectives[0].SLI = &SLOSLIInline{
 		Metadata: sli.Metadata,
 		Spec:     sli.Spec,
 	}
