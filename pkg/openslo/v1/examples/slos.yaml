@@ -16,8 +16,8 @@
       metadata:
         name: web-successful-requests-ratio
       spec:
-        counter: true
         ratioMetric:
+          counter: true
           good:
             metricSource:
               type: Prometheus

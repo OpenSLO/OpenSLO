@@ -45,8 +45,8 @@
       env: dev
       team: team-a
   spec:
+    description: Monitors that we have an average wifi connection satisfaction
     ratioMetric:
-      description: Monitors that we have an average wifi connection satisfaction
       rawType: success
       raw:
         dataSourceRef: prometheus
@@ -85,6 +85,7 @@
     description: X% of time messages are processed without delay by the processing pipeline (expected value ~100%)
     thresholdMetric:
       dataSourceSpec:
+        type: Prometheus
         connectionDetails:
           accessToken: secretToken
       spec:

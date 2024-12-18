@@ -1,8 +1,7 @@
-- apiVersion: openslo/v1
+- apiVersion: openslo.com/v2alpha
   kind: SLO
   metadata:
     name: web-availability
-    displayName: SLO for web availability
     labels:
       env: prod
       team: team-a
@@ -13,8 +12,8 @@
       metadata:
         name: web-successful-requests-ratio
       spec:
-        counter: true
         ratioMetric:
+          counter: true
           good:
             dataSourceRef: my-prometheus
             spec:
