@@ -185,7 +185,9 @@ func decodeV1Object(generic genericObject) (openslo.Object, error) {
 	case openslo.KindAlertCondition:
 		return decodeJSONObject[v1.AlertCondition](generic.data)
 	case openslo.KindAlertNotificationTarget:
-		return decodeJSONObject[v1.AlertNotificationTarget](generic.data)
+		return decodeYAMLObject[v1.AlertNotificationTarget](generic.node)
+	case openslo.KindBudgetAdjustment:
+		return decodeYAMLObject[v1.BudgetAdjustment](generic.node)
 	default:
 		return nil, fmt.Errorf("unsupported %[1]T: %[1]s for version: %[2]s", generic.kind, generic.apiVersion)
 	}
