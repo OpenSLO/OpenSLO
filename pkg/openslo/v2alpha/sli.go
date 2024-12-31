@@ -4,6 +4,7 @@ import (
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
 
+	"encoding/json"
 	"github.com/OpenSLO/OpenSLO/internal"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )
@@ -72,7 +73,7 @@ var validSLIRawMetricTypes = []SLIRawMetricType{
 type SLIMetricSpec struct {
 	DataSourceRef  string          `json:"dataSourceRef,omitempty"`
 	DataSourceSpec *DataSourceSpec `json:"dataSourceSpec,omitempty"`
-	Spec           map[string]any  `json:"spec,omitempty"`
+	Spec           json.RawMessage `json:"spec,omitempty"`
 }
 
 var sliValidation = govy.New(
