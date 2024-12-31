@@ -2,6 +2,7 @@ package v2alpha_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"reflect"
 
@@ -47,15 +48,11 @@ func ExampleSLI() {
 				Counter: true,
 				Good: &v2alpha.SLIMetricSpec{
 					DataSourceRef: "my-datadog",
-					Spec: map[string]interface{}{
-						"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
-					},
+					Spec:          json.RawMessage(`{"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()"}`),
 				},
 				Total: &v2alpha.SLIMetricSpec{
 					DataSourceRef: "my-datadog",
-					Spec: map[string]interface{}{
-						"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
-					},
+					Spec:          json.RawMessage(`{"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()"}`),
 				},
 			},
 		},

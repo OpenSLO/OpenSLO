@@ -269,7 +269,7 @@ func runSLIMetricSpecTests[T openslo.Object](t *testing.T, path string, objectGe
 	t.Run("invalid dataSourceRef", func(t *testing.T) {
 		object := objectGetter(SLIMetricSpec{
 			DataSourceRef: "my datadog",
-			Spec:          map[string]any{"query": "query"},
+			Spec:          json.RawMessage(`{"query": "query"}`),
 		})
 		err := object.Validate()
 		govytest.AssertError(t, err, govytest.ExpectedRuleError{
@@ -305,15 +305,11 @@ func validGoodOverTotalSLI() SLI {
 				Counter: true,
 				Good: &SLIMetricSpec{
 					DataSourceRef: "my-datadog",
-					Spec: map[string]interface{}{
-						"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()",
-					},
+					Spec:          json.RawMessage(`{"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()"}`),
 				},
 				Total: &SLIMetricSpec{
 					DataSourceRef: "my-datadog",
-					Spec: map[string]interface{}{
-						"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()",
-					},
+					Spec:          json.RawMessage(`{"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()"}`),
 				},
 			},
 		},
@@ -326,9 +322,7 @@ func validBadOverTotalSLI() SLI {
 	sli.Spec.Description = "X% of search requests are unsuccessful"
 	sli.Spec.RatioMetric.Bad = &SLIMetricSpec{
 		DataSourceRef: "my-datadog",
-		Spec: map[string]interface{}{
-			"query": "sum:trace.http.request.hits.by_http_status{!http.status_code:200}.as_count()",
-		},
+		Spec:          json.RawMessage(`{"query": "sum:trace.http.request.hits.by_http_status{!http.status_code:200}.as_count()"}`),
 	}
 	return sli
 }
@@ -348,14 +342,7 @@ func validRawSLI() SLI {
 				RawType: SLIRawMetricTypeSuccess,
 				Raw: &SLIMetricSpec{
 					DataSourceRef: "my-prometheus",
-					Spec: map[string]interface{}{
-						"query": `
-1 - (
-  sum(sum_over_time(poller_client_satisfaction_ratio[{{.window}}]))
-  /
-  sum(count_over_time(poller_client_satisfaction_ratio[{{.window}}]))
-)`,
-					},
+					Spec:          json.RawMessage(`{"query": "1 - ( sum(sum_over_time(poller_client_satisfaction_ratio[{{.window}}])) / sum(count_over_time(poller_client_satisfaction_ratio[{{.window}}])))"}`),
 				},
 			},
 		},
@@ -375,10 +362,7 @@ func validThresholdSLI() SLI {
 			Description: "X% of time messages are processed without delay by the processing pipeline (expected value ~100%)",
 			ThresholdMetric: &SLIMetricSpec{
 				DataSourceRef: "my-prometheus",
-				Spec: map[string]interface{}{
-					// nolint: lll
-					"query": `sum(min_over_time(kafka_consumergroup_lag{k8s_cluster="prod", consumergroup="annotator", topic="annotator-in"}[2m]))`,
-				},
+				Spec:          json.RawMessage(`{"query": "sum(min_over_time(kafka_consumergroup_lag{k8s_cluster=\"prod\", consumergroup=\"annotator\", topic=\"annotator-in\"}[2m]))"}`),
 			},
 		},
 	)
