@@ -272,6 +272,7 @@ func TestDecode(t *testing.T) {
 							Spec: v2alpha.SLISpec{
 								ThresholdMetric: &v2alpha.SLIMetricSpec{
 									Spec: json.RawMessage(
+										//nolint: lll
 										`{"clusterId":"metrics-cluster","databaseName":"metrics-db","query":"SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to","region":"eu-central-1"}`,
 									),
 									DataSourceSpec: &v2alpha.DataSourceSpec{
