@@ -236,14 +236,14 @@ func TestDecode(t *testing.T) {
 									Counter: true,
 									Good: &v2alpha.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
-										Spec: json.RawMessage(`{
-											"query": "sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()"
-										}`),
+										Spec: json.RawMessage(
+											`{"query":"sum:trace.http.request.hits.by_http_status{http.status_code:200}.as_count()"}`,
+										),
 									},
 									Total: &v2alpha.SLIMetricSpec{
 										DataSourceRef: "datadog-datasource",
 										Spec: json.RawMessage(
-											`{"query": "sum:trace.http.request.hits.by_http_status{*}.as_count()"}`,
+											`{"query":"sum:trace.http.request.hits.by_http_status{*}.as_count()"}`,
 										),
 									},
 								},
@@ -271,12 +271,9 @@ func TestDecode(t *testing.T) {
 							},
 							Spec: v2alpha.SLISpec{
 								ThresholdMetric: &v2alpha.SLIMetricSpec{
-									Spec: json.RawMessage(`{
-										"region":       "eu-central-1",
-										"clusterId":    "metrics-cluster",
-										"databaseName": "metrics-db",
-										"query":        "SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to",
-									}`),
+									Spec: json.RawMessage(
+										`{"clusterId":"metrics-cluster","databaseName":"metrics-db","query":"SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to","region":"eu-central-1"}`,
+									),
 									DataSourceSpec: &v2alpha.DataSourceSpec{
 										Description: "Metrics Database",
 										Type:        "redshift",
