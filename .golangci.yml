@@ -1,11 +1,11 @@
 run:
   timeout: 5m
   modules-download-mode: readonly
-  skip-dirs-use-default: true
 
 issues:
   # Enable all checks (which was as default disabled e.g. comments).
   exclude-use-default: false
+  exclude-dirs-use-default: true
   exclude-rules:
     - linters:
         - revive

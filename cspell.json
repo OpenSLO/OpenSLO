@@ -17,7 +17,9 @@
     ".idea/",
     "**/node_modules/**",
     "**/*.lock",
-    "package.json"
+    "package.json",
+    "go.mod",
+    "go.sum"
   ],
   "ignoreRegExpList": [
     "/\\|\\s+[T|G]{2,}\\s+\\|/g",
@@ -42,6 +44,7 @@
     "govulncheck",
     "govy",
     "govytest",
+    "kubebuilder",
     "mhdw",
     "nocomments",
     "openslo",
