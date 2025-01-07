@@ -1,10 +1,11 @@
 package v2alpha
 
 import (
+	"encoding/json"
+
 	"github.com/nobl9/govy/pkg/govy"
 	"github.com/nobl9/govy/pkg/rules"
 
-	"encoding/json"
 	"github.com/OpenSLO/OpenSLO/internal"
 	"github.com/OpenSLO/OpenSLO/pkg/openslo"
 )

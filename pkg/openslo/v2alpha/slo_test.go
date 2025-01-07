@@ -533,11 +533,15 @@ func validSLO() SLO {
 						Counter: true,
 						Good: &SLIMetricSpec{
 							DataSourceRef: "my-prometheus",
-							Spec:          json.RawMessage(`{"query": "sum(http_requests{k8s_cluster=\"prod\",component=\"web\",code=~\"2xx|4xx\"})"}`),
+							Spec: json.RawMessage(`{
+								"query": "sum(http_requests{k8s_cluster=\"prod\",component=\"web\",code=~\"2xx|4xx\"})"
+							}`),
 						},
 						Total: &SLIMetricSpec{
 							DataSourceRef: "my-prometheus",
-							Spec:          json.RawMessage(`{"query": "sum(http_requests{k8s_cluster=\"prod\",component=\"web\"})"}`),
+							Spec: json.RawMessage(
+								`{"query": "sum(http_requests{k8s_cluster=\"prod\",component=\"web\"})"}`,
+							),
 						},
 					},
 				},
