@@ -73,11 +73,15 @@ func ExampleSLO() {
 						Good: &v2alpha.SLIMetricSpec{
 							DataSourceRef: "my-prometheus",
 							//nolint: lll
-							Spec: json.RawMessage(`{"query":"sum(http_requests{k8s_cluster=\"prod\",component=\"web\",code=~\"2xx|4xx\"})"}`),
+							Spec: json.RawMessage(
+								`{"query":"sum(http_requests{k8s_cluster=\"prod\",component=\"web\",code=~\"2xx|4xx\"})"}`,
+							),
 						},
 						Total: &v2alpha.SLIMetricSpec{
 							DataSourceRef: "my-prometheus",
-							Spec:          json.RawMessage(`{"query":"sum(http_requests{k8s_cluster=\"prod\",component=\"web\"})"}`),
+							Spec: json.RawMessage(
+								`{"query":"sum(http_requests{k8s_cluster=\"prod\",component=\"web\"})"}`,
+							),
 						},
 					},
 				},
