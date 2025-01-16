@@ -13,6 +13,7 @@ specifications lack traditional architecture, so the process has been adapted ac
 
 Whenever significant discussions occur with multiple potential solutions,
 a new proposal log should be created to document the final decision. This ensures that:
+
 1. Everyone involved understands the final resolution in the same way.
 2. New contributors can refer to these logs to understand the reasoning behind specific choices and avoid
 revisiting resolved issues.
