@@ -1,11 +1,7 @@
-# Proposal template
-
-Use this template when creating new proposals and adjust it to the specific needs of the proposal.
-
-Note: This template may evolve over time. Older proposals will not be retroactively updated,
-so consider this when referencing them.
-
-Template can be adjusted to author needs.
+<!-- Use this template when creating new proposals and adjust it to the specific needs of the proposal. -->
+<!-- Note: This template may evolve over time. Older proposals will not be retroactively updated, -->
+<!-- so consider this when referencing them. -->
+<!-- Template can be adjusted to author needs. -->
 
 # Title
 
