@@ -1,6 +1,6 @@
 # Proposal template
 
-Use this template when creating new proposals and adjust it to the specific needs of the proposal.  
+Use this template when creating new proposals and adjust it to the specific needs of the proposal.
 
 Note: This template may evolve over time. Older proposals will not be retroactively updated, so consider this when referencing them.
 
@@ -8,7 +8,7 @@ Template can be adjusted to author needs.
 
 # Title
 
-**Issue**: [Name](link)  
+**Issue**: [Name](link)
 
 <!-- Provide a concise, descriptive title for the proposal -->
 
@@ -18,10 +18,10 @@ Template can be adjusted to author needs.
 
 ## Consequences
 
-<!-- Outline the trade-offs and potential consequences of implementing this change.  
+<!-- Outline the trade-offs and potential consequences of implementing this change.
 Explain why the benefits outweigh the drawbacks. -->
 
 ## Alternatives
 
-<!-- Describe alternative approaches considered and why they were ultimately not chosen.  
+<!-- Describe alternative approaches considered and why they were ultimately not chosen.
 Provide reasoning to show how the proposed approach is preferable. -->
