@@ -2,7 +2,8 @@
 
 Use this template when creating new proposals and adjust it to the specific needs of the proposal.
 
-Note: This template may evolve over time. Older proposals will not be retroactively updated, so consider this when referencing them.
+Note: This template may evolve over time. Older proposals will not be retroactively updated,
+so consider this when referencing them.
 
 Template can be adjusted to author needs.
 
@@ -14,7 +15,8 @@ Template can be adjusted to author needs.
 
 ## Description
 
-<!-- Clearly describe the changes being proposed. Include details such as the purpose, scope, and expected impact. -->
+<!-- Clearly describe the changes being proposed. Include details such as the purpose,
+scope, and expected impact. -->
 
 ## Consequences
 
