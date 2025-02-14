@@ -1,7 +1,0 @@
-- apiVersion: openslo/v1alpha
-  kind: Service
-  metadata:
-    displayName: Example Service
-    name: example-service
-  spec:
-    description: Example service description
