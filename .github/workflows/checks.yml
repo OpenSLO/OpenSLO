@@ -13,7 +13,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v5
       - name: Install devbox
-        uses: jetpack-io/devbox-install-action@v0.13.0
+        uses: jetpack-io/devbox-install-action@v0.14.0
         with:
           enable-cache: true
       - name: Run checks
