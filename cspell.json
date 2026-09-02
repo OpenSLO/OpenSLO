@@ -5,7 +5,6 @@
     "bash",
     "companies",
     "css",
-    "go",
     "html",
     "misc",
     "softwareTerms",
@@ -22,35 +21,15 @@
   "ignoreRegExpList": [
     "/\\|\\s+[T|G]{2,}\\s+\\|/g",
     "/https?:\\/\\/.*/g",
-    "/github.*/g",
-    "/nolint.*/g",
-    "/nosec.*/g"
+    "/github.*/g"
   ],
   "words": [
     "Kubernetes",
     "devbox",
     "direnv",
     "envrc",
-    "gofumpt",
-    "goimports",
-    "golangci",
-    "golines",
-    "gopath",
-    "gopkg",
-    "goroot",
-    "gosec",
-    "govulncheck",
-    "govy",
-    "govytest",
-    "mhdw",
-    "nocomments",
     "openslo",
-    "openslosdk",
     "slos",
-    "socio",
-    "struct",
-    "tada",
-    "unmarshaller",
-    "vulns"
+    "tada"
   ]
 }

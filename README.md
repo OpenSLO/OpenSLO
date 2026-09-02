@@ -688,7 +688,7 @@ If the kind is `burnrate` the following fields are required:
 - **op** _enum(lte | gte | lt | gt)_, required field, the conditional operator used to compare against the threshold
 - **threshold** _number_, required field, the threshold that you want alert on
 - **lookbackWindow** _duration-shorthand_, required field, the time-frame for which to calculate the threshold e.g. `5m`
-- **alertAfter** _duration-shorthand_: required field, the duration the condition needs to be valid for before alerting, defaults to `0m`
+- **alertAfter** _duration-shorthand_: the duration the condition needs to be valid for before alerting, defaults to `0m`
 
 If the alert condition is breaching, and the alert policy has `alertWhenBreaching` set to `true`
 the alert will be triggered

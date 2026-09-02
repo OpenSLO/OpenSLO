@@ -87,7 +87,7 @@ spec:
   thresholdMetric: # either thresholdMetric or ratioMetric must be provided
     # either dataSourceRef or <<dataSourceName>> must be provided
     dataSourceRef: string # refer to already defined DataSource object
-    dataSource: # contains whole DataSource "spec"
+    dataSourceSpec: # contains whole DataSource "spec"
     # fields used for creating a connection with particular datasource e.g. AccessKeys, SecretKeys, etc.
     # everything that is valid YAML can be put here
     spec:

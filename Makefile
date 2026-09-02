@@ -23,33 +23,9 @@ install/devbox:
 direnv:
 	devbox generate direnv
 
-.PHONY: test test/go/unit
-## Run all tests.
-test: test/go/unit
-
-## Run Go unit tests.
-test/go/unit:
-	$(call _print_step,Running Go unit tests)
-	go test -race -cover ./...
-
-.PHONY: check check/vet check/lint check/gosec check/spell check/trailing check/markdown check/format
+.PHONY: check check/spell check/trailing check/markdown check/format
 ## Run all checks.
-check: check/vet check/lint check/gosec check/spell check/trailing check/markdown check/format
-
-## Run 'go vet' on the whole project.
-check/vet:
-	$(call _print_step,Running go vet)
-	go vet ./...
-
-## Run golangci-lint all-in-one linter with configuration defined inside .golangci.yml.
-check/lint:
-	$(call _print_step,Running golangci-lint)
-	golangci-lint run
-
-## Check for security problems using gosec, which inspects the Go code by scanning the AST.
-check/gosec:
-	$(call _print_step,Running gosec)
-	gosec -exclude-dir=test -exclude-generated -quiet ./...
+check: check/spell check/trailing check/markdown check/format
 
 ## Check spelling, rules are defined in cspell.json.
 check/spell:
@@ -66,33 +42,15 @@ check/markdown:
 	$(call _print_step,Verifying Markdown files)
 	yarn --silent markdownlint '**/*.md' --ignore 'node_modules'
 
-## Check for potential vulnerabilities across all Go dependencies.
-check/vulns:
-	$(call _print_step,Running govulncheck)
-	govulncheck ./...
-
 ## Verify if the files are formatted.
 ## You must first commit the changes, otherwise it won't detect the diffs.
 check/format:
 	$(call _print_step,Checking if files are formatted)
 	$(SCRIPTS_DIR)/check-formatting.sh
 
-.PHONY: generate
-## Generate Golang code.
-generate:
-	echo "Generating Go code..."
-	go generate ./...
-
-.PHONY: format format/go format/cspell
+.PHONY: format format/cspell
 ## Format files.
-format: format/go format/cspell
-
-## Format Go files.
-format/go:
-	echo "Formatting Go files..."
-	gofumpt -l -w -extra .
-	goimports -local=$$(head -1 go.mod | awk '{print $$2}') -w .
-	golines -m 120 --ignore-generated --reformat-tags -w .
+format: format/cspell
 
 ## Format cspell config file.
 format/cspell:
