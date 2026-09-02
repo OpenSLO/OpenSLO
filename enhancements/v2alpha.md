@@ -211,3 +211,22 @@ thresholdMetric:
     databaseName: metrics-db
     query: SELECT value, timestamp FROM metrics WHERE timestamp BETWEEN :date_from AND :date_to
 ```
+
+## BudgetAdjustment
+
+A BudgetAdjustment is an addition to an SLI percentage for a known and accepted time of unreliability or events of unreliability.
+
+```yaml
+apiVersion: openslo.com/v2alpha
+kind: BudgetAdjustment
+metadata:
+  name: string
+  labels: object # optional
+spec:
+  description: string
+  service: string
+  indicatorRef: string
+  startTime: string
+  endTime: string
+  duration: string
+```
