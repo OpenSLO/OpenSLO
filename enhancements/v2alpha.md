@@ -227,8 +227,8 @@ spec:
   service: string
   indicatorRef: string
   startTime: string
-  endTime: string
-  duration: string
+  endTime: string # mutually exclusive with duration, only one can be provided
+  duration: string # mutually exclusive with endTime, only one can be provided
 ```
 
 ### Example
@@ -249,7 +249,6 @@ spec:
   indicatorRef: payment-api-availability
   startTime: "2024-06-15T02:00:00Z"
   endTime: "2024-06-15T06:00:00Z"
-  duration: 4h
 ```
 
 A BudgetAdjustment for a known third-party dependency outage:
@@ -267,6 +266,5 @@ spec:
   service: web-app
   indicatorRef: web-app-latency
   startTime: "2024-03-20T14:30:00Z"
-  endTime: "2024-03-20T18:00:00Z"
-  duration: 3h30m
+  duration: 3h
 ```
