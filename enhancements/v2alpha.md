@@ -230,3 +230,43 @@ spec:
   endTime: string
   duration: string
 ```
+
+### Example
+
+A BudgetAdjustment for a planned database migration that will cause expected downtime:
+
+```yaml
+apiVersion: openslo.com/v2alpha
+kind: BudgetAdjustment
+metadata:
+  name: db-migration-window
+  labels:
+    team: platform
+    environment: production
+spec:
+  description: Planned database migration causing expected service degradation
+  service: payment-api
+  indicatorRef: payment-api-availability
+  startTime: "2024-06-15T02:00:00Z"
+  endTime: "2024-06-15T06:00:00Z"
+  duration: 4h
+```
+
+A BudgetAdjustment for a known third-party dependency outage:
+
+```yaml
+apiVersion: openslo.com/v2alpha
+kind: BudgetAdjustment
+metadata:
+  name: cdn-outage-adjustment
+  labels:
+    team: frontend
+    incident: INC-2024-0042
+spec:
+  description: CDN provider regional outage affecting static asset delivery
+  service: web-app
+  indicatorRef: web-app-latency
+  startTime: "2024-03-20T14:30:00Z"
+  endTime: "2024-03-20T18:00:00Z"
+  duration: 3h30m
+```
