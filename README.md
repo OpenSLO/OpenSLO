@@ -211,8 +211,8 @@ spec:
   service: string # name of the service to associate this SLO with, may refer (depends on implementation) to existing object Kind: Service
   indicator: # see SLI below for details
   indicatorRef: string # name of the SLI. Required if indicator is not given.
-  timeWindow: # optional
-    # if present, exactly one rolling or calendar-aligned time window
+  timeWindow:
+    # exactly one item; one of possible: rolling or calendar–aligned time window
     ## rolling time window
     - duration: duration-shorthand # duration of the window eg 1d, 4w
       isRolling: true
@@ -235,8 +235,8 @@ spec:
   One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`.
 - **indicatorRef** optional, this is the name of Service Level Indicator (SLI).
   One of `indicator` or `indicatorRef` must be given. If declaring composite SLO must be moved into `objectives[]`.
-- **timeWindow[ ]** optional, a list of _TimeWindow_ values.
-  If present, it must contain exactly one rolling or calendar-aligned time window:
+- **timeWindow[ ]** optional, _TimeWindow_ is a list but accepting only exactly one
+  item, one of the rolling or calendar aligned time window:
 
   - Rolling time window. Duration should be provided in shorthand format
     e.g. 5m, 4w, 31d.
@@ -256,7 +256,7 @@ spec:
   However, if using `ratioMetric` then any number of Thresholds can be defined.
 
 - **alertPolicies\[ \]** _AlertPolicy_, optional field.
-  An alert policy can be defined inline or can refer to an [AlertPolicy](#alertpolicy) object,
+  section. An alert policy can be defined inline or can refer to an [Alert Policies](#alertpolicy) object,
   in which case the following are required:
   - **alertPolicyRef** _string_: this is the name of the AlertPolicy
 
@@ -268,14 +268,14 @@ the tolerance levels for your metrics.
 ```yaml
 objectives:
   - displayName: string # optional
-    op: lte | gte | lt | gt # required when using a thresholdMetric, compares the SLI against value
-    value: numeric # required when using a thresholdMetric, the threshold against which to compare the SLI
+    op: lte | gte | lt | gt # conditional operator used to compare the SLI against the value. Only needed when using a thresholdMetric
+    value: numeric # required, value used to compare threshold metrics. Only needed when using a thresholdMetric
     target: numeric [0.0, 1.0) # budget target for given objective of the SLO, can't be used with targetPercent
     targetPercent: numeric [0.0, 100) # budget target for given objective of the SLO, can't be used with target
     timeSliceTarget: numeric (0.0, 1.0] # required only when budgetingMethod is set to Timeslices
     timeSliceWindow: numeric | duration-shorthand # required only when budgetingMethod is set to Timeslices or RatioTimeslices
-    indicator: # required for a composite objective if indicatorRef is not given, see SLI below
-    indicatorRef: string # required for a composite objective if indicator is not given
+    indicator: # required only when creating composite SLO if indicatorRef is not given, see SLI below for more details
+    indicatorRef: string # required only when creating composite SLO, required if indicator is not given.
     compositeWeight: numeric (0.0, inf+] # optional, supported only when declaring multiple objectives, default value 1.
 ```
 
@@ -291,11 +291,10 @@ objectives:
 
 ###### Notes (Objectives)
 
-- **op** _enum( lte | gte | lt | gt )_, required when using a `thresholdMetric`.
-  Operator used to compare the SLI against `value`.
+- **op** _enum( lte | gte | lt | gt )_, operator used to compare the SLI against the value. Only needed when using a `thresholdMetric`
 
-- **value** _numeric_, required when using a `thresholdMetric`.
-  The threshold against which to compare the SLI.
+- **value** _numeric_, required field, used to compare values gathered from
+  metric source. Only needed when using a `thresholdMetric`.
 
 Either `target` or `targetPercent` must be used.
 
@@ -336,15 +335,16 @@ be 100 times more impactful. By default, weight has value 1 and doesn't need to 
 
 **Calculations** should be as simple as possible to make composite SLO intuitive and easy to implement. It is hard to compare
 different error budget calculating methods therefore all composite objectives need to be calculated with one type of error
-budget calculating method. Here is brief description how given budgeting method should impact composite SLO and how weights scale its
+budget calculating method. Here is brief description how given budgeting method should impact composite SLO and how wight scale its
 impact:
 
 - Occurrences - if SLO burns its budget composite is burning its budget at the same rate. Each violation that consumed
   SLO's budget will impact Composite at the same rate. Weight multiplies the rate of burning of SLO (referenced as burn
   rate) that burns composite.
-- Timeslices - if a time slice is bad for any individual objective, it is bad for the Composite SLO.
+- Timeslices - this is binary depending on whether it was a good or bad time slice. If it was a bad time slice for any individual
+  objective, it's considered a bad time slice for the Composite SLO.
 - RatioTimeslices - it is the sum of missing up to 100 percent. If two SLOs have average of RatioTimeslices on 95%,
-  composite will have average of RatioTimeslices on 90%. Weight multiplies missing part of given SLO.
+  composite will have average of RatioTimeslices on 90%. Weight multiplies missing part of given slo.
 
 #### SLI
 
@@ -378,7 +378,7 @@ spec:
         type: string # optional
         spec:
           # arbitrary chosen fields for every data source type to make it comfortable to use.
-    bad: # bad-event count subtracted from total; either "good" or "bad" must be provided if "total" is used
+    bad: # the numerator, either "good" or "bad" must be provided if "total" is used
       metricSource:
         metricSourceRef: string # optional
         type: string # optional
@@ -418,14 +418,17 @@ Either `ratioMetric` or `thresholdMetric` must be used.
   - **counter** _enum(true \| false)_, specifies whether the metric is a monotonically
     increasing counter. Has no effect when using a `raw` query.
 
-  - **good** queries the number of good events, used as the numerator in `good / total`.
-    If `bad` is defined then `good` must not be set.
+  - **good** represents the query used for gathering data from metric sources used
+    as the numerator. Received data is used to compare objectives (threshold)
+    values to find good values. If `bad` is defined then `good` must not be set.
 
-  - **bad** queries the number of bad events, subtracted from `total` in `(total - bad) / total`.
-    If `good` is defined then `bad` must not be set.
+  - **bad** represents the query used for gathering data from metric sources used
+    as the numerator. Received data is used to compare objectives (threshold)
+    values to find bad values. If `good` is defined then `bad` must not be set.
 
-  - **total** queries the total number of events, used as the denominator in both
-    calculations described in [Ratio Metric](#ratio-metric).
+  - **total** represents the query used for gathering data from metric sources
+    that is used as the denominator. Received data is used to compare objectives
+    (threshold) values to find total number of metrics.
 
   - **rawType** _enum(success \| failure)_, required when using `raw`, specifies
     whether the ratios represented by the "raw" ratio metric are of successes or failures.
@@ -684,13 +687,12 @@ spec:
 - **condition**, required field. Defines the conditions of the alert
   - **kind** _enum(burnrate)_ the kind of alerting condition thats checked, defaults to `burnrate`
 
-If the kind is `burnrate`, the following fields apply:
+If the kind is `burnrate` the following fields apply:
 
 - **op** _enum(lte | gte | lt | gt)_, required field, the conditional operator used to compare against the threshold
 - **threshold** _number_, required field, the threshold that you want alert on
 - **lookbackWindow** _duration-shorthand_, required field, the time-frame for which to calculate the threshold e.g. `5m`
-- **alertAfter** _duration-shorthand_, optional: how long the condition must remain breached before alerting.
-  Defaults to `0m`, which adds no delay.
+- **alertAfter** _duration-shorthand_, optional: the duration the condition needs to be valid for before alerting, defaults to `0m`
 
 If the alert condition is breaching, and the alert policy has `alertWhenBreaching` set to `true`
 the alert will be triggered
@@ -775,7 +777,7 @@ spec:
 - **target** _string_, describes the target of the notification, e.g. Slack, email, web-hook, Opsgenie etc
 - **description** _string_, optional description about the notification target, contains at most 1050 characters
 
-> 💡 **Note:** How notification targets are configured is an implementation detail of the
+> 💡 **Note:** The way the alert notification targets are is an implementation detail of the
 > system that consumes the OpenSLO specification.
 >
 > For example, if the OpenSLO is consumed by a solution that generates Prometheus recording rules,
