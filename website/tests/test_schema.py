@@ -127,7 +127,6 @@ def copy_project(destination):
     for name in (
         "main.py",
         "schema.py",
-        "specification.py",
         "api.json",
         "property-links.json",
         "mkdocs.yml",

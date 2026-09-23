@@ -9,10 +9,6 @@ on:
 permissions:
   contents: read
 
-defaults:
-  run:
-    working-directory: website
-
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -29,13 +25,8 @@ jobs:
         with:
           go-version-file: website/tools/example-check/go.mod
           cache-dependency-path: website/tools/example-check/go.sum
-      - run: python -m pip install -r requirements.txt ruff==0.11.13
-      - run: make check check/examples
-      - name: Check imported specification
-        run: |
-          make generate/specification
-          git diff --exit-code -- docs/specification.md
-      - run: mkdocs build --strict
+      - run: python -m pip install -r website/requirements.txt ruff==0.11.13
+      - run: make website/check check/examples website/build
 
   publish:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -56,7 +47,7 @@ jobs:
           python-version: '3.13'
           cache: pip
           cache-dependency-path: website/requirements.txt
-      - run: python -m pip install -r requirements.txt
+      - run: python -m pip install -r website/requirements.txt
       - name: Check publication revision
         id: revision
         run: |
@@ -69,7 +60,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          mkdocs gh-deploy --strict --remote-branch gh-pages
+          mkdocs gh-deploy --strict --config-file website/mkdocs.yml --remote-branch gh-pages
       - name: Request GitHub Pages build
         if: steps.revision.outputs.current == 'true'
         env:

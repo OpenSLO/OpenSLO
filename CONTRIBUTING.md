@@ -18,23 +18,23 @@ Use the button `Join our Slack` from the official website [openslo.com](https://
 Please make a fork of the repo, and summit a PR from there. More information can
 be found [here](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
-This project utilizes [devbox](https://github.com/jetify-com/devbox) in order
-to provide a consistent and reliable development environment.
-You can however install the required dependencies manually.
+This project uses [Devbox](https://github.com/jetify-com/devbox) for its development environment.
+Run `devbox shell` from the repository root to install and activate the dependencies.
+You can also install the required dependencies manually.
 
 All the development commands are provided via `Makefile`.
 You can run `make help` to see the list of available commands.
 
-Checks which are run as part of the CI pipeline can be run locally wth:
+Run all checks from the repository root:
 
 ```sh
 make check
 ```
 
-If you see formatting or code generation errors you can fix them with:
+To fix formatting errors, run:
 
 ```sh
-make format && make generate
+make format
 ```
 
 If you have devbox installed, you can initialize the environment with:
@@ -67,7 +67,7 @@ Try to be as descriptive as you can in your Merge Request title.
 ## Website
 
 See [website development](website/README.md) to preview the site, update schema
-documentation, and import specification changes.
+documentation, and edit the specification.
 
 ## License
 

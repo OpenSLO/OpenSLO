@@ -1,22 +1,27 @@
 # OpenSLO website
 
 This directory builds the OpenSLO website with MkDocs Material.
-The development environment uses Python 3.13, the packages in `requirements.txt`,
-and Ruff.
+The repository's root Devbox environment includes Yarn, Python 3.13, Ruff, and
+Go 1.26. It installs the website's Python dependencies from `requirements.txt`.
 
 ## Development
 
-From the repository root, run `cd website`, then `devbox shell` to enter the
-configured development environment. Run the commands below from `website/`.
-Run `make serve` to preview the website locally.
-Run `make build` to write the website to `site/`.
-Run `make check` to lint Python and test schema generation through MkDocs.
+Run `devbox shell` from the repository root to install and activate the dependencies.
+Use the root Makefile:
+
+- `make website/serve` previews the website locally.
+- `make website/build` writes the website to `website/site/`.
+- `make website/check` lints Python and tests schema generation through MkDocs.
+- `make check` runs all repository checks, including YAML example validation.
+- `make format` formats Python files and the spelling dictionary.
+
+For one command, use `devbox run -- make website/serve` instead of opening a shell.
+Run all commands below from the repository root unless stated otherwise.
+Website file paths in this document are relative to `website/`.
 
 Pull requests run these checks and a strict website build in GitHub Actions.
 Pushes to `main` publish the checked website to the `gh-pages` branch.
 `docs/CNAME` preserves the `openslo.com` domain.
-The repository root also exposes `make website/serve`, `make website/build`,
-and `make website/check` when the website dependencies are on `PATH`.
 
 ### Publication setup
 
@@ -29,11 +34,10 @@ is only the source directory.
 
 ## Specification
 
-Fix specification prose and examples in the repository's root `README.md` first.
-Then run `make generate/specification` to update this website's copy.
-The default `SPEC_PATH` is `..`. CI checks that the imported copy matches.
-The importer adds website references and preserves separate links to the v2 draft.
-It also identifies the SDK's stricter requirement for a v1 time window.
+Edit specification prose and examples directly in `docs/specification.md`.
+This page is the source of truth for the specification.
+Keep its schema reference links, v2 draft links, and Go SDK validation note
+when updating the content.
 
 ## Schema reference
 
@@ -45,10 +49,10 @@ Its `internal/cmd/objectdoc` generator writes `docs/manifest.json`.
 To update the website from an SDK checkout:
 
 1. In the SDK checkout, run `make generate/govydoc` with its required Go toolchain.
-2. From `website/`, run `make generate/schema SDK_PATH=/path/to/go-sdk`.
-   The default SDK path is `../../go-sdk`, beside the OpenSLO checkout.
+2. From the OpenSLO repository root, run `make generate/schema SDK_PATH=/path/to/go-sdk`.
+   The default SDK path is `../go-sdk`, beside the OpenSLO checkout.
    This command validates the manifest before it replaces `api.json`.
-3. Review the `api.json` diff, then run `make check` and `make build`.
+3. Review the `api.json` diff, then run `make check` and `make website/build`.
 
 Website tests cover rendering, references, links, navigation, and imports.
 Field extraction and validation-plan correctness belong to govydoc, govy, and

@@ -2,7 +2,7 @@
 
 This is the place for refining ideas for new versions of OpenSLO spec. It's not supposed to be stable, this is a living document
 
-## [General Schema](https://github.com/OpenSLO/OpenSLO?tab=readme-ov-file#general-schema)
+## [General Schema](../website/docs/specification.md#general-schema)
 
 Since the goal of the OpenSLO spec is to be compatible with Kubernetes, we should make a couple of fixes
 in the specification to reach that goal.
@@ -17,7 +17,7 @@ in the specification to reach that goal.
    - _d_ – days
    - _w_ – weeks
 
-## [SLO](../README.md#slo)
+## [SLO](../website/docs/specification.md#slo)
 
 **Rationale:** Make names more straightforward and aligned with others. Change field indicator to `sli` and `indicatorRef` to `sliRef`
 it tells which kind of object should be referred there. This change should also apply to each objective.
@@ -72,7 +72,7 @@ objectives:
     compositeWeight: numeric (0.0, inf+] # optional, supported only when declaring multiple objectives, default value 1.
 ```
 
-## [SLI](../README.md#sli)
+## [SLI](../website/docs/specification.md#sli)
 
 **Rationale:** Get rid of `metricSource` (reduce the level of indentation), and use the new syntax of `DataSource` directly.
 
