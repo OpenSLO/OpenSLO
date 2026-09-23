@@ -1,0 +1,111 @@
+{
+  "openslo/v1alpha": {
+    "_symbols": {
+      "github.com/OpenSLO/go-sdk/pkg/openslo#Kind": "../v1alpha.md#objects",
+      "Operator": "slo.md#spec-objectives-items-op",
+      "SLOObjective.RatioMetrics": "slo.md#spec-objectives-items-ratiometrics",
+      "SLOSpec.Service": "slo.md#spec-service",
+      "SLOTimeWindow": "slo.md#spec-timewindows-items"
+    },
+    "_types": {
+      "Metadata": {
+        "link": "../v1alpha.md#metadata",
+        "template": "See the [metadata definition in the overview]({{ link }})."
+      }
+    }
+  },
+  "openslo/v1": {
+    "_symbols": {
+      "github.com/OpenSLO/go-sdk/pkg/openslo#Kind": "../v1.md#objects",
+      "AlertConditionKindBurnRate": "alertcondition.md#spec-condition-kind",
+      "AlertConditionType": "alertcondition.md#spec-condition",
+      "DurationShorthand": "slo.md#spec-timewindow-items-duration",
+      "DurationShorthandUnit": "slo.md#spec-timewindow-items-duration",
+      "Metadata.Name": "../v1.md#metadata-name",
+      "SLIMetricSource.MetricSourceRef": "sli.md#spec-thresholdmetric-metricsource-metricsourceref",
+      "SLIMetricSource.Spec": "sli.md#spec-thresholdmetric-metricsource-spec",
+      "SLIMetricSource.Type": "sli.md#spec-thresholdmetric-metricsource-type",
+      "SLIRatioMetric.RawType": "sli.md#spec-ratiometric-rawtype",
+      "SLOBudgetingMethodRatioTimeslices": "slo.md#spec-budgetingmethod",
+      "SLOBudgetingMethodTimeslices": "slo.md#spec-budgetingmethod",
+      "SLOObjective": "slo.md#spec-objectives-items",
+      "SLOObjective.Operator": "slo.md#spec-objectives-items-op",
+      "SLOObjective.Target": "slo.md#spec-objectives-items-target",
+      "SLOObjective.TargetPercent": "slo.md#spec-objectives-items-targetpercent",
+      "SLOObjective.TimeSliceTarget": "slo.md#spec-objectives-items-timeslicetarget",
+      "SLOObjective.Value": "slo.md#spec-objectives-items-value",
+      "SLOSpec": "slo.md#spec",
+      "SLOSpec.Service": "slo.md#spec-service",
+      "SLOTimeWindow": "slo.md#spec-timewindow-items"
+    },
+    "_types": {
+      "Metadata": {
+        "link": "../v1.md#metadata",
+        "template": "See the [metadata definition in the overview]({{ link }})."
+      },
+      "SLOIndicatorInline": {
+        "link": "sli.md#properties",
+        "template": "Use the `metadata` and `spec` properties from the [SLI definition]({{ link }}). The inline form omits `apiVersion` and `kind`."
+      },
+      "AlertPolicySpec": {
+        "link": "alertpolicy.md#spec",
+        "template": "See the [AlertPolicy specification]({{ link }})."
+      },
+      "AlertConditionSpec": {
+        "link": "alertcondition.md#spec",
+        "template": "See the [AlertCondition specification]({{ link }})."
+      },
+      "AlertNotificationTargetSpec": {
+        "link": "alertnotificationtarget.md#spec",
+        "template": "See the [AlertNotificationTarget specification]({{ link }})."
+      }
+    }
+  },
+  "openslo.com/v2alpha": {
+    "_symbols": {
+      "github.com/OpenSLO/go-sdk/pkg/openslo#Kind": "../v2alpha.md#objects",
+      "AlertConditionType": "alertcondition.md#spec-condition",
+      "AlertNotificationTargetSpec.Target": "alertnotificationtarget.md#spec-target",
+      "AlertPolicySpec.AlertWhenBreaching": "alertpolicy.md#spec-alertwhenbreaching",
+      "DurationShorthandUnit": "slo.md#spec-timewindow-items-duration",
+      "SLIMetricSpec.DataSourceRef": "sli.md#spec-thresholdmetric-datasourceref",
+      "SLIMetricSpec.DataSourceSpec": "sli.md#spec-thresholdmetric-datasourcespec",
+      "SLIMetricSpec.Spec": "sli.md#spec-thresholdmetric-spec",
+      "SLIRatioMetric.Bad": "sli.md#spec-ratiometric-bad",
+      "SLIRatioMetric.Good": "sli.md#spec-ratiometric-good",
+      "SLIRatioMetric.Raw": "sli.md#spec-ratiometric-raw",
+      "SLIRatioMetric.RawType": "sli.md#spec-ratiometric-rawtype",
+      "SLIRatioMetric.Total": "sli.md#spec-ratiometric-total",
+      "SLOObjective.Operator": "slo.md#spec-objectives-items-op",
+      "SLOObjective.Value": "slo.md#spec-objectives-items-value",
+      "SLOSpec.ServiceRef": "slo.md#spec-serviceref",
+      "SLOTimeWindow": "slo.md#spec-timewindow-items"
+    },
+    "_types": {
+      "Metadata": {
+        "link": "../v2alpha.md#metadata",
+        "template": "See the [metadata definition in the overview]({{ link }})."
+      },
+      "SLOSLIInline": {
+        "link": "sli.md#properties",
+        "template": "Use the `metadata` and `spec` properties from the [SLI definition]({{ link }}). The inline form omits `apiVersion` and `kind`."
+      },
+      "AlertPolicySpec": {
+        "link": "alertpolicy.md#spec",
+        "template": "See the [AlertPolicy specification]({{ link }})."
+      },
+      "AlertConditionSpec": {
+        "link": "alertcondition.md#spec",
+        "template": "See the [AlertCondition specification]({{ link }})."
+      },
+      "AlertNotificationTargetSpec": {
+        "link": "alertnotificationtarget.md#spec",
+        "template": "See the [AlertNotificationTarget specification]({{ link }})."
+      },
+      "DataSourceSpec": {
+        "link": "datasource.md#spec",
+        "template": "See the [DataSource specification]({{ link }})."
+      }
+    }
+  }
+}

@@ -40,7 +40,8 @@ check/trailing:
 ## Check markdown files for potential issues with markdownlint.
 check/markdown:
 	$(call _print_step,Verifying Markdown files)
-	yarn --silent markdownlint '**/*.md' --ignore 'node_modules'
+	yarn --silent markdownlint '**/*.md' --ignore 'node_modules' --ignore 'website'
+	yarn --silent markdownlint 'website/**/*.md' --config website/.markdownlint.json --ignore 'website/site*/**'
 
 ## Verify if the files are formatted.
 ## You must first commit the changes, otherwise it won't detect the diffs.
@@ -56,6 +57,19 @@ format: format/cspell
 format/cspell:
 	echo "Formatting cspell.yaml configuration (words list)..."
 	yarn --silent format-cspell-config
+
+.PHONY: website/serve website/build website/check
+## Preview the website locally.
+website/serve:
+	$(MAKE) -C website serve
+
+## Build the website.
+website/build:
+	$(MAKE) -C website build
+
+## Check website rendering and imports.
+website/check:
+	$(MAKE) -C website check
 
 .PHONY: install
 ## Install all dev dependencies.

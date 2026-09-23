@@ -64,6 +64,11 @@ to whitelist the project's `.envrc` file.
 
 Try to be as descriptive as you can in your Merge Request title.
 
+## Website
+
+See [website development](website/README.md) to preview the site, update schema
+documentation, and import specification changes.
+
 ## License
 
 Apache 2.0, see [LICENSE](LICENSE).

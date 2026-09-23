@@ -1,0 +1,105 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+
+# Project information
+site_name: OpenSLO
+site_url: https://openslo.com
+site_description: >-
+  OpenSLO is a service level objective (SLO) language that declaratively defines
+  reliability and performance targets using a simple YAML specification.
+
+# Repository
+repo_url: https://github.com/OpenSLO/OpenSLO
+repo_name: OpenSLO
+
+# Copyright
+copyright: '&copy; The OpenSLO Contributors | <a href="https://github.com/OpenSLO/OpenSLO/blob/main/LICENSE">Apache License 2.0</a>'
+
+# Configuration
+theme:
+  name: material
+  favicon: assets/images/favicon.png
+  logo: assets/images/logo2.svg
+  features:
+    - navigation.footer
+    - navigation.tabs
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - search.highlight
+    - search.share
+    - content.code.copy
+
+# Plugins
+plugins:
+  - blog:
+      post_url_format: "{slug}"
+  - search
+  - macros:
+      on_error_fail: true
+
+hooks:
+  - main.py
+
+watch:
+  - api.json
+  - property-links.json
+  - schema.py
+  - templates
+
+# Extensions
+markdown_extensions:
+  - tables
+  - attr_list
+  - admonition
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.blocks.caption
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.details
+  - pymdownx.saneheaders
+  - pymdownx.magiclink
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+  - def_list
+
+# Additional configuration
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/slack
+      link: https://join.slack.com/t/openslo/shared_invite/zt-1ecraohaa-fqj3C52WF~1zQbwKD8LeMw
+    - icon: fontawesome/brands/github
+      link: https://github.com/OpenSLO/OpenSLO
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/openslo_
+
+# Additional styles
+extra_css:
+  - extra.css
+
+extra_javascript:
+  - property-details.js
+
+# Navigation tree
+nav:
+  - Home: index.md
+  - Specification: specification.md
+  - Schema:
+    - schema.md
+  - Tools: tools.md
+  - Blog:
+      - blog/index.md
