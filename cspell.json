@@ -45,13 +45,11 @@
         "govydoc",
         "inlinehilite",
         "linenums",
-        "mkdocs",
         "openslosdk",
         "pydantic",
         "pygments",
         "pymdownx",
-        "sloconf",
-        "venv"
+        "sloconf"
       ]
     }
   ],
@@ -60,8 +58,10 @@
     "devbox",
     "direnv",
     "envrc",
+    "mkdocs",
     "openslo",
     "slos",
-    "tada"
+    "tada",
+    "venv"
   ]
 }

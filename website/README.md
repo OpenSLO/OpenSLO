@@ -1,21 +1,23 @@
 # OpenSLO website
 
 This directory builds the OpenSLO website with MkDocs Material.
-The development environment uses Python 3.13, the packages in `requirements.txt`,
-and Ruff.
+The repository's root Devbox environment includes Yarn, Python 3.13, Ruff, and
+Go 1.26. It installs the website's Python dependencies from `requirements.txt`.
 
 ## Development
 
-With Devbox installed, run these commands from the repository root:
+Run `devbox shell` from the repository root to install and activate the dependencies.
+Use the root Makefile:
 
 - `make website/serve` previews the website locally.
 - `make website/build` writes the website to `website/site/`.
 - `make website/check` lints Python and tests schema generation through MkDocs.
+- `make check` runs all repository checks, including YAML example validation.
+- `make format` formats Python files and the spelling dictionary.
 
-These targets use the environment in `website/devbox.json`.
-The first run installs its packages and Python dependencies.
-To run website commands directly, enter `website/`, then run `devbox shell`.
-The commands below assume that environment and directory.
+For one command, use `devbox run -- make website/serve` instead of opening a shell.
+Run all commands below from the repository root unless stated otherwise.
+Website file paths in this document are relative to `website/`.
 
 Pull requests run these checks and a strict website build in GitHub Actions.
 Pushes to `main` publish the checked website to the `gh-pages` branch.
@@ -47,10 +49,10 @@ Its `internal/cmd/objectdoc` generator writes `docs/manifest.json`.
 To update the website from an SDK checkout:
 
 1. In the SDK checkout, run `make generate/govydoc` with its required Go toolchain.
-2. From `website/`, run `make generate/schema SDK_PATH=/path/to/go-sdk`.
-   The default SDK path is `../../go-sdk`, beside the OpenSLO checkout.
+2. From the OpenSLO repository root, run `make generate/schema SDK_PATH=/path/to/go-sdk`.
+   The default SDK path is `../go-sdk`, beside the OpenSLO checkout.
    This command validates the manifest before it replaces `api.json`.
-3. Review the `api.json` diff, then run `make check` and `make build`.
+3. Review the `api.json` diff, then run `make check` and `make website/build`.
 
 Website tests cover rendering, references, links, navigation, and imports.
 Field extraction and validation-plan correctness belong to govydoc, govy, and

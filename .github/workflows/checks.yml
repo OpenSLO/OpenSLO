@@ -17,4 +17,4 @@ jobs:
         with:
           enable-cache: true
       - name: Run checks
-        run: devbox run -- make check
+        run: devbox run -- make check/style
