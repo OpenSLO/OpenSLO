@@ -61,15 +61,15 @@ format/cspell:
 .PHONY: website/serve website/build website/check
 ## Preview the website locally.
 website/serve:
-	$(MAKE) -C website serve
+	cd website && devbox run -- $(MAKE) serve
 
 ## Build the website.
 website/build:
-	$(MAKE) -C website build
+	cd website && devbox run -- $(MAKE) build
 
 ## Check website rendering and imports.
 website/check:
-	$(MAKE) -C website check
+	cd website && devbox run -- $(MAKE) check
 
 .PHONY: install
 ## Install all dev dependencies.

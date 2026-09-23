@@ -6,17 +6,20 @@ and Ruff.
 
 ## Development
 
-From the repository root, run `cd website`, then `devbox shell` to enter the
-configured development environment. Run the commands below from `website/`.
-Run `make serve` to preview the website locally.
-Run `make build` to write the website to `site/`.
-Run `make check` to lint Python and test schema generation through MkDocs.
+With Devbox installed, run these commands from the repository root:
+
+- `make website/serve` previews the website locally.
+- `make website/build` writes the website to `website/site/`.
+- `make website/check` lints Python and tests schema generation through MkDocs.
+
+These targets use the environment in `website/devbox.json`.
+The first run installs its packages and Python dependencies.
+To run website commands directly, enter `website/`, then run `devbox shell`.
+The commands below assume that environment and directory.
 
 Pull requests run these checks and a strict website build in GitHub Actions.
 Pushes to `main` publish the checked website to the `gh-pages` branch.
 `docs/CNAME` preserves the `openslo.com` domain.
-The repository root also exposes `make website/serve`, `make website/build`,
-and `make website/check` when the website dependencies are on `PATH`.
 
 ### Publication setup
 
