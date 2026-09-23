@@ -16,12 +16,44 @@
     ".idea/",
     "**/node_modules/**",
     "**/*.lock",
-    "package.json"
+    "package.json",
+    "website/api.json",
+    "website/docs/assets/**",
+    "website/site*/**",
+    "website/tools/example-check/go.sum"
   ],
   "ignoreRegExpList": [
     "/\\|\\s+[T|G]{2,}\\s+\\|/g",
     "/https?:\\/\\/.*/g",
     "/github.*/g"
+  ],
+  "overrides": [
+    {
+      "filename": [
+        "website/**",
+        "cspell.json"
+      ],
+      "words": [
+        "Filip",
+        "Fong",
+        "Moyer",
+        "Pawel",
+        "Piwowarczyk",
+        "Rusakiewicz",
+        "Weyert",
+        "govy",
+        "govydoc",
+        "inlinehilite",
+        "linenums",
+        "mkdocs",
+        "openslosdk",
+        "pydantic",
+        "pygments",
+        "pymdownx",
+        "sloconf",
+        "venv"
+      ]
+    }
   ],
   "words": [
     "Kubernetes",

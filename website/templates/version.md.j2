@@ -1,0 +1,16 @@
+# OpenSLO {{ slug }}
+
+API version: `{{ version }}`.
+
+Property paths use `[*]` for each array item, `.*` for each map value, and `.*~`
+for each map key.
+
+## Objects
+
+{% for kind in objects %}
+- [{{ kind }}]({{ slug }}/{{ kind | lower }}.md)
+{% endfor %}
+
+## Common metadata
+
+{{ metadata }}
