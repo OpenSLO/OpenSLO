@@ -31,10 +31,6 @@ jobs:
           cache-dependency-path: website/tools/example-check/go.sum
       - run: python -m pip install -r requirements.txt ruff==0.11.13
       - run: make check check/examples
-      - name: Check imported specification
-        run: |
-          make generate/specification
-          git diff --exit-code -- docs/specification.md
       - run: mkdocs build --strict
 
   publish:

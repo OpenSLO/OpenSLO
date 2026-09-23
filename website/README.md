@@ -29,11 +29,10 @@ is only the source directory.
 
 ## Specification
 
-Fix specification prose and examples in the repository's root `README.md` first.
-Then run `make generate/specification` to update this website's copy.
-The default `SPEC_PATH` is `..`. CI checks that the imported copy matches.
-The importer adds website references and preserves separate links to the v2 draft.
-It also identifies the SDK's stricter requirement for a v1 time window.
+Edit specification prose and examples directly in `docs/specification.md`.
+This page is the source of truth for the specification.
+Keep its schema reference links, v2 draft links, and Go SDK validation note
+when updating the content.
 
 ## Schema reference
 

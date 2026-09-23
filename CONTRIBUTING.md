@@ -67,7 +67,7 @@ Try to be as descriptive as you can in your Merge Request title.
 ## Website
 
 See [website development](website/README.md) to preview the site, update schema
-documentation, and import specification changes.
+documentation, and edit the specification.
 
 ## License
 

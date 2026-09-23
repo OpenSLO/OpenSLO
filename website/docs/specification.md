@@ -1,43 +1,9 @@
-#
+---
+hide:
+  - navigation
+---
 
-<!-- markdownlint-disable MD033-->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="images/openslo_light.png">
-  <img alt="OpenSLO light theme" src="images/openslo.png">
-</picture>
-<!-- markdownlint-enable MD033-->
-
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Specification](#specification)
-  - [Goals](#goals)
-  - [General Schema](#general-schema)
-    - [Notes (General Schema)](#notes-general-schema)
-  - [Custom Data Types](#custom-data-types)
-    - [duration-shorthand](#duration-shorthand)
-  - [Object Types](#object-types)
-    - [DataSource](#datasource)
-      - [Notes (DataSource)](#notes-datasource)
-    - [SLO](#slo)
-      - [Notes (SLO)](#notes-slo)
-      - [Objectives](#objectives)
-        - [Notes (Objectives)](#notes-objectives)
-    - [SLI](#sli)
-      - [Notes (SLI)](#notes-sli)
-      - [Ratio Metric](#ratio-metric)
-    - [AlertPolicy](#alertpolicy)
-      - [Notes (AlertPolicy)](#notes-alertpolicy)
-    - [AlertCondition](#alertcondition)
-      - [Notes (AlertCondition)](#notes-alertcondition)
-    - [AlertNotificationTarget](#alertnotificationtarget)
-      - [Notes (AlertNotificationTarget)](#notes-alertnotificationtarget)
-    - [Service](#service)
-- [Examples](examples/README.md)
-- [Glossary](glossary/README.md)
-- Work in progress for future versions
-  - [v2alpha](enhancements/v2alpha.md)
-- [SDK](#sdk)
+# Specification
 
 ## Introduction
 
@@ -151,7 +117,9 @@ prescriptive stance on this issue.
 
 A DataSource represents connection details with a particular metric source.
 
-> [Check work in progress for v2.](enhancements/v2alpha.md#datasource)
+> [See the v1 DataSource reference.](schema/v1/datasource.md)
+>
+> [View the v2 draft.](https://github.com/OpenSLO/OpenSLO/blob/main/enhancements/v2alpha.md#datasource)
 
 ```yaml
 apiVersion: openslo/v1
@@ -198,7 +166,15 @@ spec:
 A service level objective (SLO) is a target value or a range of values for
 a service level that is described by a service level indicator (SLI).
 
-> [Check work in progress for v2.](enhancements/v2alpha.md#slo)
+> [See the v1 SLO reference.](schema/v1/slo.md)
+>
+> [View the v2 draft.](https://github.com/OpenSLO/OpenSLO/blob/main/enhancements/v2alpha.md#slo)
+
+!!! note "Go SDK validation"
+
+    The v1 specification makes `timeWindow` optional.
+    The Go SDK currently requires exactly one time window.
+    Include a window when validating an SLO with the SDK.
 
 ```yaml
 apiVersion: openslo/v1
@@ -350,7 +326,9 @@ impact:
 
 A service level indicator (SLI) represents how to read metrics from data sources.
 
-> [Check work in progress for v2.](enhancements/v2alpha.md#sli)
+> [See the v1 SLI reference.](schema/v1/sli.md)
+>
+> [View the v2 draft.](https://github.com/OpenSLO/OpenSLO/blob/main/enhancements/v2alpha.md#sli)
 
 ```yaml
 apiVersion: openslo/v1
@@ -809,3 +787,9 @@ _DISCLAIMER: The SDK is a work in progress and is subject to change._
 
 The OpenSLO SDK is a set of utilities designed for programmatic access to
 OpenSLO specification.
+
+## Related documentation
+
+- [Examples](https://github.com/OpenSLO/OpenSLO/tree/main/examples)
+- [Glossary](https://github.com/OpenSLO/OpenSLO/blob/main/glossary/README.md)
+- [Work in progress for v2](https://github.com/OpenSLO/OpenSLO/blob/main/enhancements/v2alpha.md)
