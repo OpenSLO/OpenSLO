@@ -1,10 +1,12 @@
 #
 
 <!-- markdownlint-disable MD033-->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="images/openslo_light.png">
-  <img alt="OpenSLO light theme" src="images/openslo.png">
-</picture>
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="images/openslo_light.png">
+    <img alt="OpenSLO light theme" src="images/openslo.png">
+  </picture>
+</p>
 <!-- markdownlint-enable MD033-->
 
 OpenSLO is an open specification for defining service level objectives (SLOs) in YAML.
