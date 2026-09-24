@@ -16,13 +16,13 @@ spec:
         good:
           metricSource:
             type: Any # Any service with needed metrics
-            spec:
-              # Fields needed to query service for needed metrics
+            spec: # Fields necessary to query service for the data.
+              query: Any # 'query' is just an example field.
         total:
           metricSource:
             type: Any # Any service with needed metrics
-            spec:
-              # Fields needed to query service for needed metrics
+            spec: # Fields necessary to query service for the data.
+              query: Any # 'query' is just an example field.
   timeWindow:
     - duration: 1m # Contracts often are for 1 month time window
       isRolling: false # Most of contracts starts counting at beginning of month

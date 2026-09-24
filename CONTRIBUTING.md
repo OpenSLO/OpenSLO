@@ -18,23 +18,23 @@ Use the button `Join our Slack` from the official website [openslo.com](https://
 Please make a fork of the repo, and summit a PR from there. More information can
 be found [here](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
-This project utilizes [devbox](https://github.com/jetify-com/devbox) in order
-to provide a consistent and reliable development environment.
-You can however install the required dependencies manually.
+This project uses [Devbox](https://github.com/jetify-com/devbox) for its development environment.
+Run `devbox shell` from the repository root to install and activate the dependencies.
+You can also install the required dependencies manually.
 
 All the development commands are provided via `Makefile`.
 You can run `make help` to see the list of available commands.
 
-Checks which are run as part of the CI pipeline can be run locally wth:
+Run all checks from the repository root:
 
 ```sh
 make check
 ```
 
-If you see formatting or code generation errors you can fix them with:
+To fix formatting errors, run:
 
 ```sh
-make format && make generate
+make format
 ```
 
 If you have devbox installed, you can initialize the environment with:
@@ -64,30 +64,26 @@ to whitelist the project's `.envrc` file.
 
 Try to be as descriptive as you can in your Merge Request title.
 
-## Adding or modifying new object kind
+## Website
 
-1. Update main [README.md](./README.md) file with the description of the object.
-2. Update SDK code.
-    1. Add or modify examples.
-    2. Add or modify validation rules.
-    3. Add or modify unit tests.
+See [website development](website/README.md) to preview the site, update schema
+documentation, and edit the specification.
 
-## Adding new version
+## Adding or modifying an object kind
 
-*TO BE DISCUSSED AND CHANGED*
+1. Update the relevant [specification](website/docs/specification.md) or [draft proposal](enhancements/), including examples.
+2. Update the examples, validation rules, and tests in the [Go SDK repository](https://github.com/OpenSLO/go-sdk).
+3. Use the [schema update procedure](website/README.md#schema-reference) to import the SDK manifest into `website/api.json`.
+4. Run `make check` and `make website/build` from the repository root.
 
-OpenSLO follows a similar version lifecycle to the k8s API.
+## Adding a specification version
 
-- Official versions can be described by the following regular expression: `v[0-9]`, e.g. `v1`.
-- Versions still in active development or in experimentation phase can be described by the following regular expression: `v[0-9](alpha|beta)[0-9]`, e.g. `v2alpha1`, `v3beta2`.
+Stable specification versions use names such as `v1`.
+Alpha versions use names such as `v1alpha` and `v2alpha`, without a trailing sequence number.
+See the [v2 draft](enhancements/v2alpha.md) for the current proposal.
 
-Alpha versions are promoted to stable versions following a community consensus.
-Once a version is promoted:
-
-- Tag should be created in the [main OpenSLO repository](https://github.com/OpenSLO/OpenSLO).
-- The tag should list ALL the changes between the new version and its predecessor.
-- The tag should follow [semantic versioning](https://semver.org/), this is of
-  particular importance to the OpenSLO SDK.
+Discuss new versions, promotion, and release procedures with the community.
+Coordinate SDK changes and releases in the [Go SDK repository](https://github.com/OpenSLO/go-sdk).
 
 ## License
 

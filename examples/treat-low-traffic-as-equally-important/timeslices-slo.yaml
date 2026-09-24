@@ -13,14 +13,14 @@ spec:
       ratioMetric:
         good:
           metricSource:
-            type: Any # Any service with needed metrics
-            spec:
-              # Fields needed to query service for needed metrics
+            type: Any # Any service with needed metrics.
+            spec: # Fields necessary to query service for the data.
+              query: Any # 'query' is just an example field.
         total:
           metricSource:
-            type: Any # Any service with needed metrics
-            spec:
-              # Fields needed to query service for needed metrics
+            type: Any # Any service with needed metrics.
+            spec: # Fields necessary to query service for the data.
+              query: Any # 'query' is just an example field.
   timeWindow:
     - duration: 1w
       isRolling: false

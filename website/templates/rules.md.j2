@@ -1,0 +1,10 @@
+{% macro render_rules(rules) -%}
+{% set has_conditions = rules | selectattr("conditions") | list | length > 0 %}
+{% set has_details = rules | selectattr("details") | list | length > 0 %}
+{% set has_examples = rules | selectattr("examples") | list | length > 0 %}
+| Rule |{% if has_conditions %} Applies when |{% endif %}{% if has_details %} Details |{% endif %}{% if has_examples %} Examples |{% endif +%}
+| :--- |{% if has_conditions %} :--- |{% endif %}{% if has_details %} :--- |{% endif %}{% if has_examples %} :--- |{% endif +%}
+{% for rule in rules %}
+| {{ rule.description | rule_text | table_cell }} |{% if has_conditions %} {% for condition in rule.conditions %}{{ condition | rule_text | table_cell }}{% if not loop.last %}<br>and<br>{% endif %}{% endfor %} |{% endif %}{% if has_details %} {{ rule.details | rule_text | table_cell }} |{% endif %}{% if has_examples %} {% for example in rule.examples %}<code>{{ example | table_cell }}</code>{% if not loop.last %}<br>{% endif %}{% endfor %} |{% endif +%}
+{% endfor %}
+{%- endmacro %}

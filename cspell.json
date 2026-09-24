@@ -5,7 +5,6 @@
     "bash",
     "companies",
     "css",
-    "go",
     "html",
     "misc",
     "softwareTerms",
@@ -17,40 +16,52 @@
     ".idea/",
     "**/node_modules/**",
     "**/*.lock",
-    "package.json"
+    "package.json",
+    "website/api.json",
+    "website/docs/assets/**",
+    "website/site*/**",
+    "website/tools/example-check/go.sum"
   ],
   "ignoreRegExpList": [
     "/\\|\\s+[T|G]{2,}\\s+\\|/g",
     "/https?:\\/\\/.*/g",
-    "/github.*/g",
-    "/nolint.*/g",
-    "/nosec.*/g"
+    "/github.*/g"
+  ],
+  "overrides": [
+    {
+      "filename": [
+        "website/**",
+        "cspell.json"
+      ],
+      "words": [
+        "Filip",
+        "Fong",
+        "Moyer",
+        "Pawel",
+        "Piwowarczyk",
+        "Rusakiewicz",
+        "Weyert",
+        "govy",
+        "govydoc",
+        "inlinehilite",
+        "linenums",
+        "openslosdk",
+        "pydantic",
+        "pygments",
+        "pymdownx",
+        "sloconf"
+      ]
+    }
   ],
   "words": [
     "Kubernetes",
     "devbox",
     "direnv",
     "envrc",
-    "gofumpt",
-    "goimports",
-    "golangci",
-    "golines",
-    "gopath",
-    "gopkg",
-    "goroot",
-    "gosec",
-    "govulncheck",
-    "govy",
-    "govytest",
-    "mhdw",
-    "nocomments",
+    "mkdocs",
     "openslo",
-    "openslosdk",
     "slos",
-    "socio",
-    "struct",
     "tada",
-    "unmarshaller",
-    "vulns"
+    "venv"
   ]
 }

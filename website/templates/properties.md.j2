@@ -1,0 +1,89 @@
+{% from "rules.md.j2" import render_rules %}
+<div class="property-controls" role="group" aria-label="Property visibility" hidden>
+  <button type="button" data-property-action="expand">Expand all</button>
+  <button type="button" data-property-action="collapse">Collapse all</button>
+  <button type="button" class="property-controls__toggle md-header__button md-icon" data-property-action="toggle" aria-label="Expand all properties" aria-expanded="false" title="Expand all properties">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.41 8.58 12 13.17l4.59-4.59L18 10l-6 6-6-6z"/></svg>
+  </button>
+</div>
+
+{% for property in properties %}
+{% if property.path == "$" %}
+{% if property.rules %}
+### Object validation
+
+{{ render_rules(property.rules) }}
+{% endif %}
+{% else %}
+{% set heading = "###" if "." not in property.display_path else "####" %}
+{% set reference = links.get(property.path) %}
+{{ heading }} {% if reference %}[<code class="property-path">{{ property.display_path | property_path }}</code>]({{ reference.url }}){% else %}<code class="property-path">{{ property.display_path | property_path }}</code>{% endif %} { #{{ property.anchor }} }
+
+??? property "<span class='property-type-badge'>{{ property.typeInfo.kind | e }}</span>{% if property.required %} <span class='property-status-badge'>required</span>{% elif property.conditionally_required %} <span class='property-status-badge property-status-badge--conditional'>conditionally required</span>{% endif %}{% if reference %} <span class='property-status-badge property-status-badge--reference'>reference</span>{% endif %}"
+
+{% if property.fieldDoc %}
+{{ property.fieldDoc | indent(4, true) }}
+
+{% endif %}
+{% if not reference and property.typeDoc and property.typeDoc != property.fieldDoc %}
+{{ property.typeDoc | indent(4, true) }}
+
+{% endif %}
+{% if property.deprecatedDoc %}
+{{ ("**Deprecated:** " ~ property.deprecatedDoc) | indent(4, true) }}
+
+{% endif %}
+{% if reference %}
+{{ reference.description | indent(4, true) }}
+
+{% endif %}
+{% if property.values %}
+    **{{ "Possible" if property.conditional_values else "Allowed" }} values:** {% for value in property.values %}<code>{{ value | table_cell }}</code>{% if not loop.last %}, {% endif %}{% endfor +%}
+
+{% if property.conditional_values %}
+    The applicable values depend on the conditions in the validation rules below.
+{% endif %}
+
+{% endif %}
+{% if property.examples %}
+    **Examples:**
+
+{% for example in property.examples %}
+{{ example | code_block | indent(4, true) }}
+
+{% endfor %}
+{% endif %}
+{% if property.rules %}
+    **Validation rules**
+
+{{ render_rules(property.rules) | indent(4, true) }}
+
+{% endif %}
+{% if property.componentPlans %}
+    **Validation of value components**
+
+    These rules apply to parts of this value.
+
+{% for component in property.componentPlans %}
+    **Component:** <code>{{ component.path.removeprefix(property.path).removeprefix(".") | table_cell }}</code>
+
+{% if component.values %}
+    **Possible values:** {% for value in component.values %}<code>{{ value | table_cell }}</code>{% if not loop.last %}, {% endif %}{% endfor +%}
+
+{% endif %}
+{% if component.examples %}
+    **Examples:**
+
+{% for example in component.examples %}
+{{ example | code_block | indent(4, true) }}
+
+{% endfor %}
+{% endif %}
+{% if component.rules %}
+{{ render_rules(component.rules) | indent(4, true) }}
+
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}

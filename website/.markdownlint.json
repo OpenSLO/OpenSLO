@@ -1,0 +1,9 @@
+{
+  "extends": "../.markdownlint.json",
+  "MD013": false,
+  "MD024": {
+    "siblings_only": true
+  },
+  "MD033": false,
+  "MD046": false
+}

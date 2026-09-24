@@ -16,13 +16,13 @@ spec:
         good: # In most cases it is easier to think about timeslices in ratio metrics.
           metricSource:
             type: Any # Here put any service that holds information you need.
-            spec:
-              # Fields needed to query service.
+            spec: # Fields necessary to query service for the data.
+              query: Any # 'query' is just an example field.
         total:
           metricSource:
             type: Any # Here put any service that holds information you need.
-            spec:
-              # Fields needed to query service.
+            spec: # Fields necessary to query service for the data.
+              query: Any # 'query' is just an example field.
   timeWindow:
    - duration: 2w
      isRolling: true
