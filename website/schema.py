@@ -1,8 +1,8 @@
 import argparse
 import json
-from pathlib import Path
 import posixpath
 import re
+from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -10,7 +10,6 @@ from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 from markupsafe import Markup, escape
 from pydantic import BaseModel, Field, TypeAdapter
-
 
 ROOT = Path(__file__).resolve().parent
 

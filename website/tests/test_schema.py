@@ -1,15 +1,14 @@
-from html.parser import HTMLParser
 import json
-from pathlib import Path
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+from html.parser import HTMLParser
+from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 
 import markdown
-
 
 ROOT = Path(__file__).resolve().parents[1]
 SDK_DOCS = "https://pkg.go.dev/github.com/OpenSLO/go-sdk/pkg/openslo"
@@ -142,6 +141,7 @@ def run_command(project, *arguments):
         cwd=project,
         capture_output=True,
         text=True,
+        check=False,
         timeout=60,
     )
 
