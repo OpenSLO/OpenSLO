@@ -13,7 +13,7 @@ We encourage and welcome any and all feedback from the community.
 
 Use the button `Join our Slack` from the official website [openslo.com](https://openslo.com/).
 
-## Making a pull request
+## Submitting a pull request
 
 Fork the repository and submit a pull request.
 See GitHub's [pull request guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
@@ -69,6 +69,22 @@ Try to be as descriptive as you can in your Merge Request title.
 
 See [website development](website/README.md) to preview the site, update schema
 documentation, and edit the specification.
+
+## Adding or modifying an object kind
+
+1. Update the relevant [specification](website/docs/specification.md) or [draft proposal](enhancements/), including examples.
+2. Update the examples, validation rules, and tests in the [Go SDK repository](https://github.com/OpenSLO/go-sdk).
+3. Use the [schema update procedure](website/README.md#schema-reference) to import the SDK manifest into `website/api.json`.
+4. Run `make check` and `make website/build` from the repository root.
+
+## Adding a specification version
+
+Stable specification versions use names such as `v1`.
+Alpha versions use names such as `v1alpha` and `v2alpha`, without a trailing sequence number.
+See the [v2 draft](enhancements/v2alpha.md) for the current proposal.
+
+Discuss new versions, promotion, and release procedures with the community.
+Coordinate SDK changes and releases in the [Go SDK repository](https://github.com/OpenSLO/go-sdk).
 
 ## License
 
