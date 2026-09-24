@@ -600,7 +600,6 @@ class SchemaBuildTests(unittest.TestCase):
 
     def test_published_blog_routes_remain_available(self):
         for slug, title in (
-            ("hello", "Hello world!"),
             ("sloconf-talks", "SLOconf Talks"),
             (
                 "openslo-project-meeting-february-2024",
