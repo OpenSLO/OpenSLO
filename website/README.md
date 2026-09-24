@@ -1,12 +1,12 @@
 # OpenSLO website
 
 This directory builds the OpenSLO website with MkDocs Material.
-The repository's root Devbox environment includes Node.js 24, Yarn, Python 3.14,
-Ruff, and Go 1.27. It installs the website's Python dependencies from `requirements.txt`.
+The repository's root Devbox environment includes Node.js, Yarn, Python, Ruff, and Go.
+See [devbox.json](../devbox.json) for the tool versions.
+It installs the website's Python dependencies from `requirements.txt`.
 
 ## Development
 
-Use Devbox 0.18.3 for this environment.
 Run `devbox shell` from the repository root to install and activate the dependencies.
 Use the root Makefile:
 
@@ -61,9 +61,9 @@ the SDK generator.
 
 Run `make check/examples` to validate complete YAML examples from the specification
 and authored schema pages. This content check uses the SDK's public decoder and
-validator. It requires Go 1.27 or newer and the SDK revision pinned in
-`tools/example-check/go.mod`.
-Update that pin when the examples must follow a different SDK revision.
+validator. The required Go version and SDK revision are defined in
+[`tools/example-check/go.mod`](tools/example-check/go.mod).
+Update the SDK pin when the examples must follow a different SDK revision.
 CI runs this check before publication.
 
 The MkDocs hook in `main.py` generates pages and navigation for every version and
@@ -72,7 +72,7 @@ object in the manifest.
 rules.
 Builds use the checked-in manifest and require no Go toolchain or SDK checkout.
 
-The SDK generator uses govydoc v0.1.1 to register durations as opaque strings.
+The SDK generator uses govydoc to register durations as opaque strings.
 Their `componentPlans` retain validation for the unit and numeric value.
 The website displays these rules inside the duration panel and keeps their
 conditions, values, and examples separate from the parent property's rules.
