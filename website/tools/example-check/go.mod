@@ -1,8 +1,8 @@
 module github.com/OpenSLO/OpenSLO/website/tools/example-check
 
-go 1.26.0
+go 1.27.0
 
-require github.com/OpenSLO/go-sdk v0.9.3-0.20260918102601-7e56d3979bda
+require github.com/OpenSLO/go-sdk v0.9.3-0.20260922122149-982e79b3f3c8
 
 require (
 	github.com/nobl9/govy v0.29.0 // indirect

@@ -1,5 +1,5 @@
-github.com/OpenSLO/go-sdk v0.9.3-0.20260918102601-7e56d3979bda h1:rKrn6l0CtRh/UYXtYZwPbH0/YXu/lI/h2Jkh01EfEyM=
-github.com/OpenSLO/go-sdk v0.9.3-0.20260918102601-7e56d3979bda/go.mod h1:A/TxVBtnAlokG7PDGSx+2HtzQt4TiSRQfhUGRl1QAoY=
+github.com/OpenSLO/go-sdk v0.9.3-0.20260922122149-982e79b3f3c8 h1:9c4gcWyTyg1Xq+ameJHeJ55ahq6hRBbAZ2c5f5dQeJ4=
+github.com/OpenSLO/go-sdk v0.9.3-0.20260922122149-982e79b3f3c8/go.mod h1:A/TxVBtnAlokG7PDGSx+2HtzQt4TiSRQfhUGRl1QAoY=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/nobl9/govy v0.29.0 h1:djB8Tx6mYDYNhfrmuKsdMNuSQTCkZcLB3S87ygtZZhA=
