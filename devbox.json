@@ -1,11 +1,12 @@
 {
-  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.7/.schema/devbox.schema.json",
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.18.3/.schema/devbox.schema.json",
   "packages": [
+    "nodejs@24",
     "yarn@1.22",
-    "python@3.13.2",
-    "python313Packages.pip@24.0",
-    "ruff@0.11.13",
-    "go@1.26"
+    "python@3.14",
+    "python314Packages.pip@26.1.2",
+    "ruff@0.16.4",
+    "go@1.27"
   ],
   "shell": {
     "init_hook": [

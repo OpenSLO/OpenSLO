@@ -1,11 +1,12 @@
 # OpenSLO website
 
 This directory builds the OpenSLO website with MkDocs Material.
-The repository's root Devbox environment includes Yarn, Python 3.13, Ruff, and
-Go 1.26. It installs the website's Python dependencies from `requirements.txt`.
+The repository's root Devbox environment includes Node.js 24, Yarn, Python 3.14,
+Ruff, and Go 1.27. It installs the website's Python dependencies from `requirements.txt`.
 
 ## Development
 
+Use Devbox 0.18.3 for this environment.
 Run `devbox shell` from the repository root to install and activate the dependencies.
 Use the root Makefile:
 
@@ -13,7 +14,7 @@ Use the root Makefile:
 - `make website/build` writes the website to `website/site/`.
 - `make website/check` lints Python and tests schema generation through MkDocs.
 - `make check` runs all repository checks, including YAML example validation.
-- `make format` formats Python files and the spelling dictionary.
+- `make format` formats Python files.
 
 For one command, use `devbox run -- make website/serve` instead of opening a shell.
 Run all commands below from the repository root unless stated otherwise.
@@ -60,7 +61,7 @@ the SDK generator.
 
 Run `make check/examples` to validate complete YAML examples from the specification
 and authored schema pages. This content check uses the SDK's public decoder and
-validator. It requires Go 1.26 or newer and the SDK revision pinned in
+validator. It requires Go 1.27 or newer and the SDK revision pinned in
 `tools/example-check/go.mod`.
 Update that pin when the examples must follow a different SDK revision.
 CI runs this check before publication.

@@ -15,10 +15,10 @@ Use the button `Join our Slack` from the official website [openslo.com](https://
 
 ## Making a pull request
 
-Please make a fork of the repo, and summit a PR from there. More information can
-be found [here](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
+Fork the repository and submit a pull request.
+See GitHub's [pull request guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
-This project uses [Devbox](https://github.com/jetify-com/devbox) for its development environment.
+This project uses [Devbox](https://github.com/jetify-com/devbox) 0.18.3 for its development environment.
 Run `devbox shell` from the repository root to install and activate the dependencies.
 You can also install the required dependencies manually.
 
