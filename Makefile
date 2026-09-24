@@ -23,12 +23,12 @@ install/devbox:
 direnv:
 	devbox generate direnv
 
-.PHONY: check check/style check/spell check/trailing check/markdown check/format check/python check/examples
+.PHONY: check check/style check/spell check/trailing check/markdown check/python check/examples
 ## Run all checks.
 check: check/style website/check check/examples
 
-## Check spelling, whitespace, Markdown, and formatting.
-check/style: check/spell check/trailing check/markdown check/format
+## Check spelling, whitespace, and Markdown.
+check/style: check/spell check/trailing check/markdown
 
 ## Check spelling, rules are defined in cspell.json.
 check/spell:
@@ -46,12 +46,6 @@ check/markdown:
 	yarn --silent markdownlint '**/*.md' --ignore 'node_modules' --ignore 'website'
 	yarn --silent markdownlint 'website/**/*.md' --config website/.markdownlint.json --ignore 'website/site*/**'
 
-## Verify if the files are formatted.
-## You must first commit the changes, otherwise it won't detect the diffs.
-check/format:
-	$(call _print_step,Checking if files are formatted)
-	$(SCRIPTS_DIR)/check-formatting.sh
-
 ## Check Python code.
 check/python:
 	ruff check website
@@ -60,14 +54,9 @@ check/python:
 check/examples:
 	cd website/tools/example-check && go test -count=1 ./...
 
-.PHONY: format format/cspell format/python
+.PHONY: format format/python
 ## Format files.
-format: format/cspell format/python
-
-## Format cspell config file.
-format/cspell:
-	echo "Formatting cspell.yaml configuration (words list)..."
-	yarn --silent format-cspell-config
+format: format/python
 
 ## Format Python files.
 format/python:

@@ -1,7 +1,6 @@
 import re
 
 from mkdocs.structure.files import File
-
 from schema import SchemaDocumentation, SchemaLinksExtension
 
 
