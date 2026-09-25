@@ -1,26 +1,18 @@
 # OpenSLO website
 
 This directory builds the OpenSLO website with MkDocs Material.
-The repository's root Devbox environment includes Node.js, Yarn, Python, Ruff, and Go.
-See [devbox.json](../devbox.json) for the tool versions.
-It installs the website's Python dependencies from `requirements.txt`.
-
-## Development
-
-Run `devbox shell` from the repository root to install and activate the dependencies.
-Use the root Makefile:
-
-- `make website/serve` previews the website locally.
-- `make website/build` writes the website to `website/site/`.
-- `make website/check` lints Python and tests schema generation through MkDocs.
-- `make check` runs all repository checks, including YAML example validation.
-- `make format` formats Python files.
-
-For one command, use `devbox run -- make website/serve` instead of opening a shell.
+See [DEVELOPMENT.md](../docs/DEVELOPMENT.md) for environment setup and repository checks.
 Run all commands below from the repository root unless stated otherwise.
 Website file paths in this document are relative to `website/`.
 
-Pull requests run these checks and a strict website build in GitHub Actions.
+## Development
+
+Use these root Makefile targets after you activate the development environment:
+
+- `make website/serve` previews the website locally.
+- `make website/build` writes the website to `website/site/`.
+
+Pull requests run repository checks and a strict website build in GitHub Actions.
 Pushes to `main` publish the checked website to the `gh-pages` branch.
 `docs/CNAME` preserves the `openslo.com` domain.
 
@@ -39,6 +31,8 @@ Edit specification prose and examples directly in `docs/specification.md`.
 This page is the source of truth for the specification.
 Keep its schema reference links, v2 draft links, and Go SDK validation note
 when updating the content.
+
+See the [specification change workflow](../docs/specification-changes.md) for object changes, new versions, and SDK coordination.
 
 ## Schema reference
 
