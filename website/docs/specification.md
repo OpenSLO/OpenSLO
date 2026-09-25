@@ -791,5 +791,5 @@ OpenSLO specification.
 ## Related documentation
 
 - [Examples](https://github.com/OpenSLO/OpenSLO/tree/main/examples)
-- [Glossary](https://github.com/OpenSLO/OpenSLO/blob/main/docs/glossary.md)
+- [Domain context and glossary](https://github.com/OpenSLO/OpenSLO/blob/main/docs/CONTEXT.md#reliability-concepts)
 - [Work in progress for v2](https://github.com/OpenSLO/OpenSLO/blob/main/enhancements/v2alpha.md)

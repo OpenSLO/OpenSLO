@@ -2,9 +2,48 @@
 
 This guide defines the terms used in OpenSLO contributor documentation and agent instructions.
 The [specification](../website/docs/specification.md) defines object fields and requirements.
-The [SLO glossary](glossary.md) covers broader reliability concepts, such as error budgets and time windows.
 
-## OpenSLO objects
+## Reliability concepts
+
+**Service level indicator (SLI)** is a quantitative measure of some aspect of a service's behavior, such as availability or latency.
+
+**Service level objective (SLO)** is a target value or range for a service level measured by an SLI.
+
+**Service level agreement (SLA)** is an agreement with users that defines consequences for meeting or missing its SLOs.
+
+**Time window** is the period over which an SLO measures reliability.
+OpenSLO supports rolling and calendar-aligned windows.
+
+**Error budget** is the amount of unreliability that an SLO allows within its time window.
+Failures consume that budget.
+
+**Budgeting method** determines how measurements contribute to an SLO's success rate and error budget.
+The [v1 specification](../website/docs/specification.md#notes-slo) defines three methods:
+
+- `Occurrences` uses the number of good events divided by the total number of events.
+  For example, at least 95% of requests over two weeks have latency below 100 ms.
+- `Timeslices` uses the number of good time slices divided by the total number of time slices.
+  Each slice is an interval classified as good or bad against the objective's `timeSliceTarget`.
+  For example, classify each one-minute slice by its fraction of requests with latency below 100 ms.
+  The SLO counts the good slices over two weeks.
+- `RatioTimeslices` uses the average success ratio across all time slices in the budgeting period.
+  For example, each one-minute slice measures the fraction of requests with latency below 100 ms.
+  The SLO averages those fractions over two weeks.
+
+**Ratio metric** expresses an SLI through a ratio of good or bad events to total events, or through a precomputed ratio.
+OpenSLO converts a bad-event ratio to a success ratio when calculating the indicator value.
+
+**Threshold metric** supplies values that an objective compares with a threshold.
+OpenSLO uses the operators `lt`, `lte`, `gt`, and `gte` for these comparisons.
+The [SLI specification](../website/docs/specification.md#sli) describes both metric forms.
+
+**Composite SLO** combines multiple objectives, each of which can have its own queries, data sources, and targets.
+The composite consumes error budget when any of its objectives consumes error budget.
+All objectives use the same budgeting method.
+That method determines how failures and objective weights affect the combined budget.
+See the [composite SLO rules](../website/docs/specification.md#notes-composite-slo) for the calculations.
+
+## OpenSLO objects and versions
 
 **Specification** is the written definition of the OpenSLO format and its semantics.
 It describes service level objectives independently of a particular vendor or implementation.
@@ -26,8 +65,8 @@ The v1 specification defines these kinds:
 | Kind | Meaning |
 | --- | --- |
 | `Service` | A grouping that multiple SLOs can reference. |
-| `SLO` | A service level objective: a target for a service level described by an SLI. |
-| `SLI` | A service level indicator: a definition of how to obtain metrics from data sources. |
+| `SLO` | An object that configures a service level objective. |
+| `SLI` | An object that configures metric queries for a service level indicator. |
 | `DataSource` | Connection details for a metric source. |
 | `AlertPolicy` | Alert conditions and notification targets associated with an SLO. |
 | `AlertCondition` | Conditions that determine when an alert triggers. |
@@ -44,7 +83,7 @@ Use “specification” for the format's written definition and `spec` for the o
 Some fields also allow an **inline object**, which embeds a definition inside the containing object.
 The selected API version and field determine the supported forms.
 
-## SDK and schema documentation
+## SDK and schema terminology
 
 **Go SDK** is the implementation in the separate [OpenSLO/go-sdk repository](https://github.com/OpenSLO/go-sdk).
 It provides object types, decoding, and validation.
@@ -71,7 +110,10 @@ The manifest associates rules with property paths.
 Its `typeInfo.kind` describes a Go type category, such as `struct` or `string`.
 Use “object kind” for the OpenSLO category selected by the object's `kind` field.
 
-## How the sources relate
+## Relationships
+
+An SLO uses an SLI, a time window, and a budgeting method to express its reliability target.
+The OpenSLO objects configure these concepts and their connections to data sources, services, and alerts.
 
 The specification and draft proposals describe the format.
 The Go SDK implements object types and validation, then exports a schema manifest for documentation.
@@ -82,3 +124,8 @@ The imported manifest and the [example checker's SDK dependency](../website/tool
 They can reflect different SDK revisions.
 The [specification change workflow](specification-changes.md) explains how to keep them aligned.
 The [website guide](../website/README.md#schema-reference) covers manifest generation, import, and rendering.
+
+## Further reading
+
+- [Site Reliability Engineering: How Google Runs Production Systems](https://sre.google/sre-book/table-of-contents/)
+- [Implementing Service Level Objectives](https://www.oreilly.com/library/view/implementing-service-level/9781492076803/)
