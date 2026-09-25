@@ -1,6 +1,7 @@
 # OpenSLO website
 
 This directory builds the OpenSLO website with MkDocs Material.
+See [CONTEXT.md](../docs/CONTEXT.md) for object, manifest, and schema terminology.
 See [DEVELOPMENT.md](../docs/DEVELOPMENT.md) for environment setup and repository checks.
 Run all commands below from the repository root unless stated otherwise.
 Website file paths in this document are relative to `website/`.

@@ -3,6 +3,7 @@
 ## Required context
 
 - Before implementation, read [README.md](README.md) for project scope and [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+- Before specification, schema, SDK integration, or example work, read the [domain context](docs/CONTEXT.md) for project terminology and relationships.
 - Before environment setup or verification, read the [development guide](docs/DEVELOPMENT.md).
   Use its documented check scopes when reporting results.
 - Before specification or SDK dependency changes, read the [specification workflow](docs/specification-changes.md).

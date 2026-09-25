@@ -1,6 +1,7 @@
 # Specification changes
 
 This guide covers changes to OpenSLO object kinds and specification versions.
+See [CONTEXT.md](CONTEXT.md) for the terms used here and the relationship between the specification, SDK, and schema manifest.
 See [DEVELOPMENT.md](DEVELOPMENT.md) for environment setup and repository checks.
 
 ## Adding or modifying an object kind

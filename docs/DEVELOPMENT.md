@@ -2,6 +2,7 @@
 
 This guide covers local development of the OpenSLO specification and website.
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution and review guidelines.
+See [CONTEXT.md](CONTEXT.md) for project terminology and the sources behind the schema reference.
 For changes to object kinds or specification versions, see the [specification change workflow](specification-changes.md).
 Run commands from the repository root unless a step names another checkout.
 
@@ -9,7 +10,7 @@ Run commands from the repository root unless a step names another checkout.
 
 | Path | Purpose |
 | --- | --- |
-| [docs/](../docs/) | Contributor guides for development and specification changes. |
+| [docs/](../docs/) | Domain context and contributor guides for development and specification changes. |
 | [website/docs/specification.md](../website/docs/specification.md) | Specification prose and YAML examples. |
 | [enhancements/](../enhancements/) | Draft specification proposals. |
 | [examples/](../examples/) | Usage examples with explanations. |

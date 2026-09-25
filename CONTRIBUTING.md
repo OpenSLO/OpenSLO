@@ -16,6 +16,7 @@ See GitHub's [pull request guide](https://docs.github.com/en/github/collaboratin
 
 See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for environment setup, local checks,
 and website development.
+See [CONTEXT.md](docs/CONTEXT.md) for project terminology and the relationship between the specification, SDK, and schema reference.
 
 ### Pull request title
 
