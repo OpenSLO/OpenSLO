@@ -2,7 +2,7 @@
 
 This guide defines the terms used in OpenSLO contributor documentation and agent instructions.
 The [specification](../website/docs/specification.md) defines object fields and requirements.
-The [SLO glossary](../glossary/README.md) covers broader reliability concepts, such as error budgets and time windows.
+The [SLO glossary](glossary.md) covers broader reliability concepts, such as error budgets and time windows.
 
 ## OpenSLO objects
 
