@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "cspell": "10.3.3",
+    "cspell": "10.3.6",
     "markdownlint-cli": "0.49.1"
   },
   "packageManager": "yarn@1.22.22"
