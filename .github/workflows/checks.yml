@@ -13,7 +13,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install devbox
-        uses: jetify-com/devbox-install-action@8c6a66ed6273138b1915457069de78cb52fe3bd7 # v0.15.0
+        uses: jetify-com/devbox-install-action@05e954310554b6122a26b4880d69937f61b1eb2e # v0.16.0
         with:
           devbox-version: 0.18.3
           enable-cache: true
